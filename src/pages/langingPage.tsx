@@ -17,4 +17,4 @@ const landingPage = () => {
     );
 }
 
-export default landingPage;
+export default landingPage ;
