@@ -20,7 +20,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
-          <Route path="/jobs" element={<Jobs />} />nd
+          <Route path="/jobs" element={<Jobs />} />
         </Routes>
         <Toaster position="bottom-right" />
       </div>
