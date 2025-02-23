@@ -8,6 +8,7 @@ import Profile from './pages/Profile';
 import Auth from './pages/Auth';
 import Jobs from './pages/Jobs';
 import JobDetails from './pages/jobDetails';
+import JobApplicationForm from './pages/JobApplicationForm';
 
 function App() {
   return (
@@ -20,7 +21,8 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
-          <Route path="/jobs" element={<Jobs />} />nd
+          <Route path= "/jobs/apply" element={<JobApplicationForm />} / >
+          <Route path="/jobs" element={<Jobs />} />
         </Routes>
         <Toaster position="bottom-right" />
       </div>
