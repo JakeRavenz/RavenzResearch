@@ -35,7 +35,6 @@ export default function Jobs() {
           `)
           .eq('status', 'open')
           .order('created_at', { ascending: false });
-
         if (error) throw error;
         setJobs(data || []);
       } catch (error) {
@@ -44,17 +43,13 @@ export default function Jobs() {
         setLoading(false);
       }
     }
-
     fetchJobs();
   }, []);
 
   function formatTimeAgo(dateString: string) {
     const date = new Date(dateString);
     const now = new Date();
-    const diffInHours = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60 * 60)
-    );
-
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
     if (diffInHours < 24) {
       return `${diffInHours} hours ago`;
     }
@@ -63,7 +58,8 @@ export default function Jobs() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
+    // Full width container with horizontal padding
+    <div className="w-full px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-gray-900">New jobs</h1>
         <Link to="/jobs" className="text-blue-600 hover:text-blue-700 font-medium">
