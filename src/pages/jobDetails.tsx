@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // React Router hooks
+import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Briefcase, MapPin, Clock, Building, ArrowLeft } from 'lucide-react';
 
@@ -21,16 +21,34 @@ interface Job {
   };
 }
 
+function Modal({ message, onClose }: { message: string; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white p-6 rounded shadow-lg">
+        <p className="text-gray-800">{message}</p>
+        <button
+          onClick={onClose}
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function JobDetails() {
-  const { id } = useParams<{ id: string }>(); // Get the job id from the URL
-  const navigate = useNavigate(); // For programmatic navigation
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
+  const [modalMessage, setModalMessage] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [applyDisabled, setApplyDisabled] = useState(false);
 
   useEffect(() => {
     async function fetchJobDetails() {
       if (!id) return;
-      
       try {
         const { data, error } = await supabase
           .from('jobs')
@@ -40,7 +58,6 @@ export default function JobDetails() {
           `)
           .eq('id', id)
           .single();
-
         if (error) throw error;
         setJob(data);
       } catch (error) {
@@ -49,9 +66,55 @@ export default function JobDetails() {
         setLoading(false);
       }
     }
-
     fetchJobDetails();
   }, [id]);
+
+  async function handleApplyNow() {
+    // Retrieve current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      setModalMessage("User not authenticated. Please log in.");
+      setShowModal(true);
+      return;
+    }
+    // Check if user's profile exists
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+    if (profileError || !profile) {
+      setModalMessage("You need to complete your profile before applying.");
+      setShowModal(true);
+      // Optionally redirect to profile page after closing modal
+      return;
+    }
+    // Check if the user has already applied for this job
+    const { data: application, error: applicationError } = await supabase
+      .from('applications')
+      .select('*')
+      .eq('job_id', job?.id)
+      .eq('user_id', user.id)
+      .single();
+    if (!applicationError && application) {
+      setModalMessage("You have already applied for this job.");
+      setShowModal(true);
+      setApplyDisabled(true);
+      return;
+    }
+    // Insert application record
+    const { error: insertError } = await supabase
+      .from('applications')
+      .insert([{ job_id: job?.id, user_id: user.id }]);
+    if (insertError) {
+      setModalMessage("Error applying: " + insertError.message);
+      setShowModal(true);
+      return;
+    }
+    setModalMessage("Application submitted successfully!");
+    setShowModal(true);
+    setApplyDisabled(true);
+  }
 
   if (loading) {
     return (
@@ -83,6 +146,18 @@ export default function JobDetails() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {showModal && (
+        <Modal
+          message={modalMessage}
+          onClose={() => {
+            setShowModal(false);
+            // If user needs to complete profile, redirect after closing modal
+            if (modalMessage === "You need to complete your profile before applying.") {
+              navigate('/jobs/apply');
+            }
+          }}
+        />
+      )}
       {/* Header with Back Button */}
       <div className="bg-white border-b">
         <div className="max-w-5xl mx-auto px-4 py-4">
@@ -115,7 +190,6 @@ export default function JobDetails() {
             <div className="flex-grow">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{job.title}</h1>
               <div className="text-xl text-gray-600 mb-4">{job.company.name}</div>
-              
               <div className="flex flex-wrap gap-4 text-gray-600">
                 <div className="flex items-center">
                   <MapPin className="h-5 w-5 mr-2" />
@@ -133,7 +207,11 @@ export default function JobDetails() {
             </div>
 
             <div className="flex-shrink-0">
-              <button className="w-full mb-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+              <button
+                onClick={handleApplyNow}
+                disabled={applyDisabled}
+                className="w-full mb-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+              >
                 Apply Now
               </button>
               <div className="text-center text-gray-600">
@@ -147,32 +225,17 @@ export default function JobDetails() {
           <div className="space-y-8">
             <div>
               <h2 className="text-xl font-semibold mb-4">About the Role</h2>
-              <div className="prose max-w-none text-gray-700">
-                {job.description}
-              </div>
+              <div className="prose max-w-none text-gray-700">{job.description}</div>
             </div>
-
             <div>
-              <h2 className="text-xl font-semibold mb-4">Requirements</h2>
-              <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                <li>Previous experience in sales, particularly in closing deals</li>
-                <li>Excellent communication and interpersonal skills</li>
-                <li>Strong negotiation and problem-solving abilities</li>
-                <li>Ability to work independently and as part of a team</li>
-                <li>Experience with a customer-focused mindset</li>
-              </ul>
-            </div>
+  <h2 className="text-xl font-semibold mb-4">Requirements</h2>
+  <ul className="list-disc pl-5 space-y-2 text-gray-700">
+    {job.requirements?.map((req, index) => (
+      <li key={index}>{req}</li>
+    ))}
+  </ul>
+</div>
 
-            <div>
-              <h2 className="text-xl font-semibold mb-4">What We Offer</h2>
-              <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                <li>Competitive base salary of ${job.salary_min}k per month</li>
-                <li>Attractive commission structure with unlimited earning potential</li>
-                <li>Comprehensive training and ongoing support</li>
-                <li>Opportunities for career advancement</li>
-                <li>A vibrant and supportive work environment</li>
-              </ul>
-            </div>
           </div>
 
           {/* Apply Section */}
@@ -182,7 +245,11 @@ export default function JobDetails() {
                 <h2 className="text-xl font-semibold mb-2">Interested in this role?</h2>
                 <p className="text-gray-600">Apply now and we'll get back to you soon.</p>
               </div>
-              <button className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700">
+              <button
+                onClick={handleApplyNow}
+                disabled={applyDisabled}
+                className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+              >
                 Apply for this position
               </button>
             </div>
@@ -198,7 +265,6 @@ function formatTimeAgo(dateString: string) {
   const date = new Date(dateString);
   const now = new Date();
   const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-  
   if (diffInHours < 24) {
     return `${diffInHours} hours ago`;
   }
