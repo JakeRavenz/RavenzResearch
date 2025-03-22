@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 // Types
 type VerificationStatus = 'pending' | 'verified' | 'rejected';
+type EducationLevel = 'high_school' | 'associates' | 'bachelors' | 'masters' | 'phd' | 'other';
 
 interface ProfileFormData {
   firstName: string;
@@ -21,6 +22,7 @@ interface ProfileFormData {
   idType: string;
   idNumber: string;
   verification_status: VerificationStatus;
+  education: EducationLevel;
 }
 
 interface FileUrls {
@@ -62,6 +64,45 @@ const FormInput: React.FC<FormInputProps> = ({
       placeholder={placeholder}
       className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
     />
+  </div>
+);
+
+// Select component
+interface FormSelectProps {
+  label: string;
+  name: keyof ProfileFormData;
+  value: any;
+  options: { value: string; label: string }[];
+  required?: boolean;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+}
+
+const FormSelect: React.FC<FormSelectProps> = ({
+  label,
+  name,
+  value,
+  options,
+  onChange,
+  required = false,
+}) => (
+  <div className="mb-4">
+    <label className="block text-sm font-medium text-gray-700">
+      {label} {required && '*'}
+    </label>
+    <select
+      name={name}
+      value={value}
+      onChange={onChange}
+      required={required}
+      className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+    >
+      <option value="">Select {label}</option>
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
   </div>
 );
 
@@ -113,6 +154,16 @@ const SuccessMessage: React.FC<SuccessMessageProps> = ({ message, onEdit }) => (
   </div>
 );
 
+// Education options
+const educationOptions = [
+  { value: 'high_school', label: 'High School' },
+  { value: 'associates', label: 'Associate\'s Degree' },
+  { value: 'bachelors', label: 'Bachelor\'s Degree' },
+  { value: 'masters', label: 'Master\'s Degree' },
+  { value: 'phd', label: 'PhD / Doctorate' },
+  { value: 'other', label: 'Other' }
+];
+
 // Main component
 export default function ProfileForm() {
   const navigate = useNavigate();
@@ -137,7 +188,8 @@ export default function ProfileForm() {
     availableForHire: true,
     idType: '',
     idNumber: '',
-    verification_status: 'pending'
+    verification_status: 'pending',
+    education: 'bachelors'
   });
 
   const [fileUrls, setFileUrls] = useState<FileUrls>({
@@ -192,6 +244,7 @@ export default function ProfileForm() {
           idType: data.id_type || '',
           idNumber: data.id_number || '',
           verification_status: data.verification_status || 'pending',
+          education: data.education || 'bachelors',
         });
         
         setFileUrls({
@@ -305,6 +358,7 @@ export default function ProfileForm() {
         resume_url: fileUrls.resumeUrl,
         id_upload: fileUrls.idUploadUrl,
         verification_status: 'pending' as const,
+        education: formData.education,
         updated_at: new Date(),
       };
   
@@ -440,6 +494,18 @@ export default function ProfileForm() {
               className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
+        </div>
+        
+        {/* Education - Added new section */}
+        <div className="col-span-1 md:col-span-3">
+          <FormSelect
+            label="Education Level"
+            name="education"
+            value={formData.education}
+            options={educationOptions}
+            onChange={handleInputChange}
+            required
+          />
         </div>
         
         <div className="col-span-1 md:col-span-3">
