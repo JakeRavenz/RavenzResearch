@@ -10,6 +10,8 @@ import Jobs from './pages/Jobs';
 import JobDetails from './pages/jobDetails';
 import JobApplicationForm from './pages/JobApplicationForm';
 import Layout from './components/layout';
+import CompanyForm from './pages/createCompanies';
+import PostJobForm from './pages/postJobs';
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
       <Routes>
         {/* Routes without Layout */}
         <Route path="/jobs/:id" element={<JobDetails />} />
+        <Route path = "/company-bio" element= {<CompanyForm />} />
+        <Route path = "/post-job" element={<PostJobForm />} />
 
         {/* All other routes wrapped with Layout */}
         <Route element={<Layout />}>

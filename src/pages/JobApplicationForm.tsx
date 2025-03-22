@@ -216,7 +216,8 @@ export default function ProfileForm() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        throw new Error('Please sign in to view or edit your profile');
+        // Don't show an error, just return since user isn't logged in
+        return;
       }
 
       const { data, error } = await supabase
@@ -225,7 +226,16 @@ export default function ProfileForm() {
         .eq('id', session.user.id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        // Don't show the actual error message if it's a "no rows" error
+        if (error.message.includes('rows') || error.code === 'PGRST116') {
+          // This is likely a new user without a profile, just return silently
+          console.log('No profile found, user may be new');
+          return;
+        }
+        // Only throw the error if it's not the "no rows" error
+        throw error;
+      }
       
       if (data) {
         setFormData({
@@ -255,7 +265,8 @@ export default function ProfileForm() {
       }
     } catch (err: any) {
       console.error('Error fetching profile:', err);
-      setError(err.message);
+      // Only set errors that aren't related to the already-handled cases
+      setError('Error loading profile data. Please try again later.');
     }
   };
 
@@ -297,7 +308,7 @@ export default function ProfileForm() {
       }
     } catch (err: any) {
       console.error(`Error uploading ${type}:`, err);
-      setError(`Failed to upload ${type}: ${err.message}`);
+      setError(`Failed to upload file. Please try again.`);
     } finally {
       setLoading(false);
     }
@@ -390,7 +401,7 @@ export default function ProfileForm() {
       }
     } catch (err: any) {
       console.error('Profile update error:', err);
-      setError(err.message);
+      setError('Error updating profile. Please try again.');
     } finally {
       setLoading(false);
     }

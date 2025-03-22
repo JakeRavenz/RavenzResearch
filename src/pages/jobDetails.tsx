@@ -14,6 +14,7 @@ interface Job {
   remote_level: string;
   created_at: string;
   requirements?: string[];
+  what_we_offer?: string[];
   responsibilities?: string[];
   company: {
     name: string;
@@ -227,15 +228,33 @@ export default function JobDetails() {
               <h2 className="text-xl font-semibold mb-4">About the Role</h2>
               <div className="prose max-w-none text-gray-700">{job.description}</div>
             </div>
+            
             <div>
-  <h2 className="text-xl font-semibold mb-4">Requirements</h2>
-  <ul className="list-disc pl-5 space-y-2 text-gray-700">
-    {job.requirements?.map((req, index) => (
-      <li key={index}>{req}</li>
-    ))}
-  </ul>
-</div>
-
+              <h2 className="text-xl font-semibold mb-4">Requirements</h2>
+              <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                {job.requirements && job.requirements.length > 0 ? (
+                  job.requirements.map((req, index) => (
+                    <li key={index}>{req}</li>
+                  ))
+                ) : (
+                  <li>No specific requirements listed.</li>
+                )}
+              </ul>
+            </div>
+            
+            {/* What We Offer Section */}
+            <div>
+              <h2 className="text-xl font-semibold mb-4">What We Offer</h2>
+              <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                {job.what_we_offer && job.what_we_offer.length > 0 ? (
+                  job.what_we_offer.map((benefit, index) => (
+                    <li key={index}>{benefit}</li>
+                  ))
+                ) : (
+                  <li>No benefits information provided.</li>
+                )}
+              </ul>
+            </div>
           </div>
 
           {/* Apply Section */}
