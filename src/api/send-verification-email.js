@@ -47,7 +47,7 @@ router.post('/send-verification-email', async (req, res) => {
           <div style="padding: 20px 0;">
             <p style="font-size: 16px; line-height: 1.5; color: #333;">Hello <strong>${firstName || ''} ${surname || ''}</strong>,</p>
             
-            <p style="font-size: 16px; line-height: 1.5; color: #333;">Thank you for updating your profile. To complete the verification process, we need to schedule a brief video call.</p>
+            <p style="font-size: 16px; line-height: 1.5; color: #333;">Thank you for updating your profile. To complete the verification process, we need to schedule a brief id verification.</p>
             
             <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #3a86ff; margin: 20px 0; border-radius: 3px;">
               <p style="font-size: 16px; font-weight: bold; color: #333; margin-top: 0;">Please reply to this email with your preferred date and time for the verification call.</p>

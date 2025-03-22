@@ -25,22 +25,31 @@ export default function Jobs() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMoreJobs, setHasMoreJobs] = useState(false);
+  const jobsPerPage = 10; // Number of jobs to display per page
 
   useEffect(() => {
     async function fetchJobs() {
       try {
         setLoading(true);
-        const { data, error } = await supabase
+        const { data, error, count } = await supabase
           .from('jobs')
           .select(`
             *,
             company:companies(name, logo_url)
-          `)
+          `, { count: 'exact' })
           .eq('status', 'open')
-          .order('created_at', { ascending: false });
+          .order('created_at', { ascending: false })
+          .range(0, jobsPerPage);
         
         if (error) throw error;
         setJobs(data || []);
+        
+        // Check if there are more jobs than the current page limit
+        setHasMoreJobs(count !== null && count > jobsPerPage);
       } catch (error) {
         console.error('Error fetching jobs:', error);
       } finally {
@@ -49,6 +58,41 @@ export default function Jobs() {
     }
     fetchJobs();
   }, []);
+
+  async function loadMoreJobs() {
+    try {
+      setLoading(true);
+      const nextPage = currentPage + 1;
+      const startRange = jobs.length;
+      const endRange = startRange + jobsPerPage - 1;
+      
+      const { data, error, count } = await supabase
+        .from('jobs')
+        .select(`
+          *,
+          company:companies(name, logo_url)
+        `, { count: 'exact' })
+        .eq('status', 'open')
+        .order('created_at', { ascending: false })
+        .range(startRange, endRange);
+      
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        setJobs([...jobs, ...data]);
+        setCurrentPage(nextPage);
+        
+        // Check if there are more jobs to load
+        setHasMoreJobs(count !== null && count > (startRange + data.length));
+      } else {
+        setHasMoreJobs(false);
+      }
+    } catch (error) {
+      console.error('Error loading more jobs:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   function formatTimeAgo(dateString: string) {
     const date = new Date(dateString);
@@ -175,7 +219,7 @@ export default function Jobs() {
 
       <div className="flex justify-between items-center mb-6 px-1">
         <div className="text-gray-600">
-          {loading ? "Loading jobs..." : `${filteredJobs.length} jobs found`}
+          {loading && jobs.length === 0 ? "Loading jobs..." : `${filteredJobs.length} jobs found`}
         </div>
         <Link 
           to="/jobs" 
@@ -187,7 +231,7 @@ export default function Jobs() {
       </div>
 
       <div className="space-y-4">
-        {loading ? (
+        {loading && jobs.length === 0 ? (
           <>
             <JobSkeletonLoader />
             <JobSkeletonLoader />
@@ -298,10 +342,15 @@ export default function Jobs() {
         )}
       </div>
 
-      {!loading && filteredJobs.length > 0 && (
+      {/* Only show the "Load more jobs" button when there are more jobs to load and not currently loading */}
+      {!loading && filteredJobs.length > 0 && hasMoreJobs && (
         <div className="mt-8 flex justify-center">
-          <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-            Load more jobs
+          <button 
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            onClick={loadMoreJobs}
+            disabled={loading}
+          >
+            {loading ? "Loading..." : "Load more jobs"}
           </button>
         </div>
       )}

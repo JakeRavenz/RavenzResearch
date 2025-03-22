@@ -21,6 +21,7 @@ function App() {
         <Route path="/jobs/:id" element={<JobDetails />} />
         <Route path = "/company-bio" element= {<CompanyForm />} />
         <Route path = "/post-job" element={<PostJobForm />} />
+        <Route path="/jobs/apply" element={<JobApplicationForm />} />
 
         {/* All other routes wrapped with Layout */}
         <Route element={<Layout />}>
@@ -29,7 +30,6 @@ function App() {
           <Route path="/companies/:id/jobs" element={<CompanyJobs />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/jobs/apply" element={<JobApplicationForm />} />
           <Route path="/jobs" element={<Jobs />} />
         </Route>
       </Routes>

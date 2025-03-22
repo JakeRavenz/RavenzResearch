@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-
+import Navbar from '../components/Navbar';
 // Types
 type VerificationStatus = 'pending' | 'verified' | 'rejected';
 type EducationLevel = 'high_school' | 'associates' | 'bachelors' | 'masters' | 'phd' | 'other';
@@ -412,7 +412,14 @@ export default function ProfileForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow">
+    <div className="flex flex-col min-h-screen">
+    <div className="w-full border-b border-gray-200">
+    <div className="w-full">
+      <Navbar />
+    </div>
+  </div>
+      <div className="container mx-auto px-4 mt-8">
+        <form onSubmit={handleSubmit} className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow">
       <h2 className="text-2xl font-bold mb-6">Profile Information</h2>
 
       {error && (
@@ -635,6 +642,8 @@ export default function ProfileForm() {
           )}
         </button>
       </div>
-    </form>
+      </form>
+      </div>
+    </div>
   );
 }

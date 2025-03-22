@@ -131,7 +131,7 @@ export default function Home() {
             </p>
           </div>
           <div className="mt-4 md:mt-0">
-            <ActionButton to="/signup" variant="primary">
+            <ActionButton to="/auth" variant="primary">
               Get Started
             </ActionButton>
           </div>
