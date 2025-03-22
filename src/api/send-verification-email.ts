@@ -1,23 +1,22 @@
-// pages/api/send-verification-email.js
-const nodemailer = require('nodemailer');
+// src/api/email-sender.js
+import express from 'express';
+import nodemailer from 'nodemailer';
+import cors from 'cors';
+import dotenv from 'dotenv';
 
-export default async function handler(req, res) {
-  // Handle CORS
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
-  
-  // Handle OPTIONS request (CORS preflight)
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  
-  // Only allow POST requests
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed, please use POST' });
-  }
+dotenv.config();
 
+const router = express.Router();
+
+// Configure CORS
+router.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['X-CSRF-Token', 'X-Requested-With', 'Accept', 'Accept-Version', 'Content-Length', 'Content-MD5', 'Content-Type', 'Date', 'X-Api-Version']
+}));
+
+// Email verification endpoint
+router.post('/send-verification-email', async (req, res) => {
   try {
     const { email, firstName, surname } = req.body;
     
@@ -81,4 +80,6 @@ export default async function handler(req, res) {
     console.error('Error sending email:', error);
     return res.status(500).json({ success: false, message: 'Failed to send email', error: error.message });
   }
-};
+});
+
+export default router;
