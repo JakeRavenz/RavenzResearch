@@ -40,7 +40,7 @@ const FormInput: React.FC<FormInputProps> = ({
 export default function ProfileForm() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-
+  const [successMessage, setSuccessMessage] = useState('');
   const [formData, setFormData] = useState({
     firstName: '',
     middleName: '',
@@ -55,8 +55,10 @@ export default function ProfileForm() {
     skills: '',
     availableForHire: true,
     idType: '',
-    idNumber: ''
+    idNumber: '',
+    verification_status: 'pending' 
   });
+  
 
   const [fileUrls, setFileUrls] = useState({
     avatarUrl: '',
@@ -108,7 +110,8 @@ export default function ProfileForm() {
           skills: data.skills ? data.skills.join(', ') : '',
           availableForHire: data.available_for_hire ?? true,
           idType: data.id_type || '',
-          idNumber: data.id_number || ''
+          idNumber: data.id_number || '',
+          verification_status: data.verification_status || 'pending',
         });
         setFileUrls({
           avatarUrl: data.avatar_url || '',
@@ -167,13 +170,13 @@ export default function ProfileForm() {
     e.preventDefault();
     setLoading(true);
     setError('');
-
+  
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Authentication required');
-
+  
       const skillsArray = formData.skills.split(',').map(s => s.trim()).filter(Boolean);
-
+  
       const { error: submitError } = await supabase.from('profiles').upsert({
         id: user.id,
         first_name: formData.firstName,
@@ -193,18 +196,39 @@ export default function ProfileForm() {
         avatar_url: fileUrls.avatarUrl,
         resume_url: fileUrls.resumeUrl,
         id_upload: fileUrls.idUploadUrl,
+        verification_status: 'pending', // Add this field to track verification status
       });
-
+  
       if (submitError) throw submitError;
+      
+      // Send verification email using the Vercel API route
+      // This uses a relative URL that works in both development and production
+      const emailResponse = await fetch('/api/send-verification-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: user.email,
+          firstName: formData.firstName,
+          surname: formData.surname
+        }),
+      });
+      
+      if (!emailResponse.ok) {
+        const errorData = await emailResponse.json();
+        console.warn('Verification email could not be sent:', errorData);
+        setSuccessMessage("Profile updated successfully! However, we could not send the verification email. Please contact support.");
+      } else {
+        setSuccessMessage("Profile updated successfully! Please check your email to schedule your verification call.");
+      }
+      
       setSuccess(true);
-
+      
       // After a successful update, check for a redirect query param
       const redirectUrl = searchParams.get('redirect');
       if (redirectUrl) {
         navigate(redirectUrl);
-      } else {
-        // Default redirect (e.g., back to jobs list)
-        navigate('/jobs');
       }
     } catch (err: any) {
       setError(err.message);
@@ -212,11 +236,11 @@ export default function ProfileForm() {
       setLoading(false);
     }
   };
-
   if (success) {
     return (
       <div className="text-center p-4">
         <h2 className="text-2xl font-bold text-green-600 mb-4">Profile Updated!</h2>
+        <p className="mb-4">{successMessage || "Your profile has been updated successfully."}</p>
         <button onClick={() => setSuccess(false)} className="bg-green-600 text-white px-6 py-2 rounded-md">
           Edit Profile
         </button>
