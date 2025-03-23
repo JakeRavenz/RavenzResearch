@@ -135,6 +135,26 @@ const FileUpload: React.FC<FileUploadProps> = ({ label, accept, currentUrl, onCh
   </div>
 );
 
+// Success message component with countdown
+interface SuccessMessageProps {
+  message: string;
+  onEdit: () => void;
+  redirectUrl: string | null;
+  countdown: number;
+}
+
+const SuccessMessage: React.FC<SuccessMessageProps> = ({ message, onEdit, redirectUrl, countdown }) => (
+  <div className="text-center p-6 bg-white rounded-lg shadow">
+    <h2 className="text-2xl font-bold text-green-600 mb-4">Profile Updated!</h2>
+    <p className="mb-6">{message}</p>
+    {redirectUrl && countdown > 0 && (
+      <p className="text-sm text-gray-600">
+        Redirecting in {countdown} seconds...
+      </p>
+    )}
+  </div>
+);
+
 // Education options
 const educationOptions = [
   { value: 'high_school', label: 'High School' },
@@ -151,6 +171,10 @@ export default function ProfileForm() {
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [countdown, setCountdown] = useState(5); // 5-second countdown for redirect
+  const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
   
   const [formData, setFormData] = useState<ProfileFormData>({
     firstName: '',
@@ -180,6 +204,23 @@ export default function ProfileForm() {
   useEffect(() => {
     fetchProfile();
   }, []);
+
+  // Countdown effect that triggers after success
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    
+    if (success && redirectUrl && countdown > 0) {
+      timer = setTimeout(() => {
+        setCountdown(prevCount => prevCount - 1);
+      }, 1000);
+    } else if (success && redirectUrl && countdown === 0) {
+      navigate(redirectUrl);
+    }
+    
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [success, countdown, redirectUrl, navigate]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -359,18 +400,25 @@ export default function ProfileForm() {
       if (submitError) throw submitError;
       
       // Send verification email
-      await sendVerificationEmail(
+      const emailResult = await sendVerificationEmail(
         user.email as string, 
         formData.firstName, 
         formData.surname
       );
       
-      // Check for a redirect URL in the query parameters
-      const redirectUrl = searchParams.get('redirect');
+      if (emailResult.success) {
+        setSuccessMessage("Profile updated successfully! Please check your email to schedule your id verification.");
+      } else {
+        setSuccessMessage("Profile updated successfully! However, we could not send the verification email. Please contact support.");
+      }
       
-      // Redirect to the home page (/) if no specific redirect is provided
-      navigate(redirectUrl || '/');
+      // Get redirect URL from query params
+      const redirUrl = searchParams.get('redirect');
+      if (redirUrl) {
+        setRedirectUrl(redirUrl);
+      }
       
+      setSuccess(true);
     } catch (err: any) {
       console.error('Profile update error:', err);
       setError('Error updating profile. Please try again.');
@@ -379,238 +427,249 @@ export default function ProfileForm() {
     }
   };
 
+  if (success) {
+    return (
+      <SuccessMessage 
+        message={successMessage} 
+        onEdit={() => setSuccess(false)} 
+        redirectUrl={redirectUrl}
+        countdown={countdown}
+      />
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="w-full border-b border-gray-200">
-        <div className="w-full">
-          <Navbar />
-        </div>
-      </div>
+    <div className="w-full border-b border-gray-200">
+    <div className="w-full">
+      <Navbar />
+    </div>
+  </div>
       <div className="container mx-auto px-4 mt-8">
         <form onSubmit={handleSubmit} className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow">
-          <h2 className="text-2xl font-bold mb-6">Profile Information</h2>
+      <h2 className="text-2xl font-bold mb-6">Profile Information</h2>
 
-          {error && (
-            <div className="mb-4 p-4 bg-red-50 text-red-600 rounded-md border border-red-200">
-              {error}
-            </div>
-          )}
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 text-red-600 rounded-md border border-red-200">
+          {error}
+        </div>
+      )}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Personal Information */}
-            <FormInput 
-              label="First Name" 
-              name="firstName" 
-              value={formData.firstName} 
-              onChange={handleInputChange} 
-              required 
-            />
-            <FormInput 
-              label="Middle Name" 
-              name="middleName" 
-              value={formData.middleName} 
-              onChange={handleInputChange} 
-            />
-            <FormInput 
-              label="Surname" 
-              name="surname" 
-              value={formData.surname} 
-              onChange={handleInputChange} 
-              required 
-            />
-            
-            {/* Contact Information */}
-            <FormInput 
-              label="Date of Birth" 
-              type="date" 
-              name="dateOfBirth" 
-              value={formData.dateOfBirth} 
-              onChange={handleInputChange} 
-              required 
-            />
-            <FormInput 
-              label="Phone Number" 
-              name="phoneNumber" 
-              value={formData.phoneNumber} 
-              onChange={handleInputChange} 
-              required 
-            />
-            <FormInput 
-              label="Zip Code" 
-              name="zipCode" 
-              value={formData.zipCode} 
-              onChange={handleInputChange} 
-              required 
-            />
-            
-            {/* Address - full width */}
-            <div className="col-span-1 md:col-span-3">
-              <FormInput 
-                label="Address" 
-                name="address" 
-                value={formData.address} 
-                onChange={handleInputChange} 
-                required 
-              />
-            </div>
-            
-            {/* Professional Details */}
-            <div className="col-span-1 md:col-span-3">
-              <FormInput 
-                label="Headline" 
-                name="headline" 
-                value={formData.headline} 
-                onChange={handleInputChange} 
-                required 
-                placeholder="Software Engineer | React Developer | UX Specialist"
-              />
-            </div>
-            
-            <div className="col-span-1 md:col-span-3">
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Bio *
-                </label>
-                <textarea
-                  name="bio"
-                  value={formData.bio}
-                  onChange={handleInputChange}
-                  required
-                  rows={4}
-                  className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-            </div>
-            
-            {/* Education - Added new section */}
-            <div className="col-span-1 md:col-span-3">
-              <FormSelect
-                label="Education Level"
-                name="education"
-                value={formData.education}
-                options={educationOptions}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            
-            <div className="col-span-1 md:col-span-3">
-              <FormInput 
-                label="Work Experience (years)" 
-                type="number" 
-                name="workExperience" 
-                value={formData.workExperience} 
-                onChange={handleInputChange} 
-                required 
-              />
-            </div>
-            
-            <div className="col-span-1 md:col-span-3">
-              <FormInput 
-                label="Skills" 
-                name="skills" 
-                value={formData.skills} 
-                onChange={handleInputChange} 
-                required 
-                placeholder="React, TypeScript, Node.js, AWS (separate skills with commas)" 
-              />
-            </div>
-            
-            {/* ID verification */}
-            <div className="col-span-1 md:col-span-3 mt-4 mb-2">
-              <h3 className="text-lg font-medium">Identity Verification</h3>
-            </div>
-            
-            <div className="col-span-1 md:col-span-3">
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">ID Type *</label>
-                <select 
-                  name="idType" 
-                  value={formData.idType} 
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">Select ID Type</option>
-                  <option value="passport">Passport</option>
-                  <option value="driverLicense">Driver's License</option>
-                  <option value="nationalId">National ID</option>
-                </select>
-              </div>
-            </div>
-
-            <FormInput 
-              label="ID Number" 
-              name="idNumber" 
-              value={formData.idNumber} 
-              onChange={handleInputChange} 
-              required 
-            />
-            
-            {/* File uploads */}
-            <div className="col-span-1 md:col-span-3 mt-4 mb-2">
-              <h3 className="text-lg font-medium">Document Uploads</h3>
-            </div>
-            
-            <FileUpload
-              label="Resume"
-              accept=".pdf,.doc,.docx"
-              currentUrl={fileUrls.resumeUrl}
-              onChange={(e) => handleFileInputChange(e, 'resumes', 'resumeUrl')}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Personal Information */}
+        <FormInput 
+          label="First Name" 
+          name="firstName" 
+          value={formData.firstName} 
+          onChange={handleInputChange} 
+          required 
+        />
+        <FormInput 
+          label="Middle Name" 
+          name="middleName" 
+          value={formData.middleName} 
+          onChange={handleInputChange} 
+        />
+        <FormInput 
+          label="Surname" 
+          name="surname" 
+          value={formData.surname} 
+          onChange={handleInputChange} 
+          required 
+        />
+        
+        {/* Contact Information */}
+        <FormInput 
+          label="Date of Birth" 
+          type="date" 
+          name="dateOfBirth" 
+          value={formData.dateOfBirth} 
+          onChange={handleInputChange} 
+          required 
+        />
+        <FormInput 
+          label="Phone Number" 
+          name="phoneNumber" 
+          value={formData.phoneNumber} 
+          onChange={handleInputChange} 
+          required 
+        />
+        <FormInput 
+          label="Zip Code" 
+          name="zipCode" 
+          value={formData.zipCode} 
+          onChange={handleInputChange} 
+          required 
+        />
+        
+        {/* Address - full width */}
+        <div className="col-span-1 md:col-span-3">
+          <FormInput 
+            label="Address" 
+            name="address" 
+            value={formData.address} 
+            onChange={handleInputChange} 
+            required 
+          />
+        </div>
+        
+        {/* Professional Details */}
+        <div className="col-span-1 md:col-span-3">
+          <FormInput 
+            label="Headline" 
+            name="headline" 
+            value={formData.headline} 
+            onChange={handleInputChange} 
+            required 
+            placeholder="Software Engineer | React Developer | UX Specialist"
+          />
+        </div>
+        
+        <div className="col-span-1 md:col-span-3">
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Bio *
+            </label>
+            <textarea
+              name="bio"
+              value={formData.bio}
+              onChange={handleInputChange}
               required
+              rows={4}
+              className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
-            
-            <FileUpload
-              label="Profile Photo"
-              accept="image/png,image/jpeg"
-              currentUrl={fileUrls.avatarUrl}
-              onChange={(e) => handleFileInputChange(e, 'avatars', 'avatarUrl')}
-              required
-            />
-            
-            <FileUpload
-              label="ID Document"
-              accept="image/png,image/jpeg,application/pdf"
-              currentUrl={fileUrls.idUploadUrl}
-              onChange={(e) => handleFileInputChange(e, 'ids', 'idUploadUrl')}
-              required
-            />
-
-            {/* Availability checkbox */}
-            <div className="col-span-1 md:col-span-3 mt-4">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="availableForHire"
-                  checked={formData.availableForHire}
-                  onChange={handleInputChange}
-                  className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <span className="ml-2 text-sm font-medium text-gray-700">Available for Hire</span>
-              </label>
-            </div>
           </div>
-
-          <div className="mt-8">
-            <button 
-              type="submit" 
-              disabled={loading}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors flex justify-center items-center"
+        </div>
+        
+        {/* Education - Added new section */}
+        <div className="col-span-1 md:col-span-3">
+          <FormSelect
+            label="Education Level"
+            name="education"
+            value={formData.education}
+            options={educationOptions}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        
+        <div className="col-span-1 md:col-span-3">
+          <FormInput 
+            label="Work Experience (years)" 
+            type="number" 
+            name="workExperience" 
+            value={formData.workExperience} 
+            onChange={handleInputChange} 
+            required 
+          />
+        </div>
+        
+        <div className="col-span-1 md:col-span-3">
+          <FormInput 
+            label="Skills" 
+            name="skills" 
+            value={formData.skills} 
+            onChange={handleInputChange} 
+            required 
+            placeholder="React, TypeScript, Node.js, AWS (separate skills with commas)" 
+          />
+        </div>
+        
+        {/* ID verification */}
+        <div className="col-span-1 md:col-span-3 mt-4 mb-2">
+          <h3 className="text-lg font-medium">Identity Verification</h3>
+        </div>
+        
+        <div className="col-span-1 md:col-span-3">
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">ID Type *</label>
+            <select 
+              name="idType" 
+              value={formData.idType} 
+              onChange={handleInputChange}
+              required
+              className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              {loading ? (
-                <>
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Updating...
-                </>
-              ) : (
-                'Save Profile'
-              )}
-            </button>
+              <option value="">Select ID Type</option>
+              <option value="passport">Passport</option>
+              <option value="driverLicense">Driver's License</option>
+              <option value="nationalId">National ID</option>
+            </select>
           </div>
-        </form>
+        </div>
+
+        <FormInput 
+          label="ID Number" 
+          name="idNumber" 
+          value={formData.idNumber} 
+          onChange={handleInputChange} 
+          required 
+        />
+        
+        {/* File uploads */}
+        <div className="col-span-1 md:col-span-3 mt-4 mb-2">
+          <h3 className="text-lg font-medium">Document Uploads</h3>
+        </div>
+        
+        <FileUpload
+          label="Resume"
+          accept=".pdf,.doc,.docx"
+          currentUrl={fileUrls.resumeUrl}
+          onChange={(e) => handleFileInputChange(e, 'resumes', 'resumeUrl')}
+          required
+        />
+        
+        <FileUpload
+          label="Profile Photo"
+          accept="image/png,image/jpeg"
+          currentUrl={fileUrls.avatarUrl}
+          onChange={(e) => handleFileInputChange(e, 'avatars', 'avatarUrl')}
+          required
+        />
+        
+        <FileUpload
+          label="ID Document"
+          accept="image/png,image/jpeg,application/pdf"
+          currentUrl={fileUrls.idUploadUrl}
+          onChange={(e) => handleFileInputChange(e, 'ids', 'idUploadUrl')}
+          required
+        />
+
+        {/* Availability checkbox */}
+        <div className="col-span-1 md:col-span-3 mt-4">
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              name="availableForHire"
+              checked={formData.availableForHire}
+              onChange={handleInputChange}
+              className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <span className="ml-2 text-sm font-medium text-gray-700">Available for Hire</span>
+          </label>
+        </div>
+      </div>
+
+      <div className="mt-8">
+        <button 
+          type="submit" 
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors flex justify-center items-center"
+        >
+          {loading ? (
+            <>
+              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Updating...
+            </>
+          ) : (
+            'Save Profile'
+          )}
+        </button>
+      </div>
+      </form>
       </div>
     </div>
   );
