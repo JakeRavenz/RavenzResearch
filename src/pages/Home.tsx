@@ -15,10 +15,6 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) =
     </div>
     <h3 className="mt-4 text-xl font-semibold text-gray-900">{title}</h3>
     <p className="mt-2 text-gray-600">{description}</p>
-    <div className="mt-4 text-indigo-600 font-medium opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
-      Learn more
-      <ArrowRight className="ml-1 h-4 w-4" />
-    </div>
   </div>
 );
 
@@ -131,9 +127,6 @@ export default function Home() {
             </p>
           </div>
           <div className="mt-4 md:mt-0">
-            <ActionButton to="/auth" variant="primary">
-              Get Started
-            </ActionButton>
           </div>
         </div>
       </div>
