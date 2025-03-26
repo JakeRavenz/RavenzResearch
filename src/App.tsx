@@ -1,15 +1,19 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
-import LandingPage from './pages/langingPage'; 
-import Companies from './pages/Companies';
-import CompanyJobs from './pages/CompanyJobs';
-import Profile from './pages/Profile';
-import Auth from './pages/Auth';
-import Jobs from './pages/Jobs';
-import JobDetails from './pages/jobDetails';
-import JobApplicationForm from './pages/JobApplicationForm';
-import Layout from './components/layout';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import LandingPage from "./pages/langingPage";
+import Companies from "./pages/Companies";
+import CompanyJobs from "./pages/CompanyJobs";
+import Profile from "./pages/Profile";
+import Auth from "./pages/Auth";
+import Jobs from "./pages/Jobs";
+import JobDetails from "./pages/jobDetails";
+import JobApplicationForm from "./pages/JobApplicationForm";
+import Layout from "./components/layout";
+import AboutUs from "./pages/AboutUs";
+import Faq from "./pages/Faq";
+import Careers from "./pages/Careers";
+import Contact from "./pages/Contact";
 
 function App() {
   return (
@@ -26,10 +30,15 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
-          <Route path="/jobs" element={<Jobs />} />nd
-        </Routes>
-        <Toaster position="bottom-right" />
-      </div>
+          <Route path="/jobs" element={<Jobs />} />
+          <Route path="/aboutUs" element={<AboutUs />} />
+          <Route path="/jobs/apply/:id" element={<JobApplicationForm />} />
+          <Route path="/faq" element={<Faq />} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/contact" element={<Contact />} />
+        </Route>
+      </Routes>
+      <Toaster position="bottom-right" />
     </Router>
   );
 }

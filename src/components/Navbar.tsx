@@ -36,37 +36,53 @@ export default function Navbar() {
   return (
     <>
       <nav className="bg-white border-b border-gray-200 h-[80px] w-full">
-        <div className="h-full flex items-center">
+        <div className="flex items-center h-full">
           {/* Logo Section - Extreme Left */}
-          <Link to="/" className="flex items-center space-x-2 pl-6" onClick={closeSidebar}>
-            <BriefcaseIcon className="h-6 w-6 text-indigo-600" />
+          <Link
+            to="/"
+            className="flex items-center pl-6 space-x-2"
+            onClick={closeSidebar}
+          >
+            <BriefcaseIcon className="w-6 h-6 text-indigo-600" />
             <span className="font-bold text-xl text-[bg-emerald-400] font-['Inter']">
-              RemoteWork
+              RavenzResearch
             </span>
           </Link>
 
           {/* Right Section with Nav Links and Sign In */}
-          <div className="hidden md:flex items-center ml-auto pr-6 space-x-12">
+          <div className="items-center hidden pr-6 ml-auto space-x-12 md:flex">
             <Link
               to="/jobs"
               className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
             >
-              <BriefcaseIcon className="h-5 w-5" />
+              <BriefcaseIcon className="w-5 h-5" />
               <span>Jobs</span>
             </Link>
             <Link
               to="/companies"
               className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
             >
-              <BuildingOffice2Icon className="h-5 w-5" />
+              <BuildingOffice2Icon className="w-5 h-5" />
               <span>Companies</span>
+            </Link>  <Link
+              to="/aboutUs"
+              className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
+            >
+              <BuildingOffice2Icon className="w-5 h-5" />
+              <span>About Us</span>
+            </Link>  <Link
+              to="/faq"
+              className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
+            >
+              <BuildingOffice2Icon className="w-5 h-5" />
+              <span>FAQ</span>
             </Link>
             {user ? (
               <Link
                 to="/profile"
                 className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
               >
-                <UserIcon className="h-5 w-5" />
+                <UserIcon className="w-5 h-5" />
                 <span>Profile</span>
               </Link>
             ) : (
@@ -81,10 +97,10 @@ export default function Navbar() {
 
           {/* Hamburger Menu Button */}
           <button
-            className="md:hidden text-gray-700 pr-6 ml-auto"
+            className="pr-6 ml-auto text-gray-700 md:hidden"
             onClick={toggleSidebar}
           >
-            <Bars3Icon className="h-6 w-6" />
+            <Bars3Icon className="w-6 h-6" />
           </button>
         </div>
       </nav>
@@ -105,17 +121,17 @@ export default function Navbar() {
         <div className="p-6">
           <div className="flex justify-end">
             <button onClick={closeSidebar} className="text-gray-700">
-              <XMarkIcon className="h-6 w-6" />
+              <XMarkIcon className="w-6 h-6" />
             </button>
           </div>
 
-          <div className="mt-8 flex flex-col space-y-6">
+          <div className="flex flex-col mt-8 space-y-6">
             <Link
               to="/jobs"
               className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
               onClick={closeSidebar}
             >
-              <BriefcaseIcon className="h-5 w-5" />
+              <BriefcaseIcon className="w-5 h-5" />
               <span>Jobs</span>
             </Link>
             <Link
@@ -123,8 +139,24 @@ export default function Navbar() {
               className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
               onClick={closeSidebar}
             >
-              <BuildingOffice2Icon className="h-5 w-5" />
+              <BuildingOffice2Icon className="w-5 h-5" />
               <span>Companies</span>
+            </Link>
+            <Link
+              to="/companies"
+              className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
+              onClick={closeSidebar}
+            >
+              <BuildingOffice2Icon className="w-5 h-5" />
+              <span>About Us</span>
+            </Link>
+            <Link
+              to="/companies"
+              className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
+              onClick={closeSidebar}
+            >
+              <BuildingOffice2Icon className="w-5 h-5" />
+              <span>FAQ</span>
             </Link>
             {user ? (
               <Link
@@ -132,7 +164,7 @@ export default function Navbar() {
                 className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
                 onClick={closeSidebar}
               >
-                <UserIcon className="h-5 w-5" />
+                <UserIcon className="w-5 h-5" />
                 <span>Profile</span>
               </Link>
             ) : (
