@@ -1,17 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
+
+// Types
+type EducationLevel = 'high_school' | 'associates' | 'bachelors' | 'masters' | 'phd' | 'other';
+
+interface ProfileFormData {
+  firstName: string;
+  middleName: string;
+  surname: string;
+  dateOfBirth: string;
+  address: string;
+  phoneNumber: string;
+  zipCode: string;
+  education: EducationLevel;
+}
+
+interface FileUrls {
+  resumeUrl: string;
+}
 
 interface FormInputProps {
   label: string;
   type?: string;
-  name: string;
+  name: keyof ProfileFormData;
   value: any;
   required?: boolean;
   placeholder?: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 }
 
+// Components
 const FormInput: React.FC<FormInputProps> = ({
   label,
   type = "text",
@@ -22,8 +44,8 @@ const FormInput: React.FC<FormInputProps> = ({
   placeholder,
 }) => (
   <div className="mb-4">
-    <label className="block text-sm font-medium text-gray-700">
-      {label} {required && '*'}
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      {label} {required && <span className="text-red-500">*</span>}
     </label>
     <input
       type={type}
@@ -32,16 +54,163 @@ const FormInput: React.FC<FormInputProps> = ({
       onChange={onChange}
       required={required}
       placeholder={placeholder}
-      className="w-full px-3 py-2 border rounded-md"
+      className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
     />
   </div>
 );
 
+// Select component
+interface FormSelectProps {
+  label: string;
+  name: keyof ProfileFormData;
+  value: any;
+  options: { value: string; label: string }[];
+  required?: boolean;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+}
+
+const FormSelect: React.FC<FormSelectProps> = ({
+  label,
+  name,
+  value,
+  options,
+  onChange,
+  required = false,
+}) => (
+  <div className="mb-4">
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <select
+      name={name}
+      value={value}
+      onChange={onChange}
+      required={required}
+      className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+    >
+      <option value="">Select {label}</option>
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  </div>
+);
+
+// Phone input component
+interface PhoneInputFieldProps {
+  label: string;
+  value: string;
+  onChange: (value: string | undefined) => void;
+  required?: boolean;
+}
+
+const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
+  label,
+  value,
+  onChange,
+  required = false,
+}) => (
+  <div className="mb-4">
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <div className="w-full border rounded-md focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
+      <PhoneInput
+        international
+        defaultCountry="US"
+        value={value}
+        onChange={onChange}
+        className="w-full px-3 py-2"
+        inputClassName="w-full border-0 focus:ring-0 focus:outline-none"
+      />
+    </div>
+  </div>
+);
+
+// File upload component
+interface FileUploadProps {
+  label: string;
+  accept: string;
+  currentUrl: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
+}
+
+const FileUpload: React.FC<FileUploadProps> = ({ 
+  label, 
+  accept, 
+  currentUrl, 
+  onChange, 
+  required = false 
+}) => (
+  <div className="mb-4">
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <input
+      type="file"
+      accept={accept}
+      onChange={onChange}
+      required={required && !currentUrl}
+      className="w-full py-1"
+    />
+    {currentUrl && (
+      <div className="mt-1 text-sm text-gray-500 truncate max-w-full">
+        <span className="font-medium">Current file:</span> {currentUrl.split('/').pop()}
+      </div>
+    )}
+  </div>
+);
+
+// Success message component with countdown
+interface SuccessMessageProps {
+  message: string;
+  onEdit: () => void;
+  redirectUrl: string | null;
+  countdown: number;
+}
+
+const SuccessMessage: React.FC<SuccessMessageProps> = ({ 
+  message, 
+  onEdit, 
+  redirectUrl, 
+  countdown 
+}) => (
+  <div className="text-center p-6 bg-white rounded-lg shadow">
+    <h2 className="text-2xl font-bold text-green-600 mb-4">Profile Updated!</h2>
+    <p className="mb-6">{message}</p>
+    {redirectUrl && countdown > 0 && (
+      <p className="text-sm text-gray-600">
+        Redirecting in {countdown} seconds...
+      </p>
+    )}
+  </div>
+);
+
+// Education options
+const educationOptions = [
+  { value: 'high_school', label: 'High School' },
+  { value: 'associates', label: 'Associate\'s Degree' },
+  { value: 'bachelors', label: 'Bachelor\'s Degree' },
+  { value: 'masters', label: 'Master\'s Degree' },
+  { value: 'phd', label: 'PhD / Doctorate' },
+  { value: 'other', label: 'Other' }
+];
+
+// Main component
 export default function ProfileForm() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-
-  const [formData, setFormData] = useState({
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [countdown, setCountdown] = useState(5); // 5-second countdown for redirect
+  const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
+  
+  const [formData, setFormData] = useState<ProfileFormData>({
     firstName: '',
     middleName: '',
     surname: '',
@@ -49,42 +218,58 @@ export default function ProfileForm() {
     address: '',
     phoneNumber: '',
     zipCode: '',
-    workExperience: '',
-    headline: '',
-    bio: '',
-    skills: '',
-    availableForHire: true,
-    idType: '',
-    idNumber: ''
+    education: 'bachelors'
   });
 
-  const [fileUrls, setFileUrls] = useState({
-    avatarUrl: '',
-    resumeUrl: '',
-    idUploadUrl: ''
+  const [fileUrls, setFileUrls] = useState<FileUrls>({
+    resumeUrl: ''
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     fetchProfile();
   }, []);
 
+  // Countdown effect that triggers after success
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    
+    if (success && redirectUrl && countdown > 0) {
+      timer = setTimeout(() => {
+        setCountdown(prevCount => prevCount - 1);
+      }, 1000);
+    } else if (success && redirectUrl && countdown === 0) {
+      navigate(redirectUrl);
+    }
+    
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [success, countdown, redirectUrl, navigate]);
+
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
+    const { name, value } = e.target;
+    setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: value,
+    }));
+  };
+
+  // Special handler for phone input
+  const handlePhoneChange = (value: string | undefined) => {
+    setFormData(prev => ({
+      ...prev,
+      phoneNumber: value || '',
     }));
   };
 
   const fetchProfile = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error('Please sign in');
+      if (!session) {
+        return;
+      }
 
       const { data, error } = await supabase
         .from('profiles')
@@ -92,7 +277,14 @@ export default function ProfileForm() {
         .eq('id', session.user.id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes('rows') || error.code === 'PGRST116') {
+          console.log('No profile found, user may be new');
+          return;
+        }
+        throw error;
+      }
+      
       if (data) {
         setFormData({
           firstName: data.first_name || '',
@@ -102,64 +294,60 @@ export default function ProfileForm() {
           address: data.address || '',
           phoneNumber: data.phone_number || '',
           zipCode: data.zip_code || '',
-          workExperience: data.work_experience || '',
-          headline: data.headline || '',
-          bio: data.bio || '',
-          skills: data.skills ? data.skills.join(', ') : '',
-          availableForHire: data.available_for_hire ?? true,
-          idType: data.id_type || '',
-          idNumber: data.id_number || ''
+          education: data.education || 'bachelors',
         });
+        
         setFileUrls({
-          avatarUrl: data.avatar_url || '',
-          resumeUrl: data.resume_url || '',
-          idUploadUrl: data.id_upload || ''
+          resumeUrl: data.resume_url || ''
         });
       }
     } catch (err: any) {
-      setError(err.message);
+      console.error('Error fetching profile:', err);
+      setError('Error loading profile data. Please try again later.');
     }
   };
 
-  const handleFileUpload = async (file: File, bucket: string, type: string) => {
-    try {
-      if (!file) return null;
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}.${fileExt}`;
+  const handleFileUpload = async (file: File, bucket: string): Promise<string | null> => {
+    if (!file) return null;
 
-      const { data, error: uploadError } = await supabase
-        .storage
-        .from(bucket)
-        .upload(fileName, file);
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}.${fileExt}`;
 
-      if (uploadError) throw uploadError;
+    const { data, error: uploadError } = await supabase
+      .storage
+      .from(bucket)
+      .upload(fileName, file);
 
-      const { data: { publicUrl } } = supabase
-        .storage
-        .from(bucket)
-        .getPublicUrl(data.path);
+    if (uploadError) throw uploadError;
 
-      return publicUrl;
-    } catch (err: any) {
-      throw new Error(`${type} upload failed: ${err.message}`);
-    }
+    const { data: { publicUrl } } = supabase
+      .storage
+      .from(bucket)
+      .getPublicUrl(data.path);
+
+    return publicUrl;
   };
 
   const handleFileInputChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
     bucket: string,
-    type: string
+    type: keyof FileUrls
   ) => {
-    try {
-      const file = e.target.files?.[0];
-      if (!file) return;
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-      const url = await handleFileUpload(file, bucket, type);
+    try {
+      setLoading(true);
+      const url = await handleFileUpload(file, bucket);
+      
       if (url) {
-        setFileUrls((prev) => ({ ...prev, [`${type}Url`]: url }));
+        setFileUrls(prev => ({ ...prev, [type]: url }));
       }
     } catch (err: any) {
-      setError(err.message);
+      console.error(`Error uploading ${type}:`, err);
+      setError(`Failed to upload file. Please try again.`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -167,14 +355,12 @@ export default function ProfileForm() {
     e.preventDefault();
     setLoading(true);
     setError('');
-
+  
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Authentication required');
-
-      const skillsArray = formData.skills.split(',').map(s => s.trim()).filter(Boolean);
-
-      const { error: submitError } = await supabase.from('profiles').upsert({
+  
+      const profileData = {
         id: user.id,
         first_name: formData.firstName,
         middle_name: formData.middleName,
@@ -183,31 +369,28 @@ export default function ProfileForm() {
         address: formData.address,
         phone_number: formData.phoneNumber,
         zip_code: formData.zipCode,
-        work_experience: formData.workExperience,
-        headline: formData.headline,
-        bio: formData.bio,
-        skills: skillsArray,
-        available_for_hire: formData.availableForHire,
-        id_type: formData.idType,
-        id_number: formData.idNumber,
-        avatar_url: fileUrls.avatarUrl,
-        resume_url: fileUrls.resumeUrl,
-        id_upload: fileUrls.idUploadUrl,
-      });
-
+        education: formData.education,
+        updated_at: new Date(),
+      };
+  
+      const { error: submitError } = await supabase
+        .from('profiles')
+        .upsert(profileData);
+  
       if (submitError) throw submitError;
-      setSuccess(true);
-
-      // After a successful update, check for a redirect query param
-      const redirectUrl = searchParams.get('redirect');
-      if (redirectUrl) {
-        navigate(redirectUrl);
-      } else {
-        // Default redirect (e.g., back to jobs list)
-        navigate('/jobs');
+      
+      setSuccessMessage("Profile updated successfully!");
+      
+      // Get redirect URL from query params
+      const redirUrl = searchParams.get('redirect');
+      if (redirUrl) {
+        setRedirectUrl(redirUrl);
       }
+      
+      setSuccess(true);
     } catch (err: any) {
-      setError(err.message);
+      console.error('Profile update error:', err);
+      setError('Error updating profile. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -215,114 +398,140 @@ export default function ProfileForm() {
 
   if (success) {
     return (
-      <div className="text-center p-4">
-        <h2 className="text-2xl font-bold text-green-600 mb-4">Profile Updated!</h2>
-        <button onClick={() => setSuccess(false)} className="bg-green-600 text-white px-6 py-2 rounded-md">
-          Edit Profile
-        </button>
-      </div>
+      <SuccessMessage 
+        message={successMessage} 
+        onEdit={() => setSuccess(false)} 
+        redirectUrl={redirectUrl}
+        countdown={countdown}
+      />
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow">
-      <h2 className="text-2xl font-bold mb-6">Profile Form</h2>
-
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 text-red-600 rounded-md">{error}</div>
-      )}
-
-      {/* Grid with three columns */}
-      <div className="grid grid-cols-3 gap-4">
-        <FormInput label="First Name" name="firstName" value={formData.firstName} onChange={handleInputChange} required />
-        <FormInput label="Middle Name" name="middleName" value={formData.middleName} onChange={handleInputChange} required />
-        <FormInput label="Surname" name="surname" value={formData.surname} onChange={handleInputChange} required />
-        <FormInput label="Date of Birth" type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleInputChange} required />
-        <FormInput label="Address" name="address" value={formData.address} onChange={handleInputChange} required />
-        <FormInput label="Phone Number" name="phoneNumber" value={formData.phoneNumber} onChange={handleInputChange} required />
-        <FormInput label="Zip Code" name="zipCode" value={formData.zipCode} onChange={handleInputChange} required />
-        <FormInput label="Work Experience" name="workExperience" value={formData.workExperience} onChange={handleInputChange} required />
-        <FormInput label="Headline" name="headline" value={formData.headline} onChange={handleInputChange} required />
-        <FormInput label="Bio" name="bio" value={formData.bio} onChange={handleInputChange} required />
-        <FormInput label="Skills" name="skills" value={formData.skills} onChange={handleInputChange} required placeholder="Separate skills with commas" />
-        
-        {/* ID Type as Select spanning all three columns */}
-        <div className="mb-4 col-span-3">
-          <label className="block text-sm font-medium text-gray-700">ID Type *</label>
-          <select 
-            name="idType" 
-            value={formData.idType} 
-            onChange={handleInputChange}
-            required
-            className="w-full px-3 py-2 border rounded-md"
-          >
-            <option value="">Select ID Type</option>
-            <option value="passport">Passport</option>
-            <option value="driverLicense">Driver License</option>
-            <option value="nationalId">National ID</option>
-          </select>
-        </div>
-
-        <FormInput label="ID Number" name="idNumber" value={formData.idNumber} onChange={handleInputChange} required />
-
-        {/* File uploads, each occupying one cell */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Resume *</label>
-          <input 
-            type="file" 
-            accept=".pdf,.doc,.docx" 
-            onChange={(e) => handleFileInputChange(e, 'resumes', 'resume')}
-            required 
-            className="w-full" 
-          />
-          {fileUrls.resumeUrl && <p className="mt-1 text-sm text-gray-500">Current: {fileUrls.resumeUrl}</p>}
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Avatar *</label>
-          <input 
-            type="file" 
-            accept="image/png,image/jpeg" 
-            onChange={(e) => handleFileInputChange(e, 'avatars', 'avatar')}
-            required 
-            className="w-full" 
-          />
-          {fileUrls.avatarUrl && <p className="mt-1 text-sm text-gray-500">Current: {fileUrls.avatarUrl}</p>}
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Upload ID *</label>
-          <input 
-            type="file" 
-            accept="image/png,image/jpeg,application/pdf" 
-            onChange={(e) => handleFileInputChange(e, 'ids', 'idUpload')}
-            required 
-            className="w-full" 
-          />
-          {fileUrls.idUploadUrl && <p className="mt-1 text-sm text-gray-500">Current: {fileUrls.idUploadUrl}</p>}
-        </div>
-
-        {/* Checkbox occupies one cell spanning three columns */}
-        <div className="mb-4 col-span-3">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              name="availableForHire"
-              checked={formData.availableForHire}
-              onChange={handleInputChange}
-              required
-              className="mr-2"
-            />
-            <span className="text-sm">Available for Hire *</span>
-          </label>
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <div className="w-full border-b border-gray-200 bg-white shadow-sm">
+        <div className="w-full">
+          <Navbar />
         </div>
       </div>
+      
+      <div className="container mx-auto px-4 py-8">
+        <form onSubmit={handleSubmit} className="max-w-3xl mx-auto p-8 bg-white rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Profile Information</h2>
 
-      <button 
-        type="submit" 
-        disabled={loading}
-        className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-blue-300"
-      >
-        {loading ? 'Updating...' : 'Submit'}
-      </button>
-    </form>
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-md border border-red-200">
+              {error}
+            </div>
+          )}
+
+          <div className="space-y-6">
+            {/* All fields in 3-column layout without section separations */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <FormInput 
+                label="First Name" 
+                name="firstName" 
+                value={formData.firstName} 
+                onChange={handleInputChange} 
+                required 
+              />
+              
+              <FormInput 
+                label="Middle Name" 
+                name="middleName" 
+                value={formData.middleName} 
+                onChange={handleInputChange} 
+              />
+              
+              <FormInput 
+                label="Surname" 
+                name="surname" 
+                value={formData.surname} 
+                onChange={handleInputChange} 
+                required 
+              />
+              
+              <FormInput 
+                label="Date of Birth" 
+                type="date" 
+                name="dateOfBirth" 
+                value={formData.dateOfBirth} 
+                onChange={handleInputChange} 
+                required 
+              />
+              
+              <FormInput 
+                label="Address" 
+                name="address" 
+                value={formData.address} 
+                onChange={handleInputChange} 
+                required 
+                placeholder="Street address"
+              />
+              
+              <FormInput 
+                label="Zip Code" 
+                name="zipCode" 
+                value={formData.zipCode} 
+                onChange={handleInputChange} 
+                required 
+              />
+              
+              <div>
+                <PhoneInputField
+                  label="Phone Number"
+                  value={formData.phoneNumber}
+                  onChange={handlePhoneChange}
+                  required
+                />
+              </div>
+              
+              <FormSelect
+                label="Education Level"
+                name="education"
+                value={formData.education}
+                options={educationOptions}
+                onChange={handleInputChange}
+                required
+              />
+              
+              <div>
+                <FileUpload
+                  label="Resume"
+                  accept=".pdf,.doc,.docx"
+                  currentUrl={fileUrls.resumeUrl}
+                  onChange={(e) => handleFileInputChange(e, 'resumes', 'resumeUrl')}
+                  required
+                />
+                <p className="mt-1 text-sm text-gray-500">
+                  Accepted formats: PDF, DOC, or DOCX
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="w-full md:w-auto float-right bg-blue-600 text-white py-2 px-8 rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors flex justify-center items-center"
+            >
+              {loading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Updating...
+                </>
+              ) : (
+                'Save Profile'
+              )}
+            </button>
+            <div className="clear-both"></div>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
