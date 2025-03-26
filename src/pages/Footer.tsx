@@ -3,13 +3,13 @@ import React from 'react';
 const Footer = () => {
   const navigation = {
     company: [
-      { name: 'About Remote', href: '/about' },
+      { name: 'About Ravennz Research', href: '/aboutUs' },
       { name: 'Careers', href: '/careers' },
-      { name: 'Support', href: '/support' },
+      { name: 'Support', href: '/contact' },
       { name: 'Contact us', href: '/contact' },
     ],
     jobSeekers: [
-      { name: 'Sign up with Remote Jobs', href: '/signup' },
+      { name: 'Sign up with Ravenz Research', href: '/signup' },
       { name: 'Browse remote jobs', href: '/jobs' },
     ],
     companies: [
