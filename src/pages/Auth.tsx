@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-import { Briefcase, Eye, EyeOff, CheckCircle2, XCircle } from "lucide-react";
+import { Briefcase, Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function Auth() {
@@ -10,51 +10,27 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [passwordValidation, setPasswordValidation] = useState({
-    length: false,
-    uppercase: false,
-    lowercase: false,
-    number: false,
-    specialChar: false
-  });
-
-  // Password validation effect
-  useEffect(() => {
-    setPasswordValidation({
-      length: password.length >= 8,
-      uppercase: /[A-Z]/.test(password),
-      lowercase: /[a-z]/.test(password),
-      number: /\d/.test(password),
-      specialChar: /[!@#$%^&*]/.test(password)
-    });
-  }, [password]);
-
-  // Check if all password validations are met
-  const isPasswordValid = Object.values(passwordValidation).every(Boolean);
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    
-    // Additional validation before submission
-    if (isSignUp) {
-      if (password !== confirmPassword) {
-        toast.error("Passwords do not match");
-        return;
-      }
-      
-      if (!isPasswordValid) {
-        toast.error("Please meet all password requirements");
-        return;
-      }
-    }
-
     setLoading(true);
 
     try {
       const { error } = isSignUp
-        ? await supabase.auth.signUp({ email, password })
+        ? await supabase.auth.signUp({ 
+            email, 
+            password,
+            options: {
+              data: {
+                first_name: firstName,
+                last_name: lastName
+              }
+            }
+          })
         : await supabase.auth.signInWithPassword({ email, password });
 
       if (error) throw error;
@@ -74,22 +50,11 @@ export default function Auth() {
     }
   }
 
-  // Validation component for password requirements
-  const PasswordValidationItem = ({ 
-    isValid, 
-    text 
-  }: { 
-    isValid: boolean, 
-    text: string 
-  }) => (
-    <div className={`flex items-center space-x-2 ${isValid ? 'text-green-600' : 'text-gray-400'}`}>
-      {isValid ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
-      <span className="text-xs">{text}</span>
-    </div>
-  );
+  const inputClassName = "block w-full px-3 py-2 mt-1 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 ease-in-out";
+  const labelClassName = "block text-sm font-medium text-gray-700 mb-1";
 
   return (
-    <div className="max-w-md mx-auto px-4 py-8">
+    <div className="max-w-md mx-auto px-4">
       <div className="mb-8 text-center">
         <Briefcase className="w-12 h-12 mx-auto text-indigo-600" />
         <h1 className="mt-4 text-3xl font-bold text-gray-900">
@@ -104,11 +69,41 @@ export default function Auth() {
 
       <div className="p-8 bg-white rounded-lg shadow-sm">
         <form onSubmit={handleSubmit} className="space-y-6">
+          {isSignUp && (
+            <div className="flex space-x-4">
+              <div className="w-1/2">
+                <label htmlFor="firstName" className={labelClassName}>
+                  First Name
+                </label>
+                <input
+                  id="firstName"
+                  type="text"
+                  required
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className={inputClassName}
+                  placeholder="Enter your first name"
+                />
+              </div>
+              <div className="w-1/2">
+                <label htmlFor="lastName" className={labelClassName}>
+                  Last Name
+                </label>
+                <input
+                  id="lastName"
+                  type="text"
+                  required
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className={inputClassName}
+                  placeholder="Enter your last name"
+                />
+              </div>
+            </div>
+          )}
+          
           <div>
-            <label 
-              htmlFor="email" 
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="email" className={labelClassName}>
               Email address
             </label>
             <input
@@ -117,16 +112,13 @@ export default function Auth() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="block w-full px-3 py-2 mt-1 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 ease-in-out"
+              className={inputClassName}
               placeholder="you@example.com"
             />
           </div>
           
           <div>
-            <label 
-              htmlFor="password" 
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="password" className={labelClassName}>
               Password
             </label>
             <div className="relative">
@@ -136,7 +128,9 @@ export default function Auth() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full px-3 py-2 mt-1 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 ease-in-out pr-10"
+                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$"
+                title="Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a special character (!@#$%^&*)."
+                className={`${inputClassName} pr-10`}
                 placeholder="Enter your password"
               />
               <button
@@ -150,60 +144,37 @@ export default function Auth() {
           </div>
 
           {isSignUp && (
-            <>
-              <div>
-                <label 
-                  htmlFor="confirmPassword" 
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Confirm Password
-                </label>
-                <input
-                  id="confirmPassword"
-                  type="password"
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="block w-full px-3 py-2 mt-1 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 ease-in-out"
-                  placeholder="Confirm your password"
-                />
-              </div>
-
-              <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
-                <p className="text-xs font-medium text-gray-600 mb-2">
-                  Password must contain:
-                </p>
-                <div className="space-y-1">
-                  <PasswordValidationItem 
-                    isValid={passwordValidation.length} 
-                    text="At least 8 characters" 
-                  />
-                  <PasswordValidationItem 
-                    isValid={passwordValidation.uppercase} 
-                    text="One uppercase letter" 
-                  />
-                  <PasswordValidationItem 
-                    isValid={passwordValidation.lowercase} 
-                    text="One lowercase letter" 
-                  />
-                  <PasswordValidationItem 
-                    isValid={passwordValidation.number} 
-                    text="One number" 
-                  />
-                  <PasswordValidationItem 
-                    isValid={passwordValidation.specialChar} 
-                    text="One special character (!@#$%^&*)" 
-                  />
-                </div>
-              </div>
-            </>
+            <div>
+              <label htmlFor="confirmPassword" className={labelClassName}>
+                Confirm Password
+              </label>
+              <input
+                id="confirmPassword"
+                type="password"
+                required
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  if (e.target.value !== password) {
+                    e.target.setCustomValidity("Passwords do not match");
+                  } else {
+                    e.target.setCustomValidity("");
+                  }
+                }}
+                className={inputClassName}
+                placeholder="Confirm your password"
+              />
+            </div>
           )}
           
           <button
             type="submit"
             disabled={
-              loading || 
-              (isSignUp && (!isPasswordValid || password !== confirmPassword))
+              loading ||
+              !/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/.test(
+                password
+              ) ||
+              (isSignUp && password !== confirmPassword)
             }
             className="w-full px-4 py-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
           >
