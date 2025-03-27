@@ -11,9 +11,11 @@ import JobDetails from "./pages/jobDetails";
 import JobApplicationForm from "./pages/JobApplicationForm";
 import Layout from "./components/layout";
 import AboutUs from "./pages/AboutUs";
+import CompanyForm from "./pages/createCompanies";
 import Faq from "./pages/Faq";
 import Careers from "./pages/Careers";
 import Contact from "./pages/Contact";
+import PostJobForm from "./pages/postJobs";
 
 function App() {
   return (

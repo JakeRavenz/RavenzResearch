@@ -196,16 +196,6 @@ export default function Jobs() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Salary Range</label>
-            <select className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="">Any Salary</option>
-              <option value="50">$50k+</option>
-              <option value="75">$75k+</option>
-              <option value="100">$100k+</option>
-              <option value="150">$150k+</option>
-            </select>
-          </div>
-          <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Remote Level</label>
             <select className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="">Any</option>
