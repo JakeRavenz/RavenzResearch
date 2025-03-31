@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
+import { CountryDropdown } from 'react-country-region-selector';
 
 // Types
 type EducationLevel = 'high_school' | 'associates' | 'bachelors' | 'masters' | 'phd' | 'other';
@@ -13,9 +14,13 @@ interface ProfileFormData {
   middleName: string;
   surname: string;
   dateOfBirth: string;
+  // Destructured address fields
   address: string;
+  city: string;
+  region: string;
+  postalCode: string;
+  country: string;
   phoneNumber: string;
-  zipCode: string;
   education: EducationLevel;
 }
 
@@ -95,6 +100,32 @@ const FormSelect: React.FC<FormSelectProps> = ({
         </option>
       ))}
     </select>
+  </div>
+);
+
+// Country select component
+interface CountrySelectProps {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  required?: boolean;
+}
+
+const CountrySelect: React.FC<CountrySelectProps> = ({
+  label,
+  value,
+  onChange,
+  required = false,
+}) => (
+  <div className="mb-4">
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <CountryDropdown
+      value={value}
+      onChange={onChange}
+      className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+    />
   </div>
 );
 
@@ -216,8 +247,11 @@ export default function ProfileForm() {
     surname: '',
     dateOfBirth: '',
     address: '',
+    city: '',
+    region: '',
+    postalCode: '',
+    country: 'US',
     phoneNumber: '',
-    zipCode: '',
     education: 'bachelors'
   });
 
@@ -264,6 +298,14 @@ export default function ProfileForm() {
     }));
   };
 
+  // Special handler for country select
+  const handleCountryChange = (value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      country: value,
+    }));
+  };
+
   const fetchProfile = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -291,9 +333,13 @@ export default function ProfileForm() {
           middleName: data.middle_name || '',
           surname: data.surname || '',
           dateOfBirth: data.date_of_birth || '',
+          // Map destructured address fields
           address: data.address || '',
+          city: data.city || '',
+          region: data.region || '',
+          postalCode: data.postal_code || '',
+          country: data.country || 'US',
           phoneNumber: data.phone_number || '',
-          zipCode: data.zip_code || '',
           education: data.education || 'bachelors',
         });
         
@@ -366,9 +412,13 @@ export default function ProfileForm() {
         middle_name: formData.middleName,
         surname: formData.surname,
         date_of_birth: formData.dateOfBirth,
+        // Store individual address components
         address: formData.address,
+        city: formData.city,
+        region: formData.region,
+        postal_code: formData.postalCode,
+        country: formData.country,
         phone_number: formData.phoneNumber,
-        zip_code: formData.zipCode,
         education: formData.education,
         updated_at: new Date(),
       };
@@ -426,76 +476,115 @@ export default function ProfileForm() {
           )}
 
           <div className="space-y-6">
-            {/* All fields in 3-column layout without section separations */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <FormInput 
-                label="First Name" 
-                name="firstName" 
-                value={formData.firstName} 
-                onChange={handleInputChange} 
-                required 
-              />
-              
-              <FormInput 
-                label="Middle Name" 
-                name="middleName" 
-                value={formData.middleName} 
-                onChange={handleInputChange} 
-              />
-              
-              <FormInput 
-                label="Surname" 
-                name="surname" 
-                value={formData.surname} 
-                onChange={handleInputChange} 
-                required 
-              />
-              
-              <FormInput 
-                label="Date of Birth" 
-                type="date" 
-                name="dateOfBirth" 
-                value={formData.dateOfBirth} 
-                onChange={handleInputChange} 
-                required 
-              />
-              
-              <FormInput 
-                label="Address" 
-                name="address" 
-                value={formData.address} 
-                onChange={handleInputChange} 
-                required 
-                placeholder="Street address"
-              />
-              
-              <FormInput 
-                label="Zip Code" 
-                name="zipCode" 
-                value={formData.zipCode} 
-                onChange={handleInputChange} 
-                required 
-              />
-              
-              <div>
-                <PhoneInputField
-                  label="Phone Number"
-                  value={formData.phoneNumber}
-                  onChange={handlePhoneChange}
+            {/* Personal Information */}
+            <div>
+              <h3 className="text-lg font-medium text-gray-700 mb-4">Personal Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <FormInput 
+                  label="First Name" 
+                  name="firstName" 
+                  value={formData.firstName} 
+                  onChange={handleInputChange} 
+                  required 
+                />
+                
+                <FormInput 
+                  label="Middle Name" 
+                  name="middleName" 
+                  value={formData.middleName} 
+                  onChange={handleInputChange} 
+                />
+                
+                <FormInput 
+                  label="Surname" 
+                  name="surname" 
+                  value={formData.surname} 
+                  onChange={handleInputChange} 
+                  required 
+                />
+                
+                <FormInput 
+                  label="Date of Birth" 
+                  type="date" 
+                  name="dateOfBirth" 
+                  value={formData.dateOfBirth} 
+                  onChange={handleInputChange} 
+                  required 
+                />
+                
+                <div>
+                  <PhoneInputField
+                    label="Phone Number"
+                    value={formData.phoneNumber}
+                    onChange={handlePhoneChange}
+                    required
+                  />
+                </div>
+                
+                <FormSelect
+                  label="Education Level"
+                  name="education"
+                  value={formData.education}
+                  options={educationOptions}
+                  onChange={handleInputChange}
                   required
                 />
               </div>
-              
-              <FormSelect
-                label="Education Level"
-                name="education"
-                value={formData.education}
-                options={educationOptions}
-                onChange={handleInputChange}
-                required
-              />
-              
-              <div>
+            </div>
+
+            {/* Address Information */}
+            <div>
+              <h3 className="text-lg font-medium text-gray-700 mb-4">Address Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormInput 
+                  label="Street Address" 
+                  name="address" 
+                  value={formData.address} 
+                  onChange={handleInputChange} 
+                  required 
+                  placeholder="Street address, apartment, unit, etc."
+                />
+                
+                <FormInput 
+                  label="City" 
+                  name="city" 
+                  value={formData.city} 
+                  onChange={handleInputChange} 
+                  required 
+                  placeholder="City name"
+                />
+                
+                <FormInput 
+                  label="State/Province/Region" 
+                  name="region" 
+                  value={formData.region} 
+                  onChange={handleInputChange} 
+                  required 
+                  placeholder="State, province, or region"
+                />
+                
+                <FormInput 
+                  label="Postal/Zip Code" 
+                  name="postalCode" 
+                  value={formData.postalCode} 
+                  onChange={handleInputChange} 
+                  required 
+                  placeholder="Postal or zip code"
+                />
+                
+                <CountrySelect
+                  label="Country"
+                  value={formData.country}
+                  onChange={handleCountryChange}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Document Uploads */}
+            <div>
+              <h3 className="text-lg font-medium text-gray-700 mb-4">Documents</h3>
+              <div className="grid grid-cols-1 gap-6">
                 <FileUpload
                   label="Resume"
                   accept=".pdf,.doc,.docx"
