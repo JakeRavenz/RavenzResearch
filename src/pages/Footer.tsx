@@ -16,8 +16,10 @@ const Footer = () => {
       { name: 'Contact us', href: '/contact' },
     ],
     jobSeekers: [
-      { name: 'Sign up with Ravenz Research', href: '/signup' },
       { name: 'Browse remote jobs', href: '/jobs' },
+    ],
+    nonLoggedInUsers: [
+      { name: 'Sign up with Ravenz Research', href: '/signup' },
     ],
     companies: [
       { name: 'Post a remote job', href: '/post-job' },
@@ -84,21 +86,28 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Job Seekers Section - Only visible to logged in users */}
-          {isLoggedIn && (
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900">For job seekers</h3>
-              <ul className="mt-4 space-y-4">
-                {navigation.jobSeekers.map((item) => (
-                  <li key={item.name}>
-                    <a href={item.href} className="text-gray-600 hover:text-gray-900">
-                      {item.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {/* Job Seekers Section */}
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900">For job seekers</h3>
+            <ul className="mt-4 space-y-4">
+              {/* Show sign up link only to non-logged in users */}
+              {!isLoggedIn && navigation.nonLoggedInUsers.map((item) => (
+                <li key={item.name}>
+                  <a href={item.href} className="text-gray-600 hover:text-gray-900">
+                    {item.name}
+                  </a>
+                </li>
+              ))}
+              {/* Show job browsing option to everyone */}
+              {navigation.jobSeekers.map((item) => (
+                <li key={item.name}>
+                  <a href={item.href} className="text-gray-600 hover:text-gray-900">
+                    {item.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
 
           {/* Companies Section - Only visible to Ravenz employees */}
           {isRavenzEmployee && (
