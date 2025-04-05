@@ -309,15 +309,23 @@ export default function ProfileForm() {
   const fetchProfile = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
+console.log("Session:", session);
+console.log("User ID:", session?.user?.id);
+
+if (!session || !session.user) {
+  console.log("No active session found");
+  // Handle the case when user is not authenticated
+  return;
+}
       if (!session) {
         return;
       }
 
       const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session.user.id)
-        .single();
+  .from('profiles')
+  .select('*')
+  .match({ id: session.user.id })
+  .single();
 
       if (error) {
         if (error.message.includes('rows') || error.code === 'PGRST116') {
@@ -429,13 +437,41 @@ export default function ProfileForm() {
   
       if (submitError) throw submitError;
       
-      setSuccessMessage("Profile updated successfully!");
-      
-      // Get redirect URL from query params
-      const redirUrl = searchParams.get('redirect');
-      if (redirUrl) {
-        setRedirectUrl(redirUrl);
+      // After successful profile update, send verification email
+      try {
+        // Get user's email from Supabase auth
+        const { data: { session } } = await supabase.auth.getSession();
+        const email = session?.user.email;
+        
+        if (!email) throw new Error('User email not found');
+        
+        
+
+        const response = await fetch('/api/send-verification-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            firstName: formData.firstName,
+            surname: formData.surname
+          }),
+        });
+        
+        const result = await response.json();
+        if (!result.success) {
+          console.warn('Email notification sent but not delivered:', result.message);
+        }
+      } catch (emailError) {
+        // Don't fail the whole form submission if email sending fails
+        console.error('Failed to send email notification:', emailError);
       }
+      
+      setSuccessMessage("Profile updated successfully! A verification email has been sent to your inbox.");
+      
+      // Set redirect URL to /jobs:id instead of using the query param
+      setRedirectUrl('/jobs:id');
       
       setSuccess(true);
     } catch (err: any) {
@@ -445,17 +481,6 @@ export default function ProfileForm() {
       setLoading(false);
     }
   };
-
-  if (success) {
-    return (
-      <SuccessMessage 
-        message={successMessage} 
-        onEdit={() => setSuccess(false)} 
-        redirectUrl={redirectUrl}
-        countdown={countdown}
-      />
-    );
-  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">

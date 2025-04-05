@@ -38,7 +38,7 @@ export default function Navbar() {
           <Link to="/" className="flex items-center pl-6 space-x-2" onClick={closeSidebar}>
             <BriefcaseIcon className="w-6 h-6 text-indigo-600" />
             <span className="font-bold text-xl text-[bg-emerald-400] font-['Inter']">
-              RavenzResearch
+              Ravenz Research
             </span>
           </Link>
 

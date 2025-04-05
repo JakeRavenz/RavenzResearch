@@ -1,22 +1,22 @@
-// src/api/email-sender.js
-import express from 'express';
 import nodemailer from 'nodemailer';
-import cors from 'cors';
-import dotenv from 'dotenv';
 
-dotenv.config();
+export default async function handler(req, res) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
-const router = express.Router();
+  // Handle OPTIONS request (preflight)
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
-// Configure CORS
-router.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['X-CSRF-Token', 'X-Requested-With', 'Accept', 'Accept-Version', 'Content-Length', 'Content-MD5', 'Content-Type', 'Date', 'X-Api-Version']
-}));
+  // Only accept POST requests
+  if (req.method !== 'POST') {
+    return res.status(405).json({ success: false, message: 'Method not allowed' });
+  }
 
-// Email verification endpoint
-router.post('/send-verification-email', async (req, res) => {
   try {
     const { email, firstName, surname } = req.body;
     
@@ -40,6 +40,7 @@ router.post('/send-verification-email', async (req, res) => {
       subject: 'Welcome to Ravenz Research – Next Steps for Verification',
       html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e1e1e1; border-radius: 5px;">
+          <!-- Email content as in your original code -->
           <div style="text-align: center; padding: 15px 0; background-color: #3a86ff; border-radius: 4px;">
             <h2 style="color: white; margin: 0;">Welcome Aboard!</h2>
           </div>
@@ -49,12 +50,11 @@ router.post('/send-verification-email', async (req, res) => {
             
             <p style="font-size: 16px; line-height: 1.5; color: #333;">Thank you for registering with Ravenz Research! We are excited to have you on board.</p>
             <p style="font-size: 16px; line-height: 1.5; color: #333;">As part of our security and compliance process, all applicants must complete an ID verification before proceeding.</p>
-
+            
             <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #3a86ff; margin: 20px 0; border-radius: 3px;">
               <p style="font-size: 16px; font-weight: bold; color: #333; margin-top: 0;">What Happens Next?</p>
             </div>
             
-                        
             <ul style="font-size: 16px; line-height: 1.5; color: #333; background-color: #f8f9fa; padding: 15px 15px 15px 40px; border-radius: 3px;">
               <li style="margin-bottom: 10px;">You will receive a separate email shortly with your ID verification appointment details, including date, time, and instructions.</li>
               <li style="margin-bottom: 10px;">Please ensure a stable internet connection and a valid government-issued ID ready for the verification process.</li>
@@ -71,13 +71,11 @@ router.post('/send-verification-email', async (req, res) => {
       `,
       replyTo: process.env.REPLY_EMAIL || process.env.EMAIL_USER
     };
-
+    
     await transporter.sendMail(mailOptions);
     return res.status(200).json({ success: true, message: 'Email sent successfully' });
   } catch (error) {
     console.error('Error sending email:', error);
     return res.status(500).json({ success: false, message: 'Failed to send email', error: error.message });
   }
-});
-
-export default router;
+}
