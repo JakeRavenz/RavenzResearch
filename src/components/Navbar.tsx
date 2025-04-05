@@ -7,6 +7,7 @@ import {
   XMarkIcon,
   InformationCircleIcon,
   QuestionMarkCircleIcon,
+  EnvelopeIcon, 
 } from "@heroicons/react/24/outline";
 import { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
@@ -65,6 +66,11 @@ export default function Navbar() {
             <Link to="/faq" className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']">
               <QuestionMarkCircleIcon className="w-5 h-5" />
               <span>FAQ</span>
+            </Link>
+
+            <Link to="/contact" className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']">
+              <EnvelopeIcon className="w-5 h-5" />
+              <span>Contact Us</span>
             </Link>
 
             {user ? (
@@ -129,6 +135,11 @@ export default function Navbar() {
             <Link to="/faq" className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']" onClick={closeSidebar}>
               <QuestionMarkCircleIcon className="w-5 h-5" />
               <span>FAQ</span>
+            </Link>
+
+            <Link to="/contact" className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']" onClick={closeSidebar}>
+              <EnvelopeIcon className="w-5 h-5" />
+              <span>Contact Us</span>
             </Link>
 
             {user ? (

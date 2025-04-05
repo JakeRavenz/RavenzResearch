@@ -10,7 +10,7 @@ const Footer = () => {
 
   const navigation = {
     company: [
-      { name: 'About Ravennz Research', href: '/aboutUs' },
+      { name: 'About Ravenz Research', href: '/aboutUs' },
       { name: 'Careers', href: '/careers' },
       { name: 'Support', href: '/contact' },
       { name: 'Contact us', href: '/contact' },

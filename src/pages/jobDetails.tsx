@@ -73,51 +73,60 @@ export default function JobDetails() {
   }, [id]);
 
   async function handleApplyNow() {
-    // Retrieve current user
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
-      setModalMessage("User not authenticated. Please log in.");
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      setModalMessage("Please login to apply for this position");
       setShowModal(true);
       return;
     }
-    // Check if user's profile exists
-    const { data: profile, error: profileError } = await supabase
+  
+    // Check profile completeness
+    const { data: profile, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', user.id)
       .single();
-    if (profileError || !profile) {
+  
+    if (error || !profile?.first_name || !profile?.surname) {
       setModalMessage("You need to complete your profile before applying.");
       setShowModal(true);
       return;
     }
-    // Check if the user has already applied for this job
-    const { data: application, error: applicationError } = await supabase
+  
+    // Check existing application
+    const { count } = await supabase
       .from('applications')
-      .select('*')
-      .eq('job_id', job?.id)
-      .eq('user_id', user.id)
-      .single();
-    if (!applicationError && application) {
-      setModalMessage("You have already applied for this job.");
+      .select('*', { count: 'exact' })
+      .eq('job_id', id)
+      .eq('user_id', user.id);
+  
+    if (count && count > 0) {
+      setModalMessage("You've already applied to this position");
       setShowModal(true);
       setApplyDisabled(true);
       return;
     }
-    // Insert application record
-    const { error: insertError } = await supabase
+  
+    // Submit application
+    const { error: applyError } = await supabase
       .from('applications')
-      .insert([{ job_id: job?.id, user_id: user.id }]);
-    if (insertError) {
-      setModalMessage("Error applying: " + insertError.message);
+      .insert([{ 
+        job_id: id,
+        user_id: user.id,
+        status: 'submitted'
+      }]);
+  
+    if (applyError) {
+      setModalMessage("Application failed: " + applyError.message);
       setShowModal(true);
       return;
     }
-    setModalMessage("Application submitted successfully!");
+  
+    setModalMessage("✅ Application submitted successfully!");
     setShowModal(true);
     setApplyDisabled(true);
   }
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -156,7 +165,7 @@ export default function JobDetails() {
             setShowModal(false);
             // If user needs to complete profile, redirect after closing modal
             if (modalMessage === "You need to complete your profile before applying.") {
-              navigate('/jobs/apply');
+              navigate(`/profile?jobId=${id}`);
             }
           }}
         />

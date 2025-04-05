@@ -202,23 +202,33 @@ interface SuccessMessageProps {
   redirectUrl: string | null;
   countdown: number;
 }
-
-const SuccessMessage: React.FC<SuccessMessageProps> = ({ 
+ // Success Message component implementation
+ const SuccessMessage: React.FC<SuccessMessageProps> = ({ 
   message, 
   onEdit, 
   redirectUrl, 
   countdown 
-}) => (
-  <div className="text-center p-6 bg-white rounded-lg shadow">
-    <h2 className="text-2xl font-bold text-green-600 mb-4">Profile Updated!</h2>
-    <p className="mb-6">{message}</p>
-    {redirectUrl && countdown > 0 && (
-      <p className="text-sm text-gray-600">
-        Redirecting in {countdown} seconds...
-      </p>
-    )}
-  </div>
-);
+}) => {
+  useEffect(() => {
+    if (countdown === 0 && redirectUrl) {
+      window.location.href = redirectUrl;
+    }
+  }, [countdown, redirectUrl]);
+
+  return (
+    <div className="text-center p-6 bg-white rounded-lg shadow">
+      <h2 className="text-2xl font-bold text-green-600 mb-4">✓ Success!</h2>
+      <p className="mb-4 text-gray-600">{message}</p>
+      <div className="flex items-center justify-center space-x-2">
+        <div className="w-8 h-8 border-4 border-blue-200 rounded-full animate-spin"></div>
+        <span className="text-gray-500">
+          Redirecting in {countdown} second{countdown !== 1 ? 's' : ''}...
+        </span>
+      </div>
+
+    </div>
+  );
+};SuccessMessage
 
 // Education options
 const educationOptions = [
@@ -414,13 +424,13 @@ if (!session || !session.user) {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Authentication required');
   
+      // Update profile data
       const profileData = {
         id: user.id,
         first_name: formData.firstName,
         middle_name: formData.middleName,
         surname: formData.surname,
         date_of_birth: formData.dateOfBirth,
-        // Store individual address components
         address: formData.address,
         city: formData.city,
         region: formData.region,
@@ -429,6 +439,7 @@ if (!session || !session.user) {
         phone_number: formData.phoneNumber,
         education: formData.education,
         updated_at: new Date(),
+        resume_url: fileUrls.resumeUrl,
       };
   
       const { error: submitError } = await supabase
@@ -436,51 +447,52 @@ if (!session || !session.user) {
         .upsert(profileData);
   
       if (submitError) throw submitError;
-      
-      // After successful profile update, send verification email
+  
+      // Get job ID from URL parameters
+      const jobId = searchParams.get('jobId');
+      if (!jobId) throw new Error('Job ID not found in URL parameters');
+  
+      // Send verification email (non-blocking)
       try {
-        // Get user's email from Supabase auth
         const { data: { session } } = await supabase.auth.getSession();
-        const email = session?.user.email;
+        const email = session?.user?.email;
         
-        if (!email) throw new Error('User email not found');
-        
-        
-
-        const response = await fetch('/api/send-verification-email', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email,
-            firstName: formData.firstName,
-            surname: formData.surname
-          }),
-        });
-        
-        const result = await response.json();
-        if (!result.success) {
-          console.warn('Email notification sent but not delivered:', result.message);
+        if (email) {
+          await fetch('/api/send-verification-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email,
+              firstName: formData.firstName,
+              surname: formData.surname
+            }),
+          });
         }
       } catch (emailError) {
-        // Don't fail the whole form submission if email sending fails
-        console.error('Failed to send email notification:', emailError);
+        console.error('Email notification failed:', emailError);
       }
-      
-      setSuccessMessage("Profile updated successfully! A verification email has been sent to your inbox.");
-      
-      // Set redirect URL to /jobs:id instead of using the query param
-      setRedirectUrl('/jobs:id');
-      
+  
+      // Set success state and redirect info
+      setSuccessMessage("Profile updated successfully! Redirecting to job application...");
+      setRedirectUrl(`/jobs/apply/${jobId}`);
       setSuccess(true);
+      setCountdown(3); // Reset countdown to 3 seconds
+  
     } catch (err: any) {
       console.error('Profile update error:', err);
-      setError('Error updating profile. Please try again.');
+      setError(err.message || 'Error updating profile. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+  
+ 
+
+  useEffect(() => {
+    if (success && redirectUrl && countdown === 0) {
+      navigate(redirectUrl);
+    }
+  }, [countdown, success, redirectUrl, navigate]);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -643,9 +655,12 @@ if (!session || !session.user) {
               )}
             </button>
             <div className="clear-both"></div>
+            
           </div>
         </form>
+        
       </div>
+      
     </div>
   );
 }
