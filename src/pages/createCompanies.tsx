@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 // Types
 interface CompanyFormData {
+  id?: string;
   name: string;
   description: string;
   logo_url: string;
@@ -91,17 +92,71 @@ const FileUpload: React.FC<FileUploadProps> = ({ label, accept, currentUrl, onCh
 interface SuccessMessageProps {
   message: string;
   onEdit: () => void;
+  onCreateNew: () => void;
+  onViewAll: () => void;
 }
 
-const SuccessMessage: React.FC<SuccessMessageProps> = ({ message, onEdit }) => (
+const SuccessMessage: React.FC<SuccessMessageProps> = ({ message, onEdit, onCreateNew, onViewAll }) => (
   <div className="text-center p-6 bg-white rounded-lg shadow">
     <h2 className="text-2xl font-bold text-green-600 mb-4">Company Information Updated!</h2>
     <p className="mb-6">{message}</p>
+    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+      <button 
+        onClick={onEdit} 
+        className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+      >
+        Continue Editing
+      </button>
+      <button 
+        onClick={onCreateNew} 
+        className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition-colors"
+      >
+        Create New Company
+      </button>
+      <button 
+        onClick={onViewAll} 
+        className="bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700 transition-colors"
+      >
+        View All Companies
+      </button>
+    </div>
+  </div>
+);
+
+// Company selector component
+interface CompanyListProps {
+  companies: { id: string; name: string }[];
+  onSelect: (id: string) => void;
+  onCreateNew: () => void;
+}
+
+const CompanyList: React.FC<CompanyListProps> = ({ companies, onSelect, onCreateNew }) => (
+  <div className="mb-8 p-6 bg-white rounded-lg shadow">
+    <h2 className="text-xl font-bold mb-4">Your Companies</h2>
+    
+    {companies.length > 0 ? (
+      <div className="space-y-3">
+        {companies.map(company => (
+          <div key={company.id} className="flex items-center justify-between p-3 border rounded-md hover:bg-gray-50">
+            <span className="font-medium">{company.name}</span>
+            <button
+              onClick={() => onSelect(company.id)}
+              className="px-3 py-1 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition"
+            >
+              Edit
+            </button>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p className="text-gray-500 mb-4">You haven't created any companies yet.</p>
+    )}
+    
     <button 
-      onClick={onEdit} 
-      className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition-colors"
+      onClick={onCreateNew}
+      className="mt-4 w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors"
     >
-      Edit Company
+      Create New Company
     </button>
   </div>
 );
@@ -110,12 +165,18 @@ const SuccessMessage: React.FC<SuccessMessageProps> = ({ message, onEdit }) => (
 export default function CompanyForm() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const companyId = searchParams.get('id');
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   
+  const [companies, setCompanies] = useState<{ id: string; name: string }[]>([]);
+  const [showCompanyList, setShowCompanyList] = useState(!companyId);
+  
   const [formData, setFormData] = useState<CompanyFormData>({
+    id: undefined,
     name: '',
     description: '',
     logo_url: '',
@@ -123,8 +184,14 @@ export default function CompanyForm() {
   });
 
   useEffect(() => {
-    fetchCompany();
+    fetchUserCompanies();
   }, []);
+  
+  useEffect(() => {
+    if (companyId) {
+      fetchCompany(companyId);
+    }
+  }, [companyId]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -136,8 +203,31 @@ export default function CompanyForm() {
     }));
   };
 
-  const fetchCompany = async () => {
+  const fetchUserCompanies = async () => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('Please sign in to view or edit your companies');
+      }
+
+      const { data, error } = await supabase
+        .from('companies')
+        .select('id, name')
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      
+      setCompanies(data || []);
+    } catch (err: any) {
+      console.error('Error fetching companies:', err);
+      setError(err.message);
+    }
+  };
+
+  const fetchCompany = async (id: string) => {
+    try {
+      setLoading(true);
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         throw new Error('Please sign in to view or edit your company');
@@ -146,25 +236,27 @@ export default function CompanyForm() {
       const { data, error } = await supabase
         .from('companies')
         .select('*')
+        .eq('id', id)
         .eq('user_id', session.user.id)
         .single();
 
-      if (error && error.code !== 'PGRST116') {
-        // PGRST116 is "no rows returned" - this is fine for new users
-        throw error;
-      }
+      if (error) throw error;
       
       if (data) {
         setFormData({
+          id: data.id,
           name: data.name || '',
           description: data.description || '',
           logo_url: data.logo_url || '',
           website: data.website || '',
         });
+        setShowCompanyList(false);
       }
     } catch (err: any) {
       console.error('Error fetching company:', err);
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -218,6 +310,7 @@ export default function CompanyForm() {
       if (!user) throw new Error('Authentication required');
   
       const companyData = {
+        ...(formData.id && { id: formData.id }), // Include ID only when editing existing
         name: formData.name,
         description: formData.description,
         logo_url: formData.logo_url,
@@ -226,19 +319,29 @@ export default function CompanyForm() {
         updated_at: new Date(),
       };
   
-      const { error: submitError } = await supabase
+      // If no ID is present, we're creating a new company
+      if (!formData.id) {
+        companyData['created_at'] = new Date();
+      }
+  
+      const { data, error: submitError } = await supabase
         .from('companies')
-        .upsert(companyData, { onConflict: 'user_id' });
+        .upsert(companyData, { onConflict: formData.id ? 'id' : undefined })
+        .select('id')
+        .single();
   
       if (submitError) throw submitError;
   
-      setSuccessMessage("Company information updated successfully!");
-      setSuccess(true);
+      // Update companies list
+      await fetchUserCompanies();
+      
+      // Update form data to include the ID (important for new companies)
+      if (data) {
+        setFormData(prev => ({ ...prev, id: data.id }));
+      }
   
-      // Redirect to the homepage after a short delay
-      setTimeout(() => {
-        navigate('/');
-      }, 2000); // Redirect after 2 seconds
+      setSuccessMessage(formData.id ? "Company updated successfully!" : "New company created successfully!");
+      setSuccess(true);
     } catch (err: any) {
       console.error('Company update error:', err);
       setError(err.message);
@@ -247,14 +350,61 @@ export default function CompanyForm() {
     }
   };
   
+  const handleCreateNew = () => {
+    setFormData({
+      id: undefined,
+      name: '',
+      description: '',
+      logo_url: '',
+      website: '',
+    });
+    setSuccess(false);
+    setShowCompanyList(false);
+  };
+
+  const handleViewAll = () => {
+    navigate('/companies');
+  };
+
+  const handleSelectCompany = (id: string) => {
+    navigate(`?id=${id}`);
+  };
+
+  if (showCompanyList) {
+    return (
+      <div className="max-w-3xl mx-auto">
+        <CompanyList 
+          companies={companies} 
+          onSelect={handleSelectCompany} 
+          onCreateNew={handleCreateNew} 
+        />
+      </div>
+    );
+  }
 
   if (success) {
-    return <SuccessMessage message={successMessage} onEdit={() => setSuccess(false)} />;
+    return (
+      <SuccessMessage 
+        message={successMessage} 
+        onEdit={() => setSuccess(false)} 
+        onCreateNew={handleCreateNew}
+        onViewAll={handleViewAll}
+      />
+    );
   }
 
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow">
-      <h2 className="text-2xl font-bold mb-6">Company Information</h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">{formData.id ? 'Edit Company' : 'Create New Company'}</h2>
+        <button
+          type="button"
+          onClick={() => setShowCompanyList(true)}
+          className="text-blue-600 hover:text-blue-800 text-sm"
+        >
+          ← Back to companies
+        </button>
+      </div>
 
       {error && (
         <div className="mb-4 p-4 bg-red-50 text-red-600 rounded-md border border-red-200">
@@ -319,11 +469,11 @@ export default function CompanyForm() {
         )}
       </div>
 
-      <div className="mt-8">
+      <div className="mt-8 flex flex-col sm:flex-row gap-3">
         <button 
           type="submit" 
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors flex justify-center items-center"
+          className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors flex justify-center items-center"
         >
           {loading ? (
             <>
@@ -331,12 +481,22 @@ export default function CompanyForm() {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Updating...
+              {formData.id ? 'Updating...' : 'Creating...'}
             </>
           ) : (
-            'Save Company'
+            formData.id ? 'Update Company' : 'Create Company'
           )}
         </button>
+        
+        {formData.id && (
+          <button
+            type="button"
+            onClick={handleCreateNew}
+            className="flex-1 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors"
+          >
+            Create Another Company
+          </button>
+        )}
       </div>
     </form>
   );
