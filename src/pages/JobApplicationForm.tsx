@@ -202,8 +202,9 @@ interface SuccessMessageProps {
   redirectUrl: string | null;
   countdown: number;
 }
- // Success Message component implementation
- const SuccessMessage: React.FC<SuccessMessageProps> = ({ 
+
+// Success Message component implementation
+const SuccessMessage: React.FC<SuccessMessageProps> = ({ 
   message, 
   onEdit, 
   redirectUrl, 
@@ -225,10 +226,9 @@ interface SuccessMessageProps {
           Redirecting in {countdown} second{countdown !== 1 ? 's' : ''}...
         </span>
       </div>
-
     </div>
   );
-};SuccessMessage
+};
 
 // Education options
 const educationOptions = [
@@ -444,8 +444,6 @@ export default function ProfileForm() {
   
       if (submitError) throw submitError;
   
-      
-  
       // Send verification email (non-blocking)
       try {
         const { data: { session } } = await supabase.auth.getSession();
@@ -468,7 +466,7 @@ export default function ProfileForm() {
   
       // Set success state and redirect info
       setSuccessMessage("Profile updated successfully! Redirecting to job application...");
-      setRedirectUrl(`/jobs/apply`);
+      setRedirectUrl(`/jobs`);
       setSuccess(true);
       setCountdown(3); // Reset countdown to 3 seconds
   
@@ -479,14 +477,6 @@ export default function ProfileForm() {
       setLoading(false);
     }
   };
-  
- 
-
-  useEffect(() => {
-    if (success && redirectUrl && countdown === 0) {
-      navigate(redirectUrl);
-    }
-  }, [countdown, success, redirectUrl, navigate]);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -497,164 +487,172 @@ export default function ProfileForm() {
       </div>
       
       <div className="container mx-auto px-4 py-8">
-        <form onSubmit={handleSubmit} className="max-w-3xl mx-auto p-8 bg-white rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Profile Information</h2>
+        {success ? (
+          <div className="max-w-3xl mx-auto">
+            <SuccessMessage
+              message={successMessage}
+              onEdit={() => setSuccess(false)}
+              redirectUrl={redirectUrl}
+              countdown={countdown}
+            />
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="max-w-3xl mx-auto p-8 bg-white rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Profile Information</h2>
 
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-md border border-red-200">
-              {error}
-            </div>
-          )}
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-md border border-red-200">
+                {error}
+              </div>
+            )}
 
-          <div className="space-y-6">
-            {/* Personal Information */}
-            <div>
-              <h3 className="text-lg font-medium text-gray-700 mb-4">Personal Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <FormInput 
-                  label="First Name" 
-                  name="firstName" 
-                  value={formData.firstName} 
-                  onChange={handleInputChange} 
-                  required 
-                />
-                
-                <FormInput 
-                  label="Middle Name" 
-                  name="middleName" 
-                  value={formData.middleName} 
-                  onChange={handleInputChange} 
-                />
-                
-                <FormInput 
-                  label="Surname" 
-                  name="surname" 
-                  value={formData.surname} 
-                  onChange={handleInputChange} 
-                  required 
-                />
-                
-                <FormInput 
-                  label="Date of Birth" 
-                  type="date" 
-                  name="dateOfBirth" 
-                  value={formData.dateOfBirth} 
-                  onChange={handleInputChange} 
-                  required 
-                />
-                
-                <div>
-                  <PhoneInputField
-                    label="Phone Number"
-                    value={formData.phoneNumber}
-                    onChange={handlePhoneChange}
+            <div className="space-y-6">
+              {/* Personal Information */}
+              <div>
+                <h3 className="text-lg font-medium text-gray-700 mb-4">Personal Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <FormInput 
+                    label="First Name" 
+                    name="firstName" 
+                    value={formData.firstName} 
+                    onChange={handleInputChange} 
+                    required 
+                  />
+                  
+                  <FormInput 
+                    label="Middle Name" 
+                    name="middleName" 
+                    value={formData.middleName} 
+                    onChange={handleInputChange} 
+                  />
+                  
+                  <FormInput 
+                    label="Surname" 
+                    name="surname" 
+                    value={formData.surname} 
+                    onChange={handleInputChange} 
+                    required 
+                  />
+                  
+                  <FormInput 
+                    label="Date of Birth" 
+                    type="date" 
+                    name="dateOfBirth" 
+                    value={formData.dateOfBirth} 
+                    onChange={handleInputChange} 
+                    required 
+                  />
+                  
+                  <div>
+                    <PhoneInputField
+                      label="Phone Number"
+                      value={formData.phoneNumber}
+                      onChange={handlePhoneChange}
+                      required
+                    />
+                  </div>
+                  
+                  <FormSelect
+                    label="Education Level"
+                    name="education"
+                    value={formData.education}
+                    options={educationOptions}
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
-                
-                <FormSelect
-                  label="Education Level"
-                  name="education"
-                  value={formData.education}
-                  options={educationOptions}
-                  onChange={handleInputChange}
-                  required
-                />
+              </div>
+
+              {/* Address Information */}
+              <div>
+                <h3 className="text-lg font-medium text-gray-700 mb-4">Address Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormInput 
+                    label="Street Address" 
+                    name="address" 
+                    value={formData.address} 
+                    onChange={handleInputChange} 
+                    required 
+                    placeholder="Street address, apartment, unit, etc."
+                  />
+                  
+                  <FormInput 
+                    label="City" 
+                    name="city" 
+                    value={formData.city} 
+                    onChange={handleInputChange} 
+                    required 
+                    placeholder="City name"
+                  />
+                  
+                  <FormInput 
+                    label="State/Province/Region" 
+                    name="region" 
+                    value={formData.region} 
+                    onChange={handleInputChange} 
+                    required 
+                    placeholder="State, province, or region"
+                  />
+                  
+                  <FormInput 
+                    label="Postal/Zip Code" 
+                    name="postalCode" 
+                    value={formData.postalCode} 
+                    onChange={handleInputChange} 
+                    required 
+                    placeholder="Postal or zip code"
+                  />
+                  
+                  <CountrySelect
+                    label="Country"
+                    value={formData.country}
+                    onChange={handleCountryChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Document Uploads */}
+              <div>
+                <h3 className="text-lg font-medium text-gray-700 mb-4">Documents</h3>
+                <div className="grid grid-cols-1 gap-6">
+                  <FileUpload
+                    label="Resume"
+                    accept=".pdf,.doc,.docx"
+                    currentUrl={fileUrls.resumeUrl}
+                    onChange={(e) => handleFileInputChange(e, 'resumes', 'resumeUrl')}
+                    required
+                  />
+                  <p className="mt-1 text-sm text-gray-500">
+                    Accepted formats: PDF, DOC, or DOCX
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Address Information */}
-            <div>
-              <h3 className="text-lg font-medium text-gray-700 mb-4">Address Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormInput 
-                  label="Street Address" 
-                  name="address" 
-                  value={formData.address} 
-                  onChange={handleInputChange} 
-                  required 
-                  placeholder="Street address, apartment, unit, etc."
-                />
-                
-                <FormInput 
-                  label="City" 
-                  name="city" 
-                  value={formData.city} 
-                  onChange={handleInputChange} 
-                  required 
-                  placeholder="City name"
-                />
-                
-                <FormInput 
-                  label="State/Province/Region" 
-                  name="region" 
-                  value={formData.region} 
-                  onChange={handleInputChange} 
-                  required 
-                  placeholder="State, province, or region"
-                />
-                
-                <FormInput 
-                  label="Postal/Zip Code" 
-                  name="postalCode" 
-                  value={formData.postalCode} 
-                  onChange={handleInputChange} 
-                  required 
-                  placeholder="Postal or zip code"
-                />
-                
-                <CountrySelect
-                  label="Country"
-                  value={formData.country}
-                  onChange={handleCountryChange}
-                  required
-                />
-              </div>
+            <div className="mt-8 pt-6 border-t border-gray-200">
+              <button 
+                type="submit" 
+                disabled={loading}
+                className="w-full md:w-auto float-right bg-blue-600 text-white py-2 px-8 rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors flex justify-center items-center"
+              >
+                {loading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Updating...
+                  </>
+                ) : (
+                  'Save Profile'
+                )}
+              </button>
+              <div className="clear-both"></div>
             </div>
-
-            {/* Document Uploads */}
-            <div>
-              <h3 className="text-lg font-medium text-gray-700 mb-4">Documents</h3>
-              <div className="grid grid-cols-1 gap-6">
-                <FileUpload
-                  label="Resume"
-                  accept=".pdf,.doc,.docx"
-                  currentUrl={fileUrls.resumeUrl}
-                  onChange={(e) => handleFileInputChange(e, 'resumes', 'resumeUrl')}
-                  required
-                />
-                <p className="mt-1 text-sm text-gray-500">
-                  Accepted formats: PDF, DOC, or DOCX
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <button 
-              type="submit" 
-              disabled={loading}
-              className="w-full md:w-auto float-right bg-blue-600 text-white py-2 px-8 rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors flex justify-center items-center"
-            >
-              {loading ? (
-                <>
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Updating...
-                </>
-              ) : (
-                'Save Profile'
-              )}
-            </button>
-            <div className="clear-both"></div>
-            
-          </div>
-        </form>
-        
+          </form>
+        )}
       </div>
-      
     </div>
   );
 }
