@@ -319,39 +319,35 @@ export default function ProfileForm() {
   const fetchProfile = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-console.log("Session:", session);
-console.log("User ID:", session?.user?.id);
-
-if (!session || !session.user) {
-  console.log("No active session found");
-  // Handle the case when user is not authenticated
-  return;
-}
-      if (!session) {
+      
+      if (!session || !session.user) {
+        console.log("No active session found");
         return;
       }
-
+  
       const { data, error } = await supabase
-  .from('profiles')
-  .select('*')
-  .match({ id: session.user.id })
-  .single();
-
+        .from('profiles')
+        .select('*')
+        .match({ id: session.user.id })
+        .single();
+  
       if (error) {
-        if (error.message.includes('rows') || error.code === 'PGRST116') {
-          console.log('No profile found, user may be new');
+        // This specific error code means no profile found
+        if (error.code === 'PGRST116') {
+          console.log('No profile found for this user, creating a new one');
+          // Continue with empty form data for new user
           return;
         }
         throw error;
       }
       
       if (data) {
+        // Update form data with profile information
         setFormData({
           firstName: data.first_name || '',
           middleName: data.middle_name || '',
           surname: data.surname || '',
           dateOfBirth: data.date_of_birth || '',
-          // Map destructured address fields
           address: data.address || '',
           city: data.city || '',
           region: data.region || '',
@@ -365,7 +361,7 @@ if (!session || !session.user) {
           resumeUrl: data.resume_url || ''
         });
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error fetching profile:', err);
       setError('Error loading profile data. Please try again later.');
     }
