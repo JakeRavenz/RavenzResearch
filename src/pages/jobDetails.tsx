@@ -165,7 +165,7 @@ export default function JobDetails() {
             setShowModal(false);
             // If user needs to complete profile, redirect after closing modal
             if (modalMessage === "You need to complete your profile before applying.") {
-              navigate(`/profile?jobId=${id}`);
+              navigate(`/jobs/apply`);
             }
           }}
         />
