@@ -288,7 +288,8 @@ export default function Jobs() {
                 <div className="mt-3 flex flex-wrap gap-y-2 gap-x-4 text-sm text-gray-600">
                   <div className="flex items-center">
                     <MapPin className="h-4 w-4 mr-1.5 text-gray-500" />
-                    <span>{job.remote_level === 'fully_remote' ? 'Remote' : job.location}</span>
+                    {/* Updated: Always display job.location */}
+                    <span>{job.location}</span>
                   </div>
                   <div className="flex items-center">
                     <Briefcase className="h-4 w-4 mr-1.5 text-gray-500" />
@@ -302,22 +303,11 @@ export default function Jobs() {
 
                 {/* Tags - Wrap on smaller screens */}
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      job.remote_level === 'fully_remote'
-                        ? 'bg-green-100 text-green-800'
-                        : job.remote_level === 'hybrid'
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}
-                  >
-                    {job.remote_level === 'fully_remote'
-                      ? 'Fully Remote'
-                      : job.remote_level === 'hybrid'
-                      ? 'Hybrid'
-                      : 'On-site'}
+                  {/* Updated tag: Show job.location with yellow styling */}
+                  <span className="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                    {job.location}
                   </span>
-                  {/* Additional tags could be added here */}
+                  {/* Additional tags */}
                   <span className="px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
                     {job.type === 'full_time' ? 'Full Time' : 
                      job.type === 'part_time' ? 'Part Time' : 'Contract'}
