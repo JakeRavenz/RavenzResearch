@@ -163,7 +163,7 @@ export default function Companies() {
 
                 <div className="mt-6 flex items-center justify-between">
                   <button
-                    
+                    onClick={() => navigate(`/companies/${company.id}`)}
                     className="text-gray-700 hover:text-indigo-600 transition-colors text-sm font-medium"
                   >
                     Company Profile

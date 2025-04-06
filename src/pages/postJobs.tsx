@@ -197,10 +197,10 @@ export default function PostJobForm() {
             Post Another Job
           </button>
           <button 
-            onClick={() => navigate('/dashboard/jobs')} 
+            onClick={() => navigate('/')} 
             className="bg-gray-200 text-gray-800 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors"
           >
-            View My Jobs
+           Home
           </button>
         </div>
       </div>
