@@ -288,12 +288,11 @@ export default function Jobs() {
                 <div className="mt-3 flex flex-wrap gap-y-2 gap-x-4 text-sm text-gray-600">
                   <div className="flex items-center">
                     <MapPin className="h-4 w-4 mr-1.5 text-gray-500" />
-                    {/* Updated: Always display job.location */}
                     <span>{job.location}</span>
                   </div>
                   <div className="flex items-center">
                     <Briefcase className="h-4 w-4 mr-1.5 text-gray-500" />
-                    <span>{job.type.replace('_', ' ')}</span>
+                    <span>{job.type}</span>
                   </div>
                   <div className="flex items-center">
                     <Clock className="h-4 w-4 mr-1.5 text-gray-500" />
@@ -303,18 +302,20 @@ export default function Jobs() {
 
                 {/* Tags - Wrap on smaller screens */}
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {/* Updated tag: Show job.location with yellow styling */}
+                  {/* Yellow tag shows job.remote_level */}
                   <span className="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-                    {job.location}
+                    {job.remote_level}
                   </span>
-                  {/* Additional tags */}
+                  {/* Purple tag shows job.type directly */}
                   <span className="px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
-                    {job.type === 'full_time' ? 'Full Time' : 
-                     job.type === 'part_time' ? 'Part Time' : 'Contract'}
+                    {job.type}
                   </span>
-                  <span className="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
-                    New
-                  </span>
+                  {/* Only show "New" tag if job is less than 7 days old */}
+                  {(new Date().getTime() - new Date(job.created_at).getTime()) / (1000 * 60 * 60 * 24) < 7 && (
+                    <span className="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                      New
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
