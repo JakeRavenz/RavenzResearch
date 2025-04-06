@@ -108,19 +108,26 @@ export default function JobDetails() {
       return;
     }
   
-    const { error: applyError } = await supabase
-    .from('applications')
-    .insert([{ 
-      job_id: id,
-      user_id: user.id,
-      status: 'pending' 
-    }]);
-  
-    if (applyError) {
-      setModalMessage("Application failed: " + applyError.message);
-      setShowModal(true);
-      return;
-    }
+  // Submit application
+const { error: applyError } = await supabase
+.from('applications')
+.insert([{ 
+  job_id: id,
+  user_id: user.id,
+  status: 'pending'
+}]);
+
+if (applyError) {
+if (applyError.code === '23505') {
+  setModalMessage("You've already applied to this position");
+  setShowModal(true);
+  setApplyDisabled(true);
+  return;
+}
+setModalMessage("Application failed: " + applyError.message);
+setShowModal(true);
+return;
+}
   
     setModalMessage("✅ Application submitted successfully!");
     setShowModal(true);
