@@ -108,14 +108,13 @@ export default function JobDetails() {
       return;
     }
   
-    // Submit application
     const { error: applyError } = await supabase
-      .from('applications')
-      .insert([{ 
-        job_id: id,
-        user_id: user.id,
-        status: 'submitted'
-      }]);
+    .from('applications')
+    .insert([{ 
+      job_id: id,
+      user_id: user.id,
+      status: 'pending' 
+    }]);
   
     if (applyError) {
       setModalMessage("Application failed: " + applyError.message);
