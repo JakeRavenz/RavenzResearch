@@ -448,9 +448,7 @@ if (!session || !session.user) {
   
       if (submitError) throw submitError;
   
-      // Get job ID from URL parameters
-      const jobId = searchParams.get('jobId');
-      if (!jobId) throw new Error('Job ID not found in URL parameters');
+      
   
       // Send verification email (non-blocking)
       try {
@@ -474,7 +472,7 @@ if (!session || !session.user) {
   
       // Set success state and redirect info
       setSuccessMessage("Profile updated successfully! Redirecting to job application...");
-      setRedirectUrl(`/jobs/apply/${jobId}`);
+      setRedirectUrl(`/jobs/apply`);
       setSuccess(true);
       setCountdown(3); // Reset countdown to 3 seconds
   

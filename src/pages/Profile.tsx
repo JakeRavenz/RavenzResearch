@@ -5,7 +5,6 @@ import { User } from 'lucide-react';
 import toast from 'react-hot-toast';
 import 'react-phone-number-input/style.css';
 
-// Type definitions
 type EducationLevel = 'high_school' | 'associates' | 'bachelors' | 'masters' | 'phd' | 'other';
 
 const EDUCATION_LABELS: Record<EducationLevel, string> = {
@@ -84,6 +83,10 @@ export default function Profile() {
     }
   };
 
+  const handleUpdateProfile = () => {
+    navigate('/jobs/apply');
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
@@ -121,7 +124,13 @@ export default function Profile() {
                 </h1>
               </div>
             </div>
-            <div className="flex">
+            <div className="flex space-x-3">
+              <button
+                onClick={handleUpdateProfile}
+                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+              >
+                Update Profile
+              </button>
               <button
                 onClick={handleLogout}
                 className="border border-gray-300 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-100 transition-colors"
