@@ -41,7 +41,7 @@ export default function Jobs() {
             *,
             company:companies(name, logo_url)
           `, { count: 'exact' })
-          .eq('status', 'open')
+          .eq('status', 'Open')
           .order('created_at', { ascending: false })
           .range(0, jobsPerPage);
         
