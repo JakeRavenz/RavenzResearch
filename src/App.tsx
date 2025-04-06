@@ -37,7 +37,6 @@ function App() {
           <Route path="/auth" element={<Auth />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/aboutUs" element={<AboutUs />} />
-          <Route path="/jobs/apply/:id" element={<JobApplicationForm />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/careers" element={<Careers />} />
           <Route path="/contact" element={<Contact />} />
