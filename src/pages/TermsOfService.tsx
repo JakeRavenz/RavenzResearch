@@ -123,7 +123,7 @@ export default function TermsOfService() {
       </p>
       <h2 className="mb-4 text-2xl font-semibold text-gray-800">Contact Us</h2>
       <p className="text-gray-700">
-        If you have any questions about these Terms, please contact us at
+        If you have any questions about these Terms, please contact us at{" "}
         <a
           href="mailto:support@ravenzresearch.com"
           className="text-blue-600 hover:text-blue-800"

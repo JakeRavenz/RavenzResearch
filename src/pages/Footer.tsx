@@ -26,7 +26,7 @@ const Footer = () => {
       { name: 'Create a company bio', href: '/company-bio' },
     ],
     legal: [
-      { name: 'Privacy Policy', href: '/privacy-policy' },
+      { name: 'Privacy Policy', href: '/policies' },
       { name: 'Terms of Service', href: '/terms-of-service' },
     ],
     social: [
@@ -146,9 +146,9 @@ const Footer = () => {
             Copyright © {new Date().getFullYear()}. Remote Technology, Inc. All rights reserved.
           </p>
 
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mt-8">
+          <div className="flex flex-col mt-8 md:flex-row md:items-center md:justify-between">
             {/* Legal Links */}
-            <div className="flex flex-wrap space-x-6 mb-4 md:mb-0">
+            <div className="flex flex-wrap mb-4 space-x-6 md:mb-0">
               {navigation.legal.map((item) => (
                 <a
                   key={item.name}

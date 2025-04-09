@@ -93,7 +93,7 @@ export default function PrivacyPolicy() {
       <h2 className="mb-4 text-2xl font-semibold text-gray-800">Contact Us</h2>
       <p className="text-gray-700">
         If you have any questions about this Privacy Policy, please contact us
-        at
+        at{" "}
         <a
           href="mailto:info@ravenzresearch.com"
           className="text-blue-600 hover:text-blue-800"
