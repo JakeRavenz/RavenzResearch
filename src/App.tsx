@@ -16,6 +16,8 @@ import Faq from "./pages/Faq";
 import Careers from "./pages/Careers";
 import Contact from "./pages/Contact";
 import PostJobForm from "./pages/postJobs";
+import Policies from "./pages/Policies";
+import TermsOfService from "./pages/TermsOfService";
 
 function App() {
   return (
@@ -23,10 +25,9 @@ function App() {
       <Routes>
         {/* Routes without Layout */}
         <Route path="/jobs/:id" element={<JobDetails />} />
-        <Route path = "/company-bio" element= {<CompanyForm />} />
-        <Route path = "/post-job" element={<PostJobForm />} />
+        <Route path="/company-bio" element={<CompanyForm />} />
+        <Route path="/post-job" element={<PostJobForm />} />
         <Route path="/jobs/apply" element={<JobApplicationForm />} />
-        
 
         {/* All other routes wrapped with Layout */}
         <Route element={<Layout />}>
@@ -40,6 +41,8 @@ function App() {
           <Route path="/faq" element={<Faq />} />
           <Route path="/careers" element={<Careers />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/policies" element={<Policies />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
         </Route>
       </Routes>
       <Toaster position="bottom-right" />

@@ -9,8 +9,8 @@ interface FeatureCardProps {
 }
 
 const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) => (
-  <div className="bg-white p-6 md:p-8 shadow-sm border border-gray-100 hover:shadow-md transition-all group">
-    <div className="p-3 bg-indigo-50 inline-flex items-center justify-center">
+  <div className="p-6 transition-all bg-white border border-gray-100 shadow-sm md:p-8 hover:shadow-md group">
+    <div className="inline-flex items-center justify-center p-3 bg-indigo-50">
       {icon}
     </div>
     <h3 className="mt-4 text-xl font-semibold text-gray-900">{title}</h3>
@@ -32,43 +32,43 @@ const ActionButton: React.FC<{
     } px-6 py-3 font-medium transition-colors flex items-center gap-2`}
   >
     {children}
-    {variant === 'primary' && <ArrowRight className="h-4 w-4" />}
+    {variant === 'primary' && <ArrowRight className="w-4 h-4" />}
   </Link>
 );
 
 export default function Home() {
   const features = [
     {
-      icon: <Briefcase className="h-8 w-8 text-indigo-600" />,
+      icon: <Briefcase className="w-8 h-8 text-indigo-600" />,
       title: 'Remote Jobs',
       description: 'Find flexible remote positions from companies worldwide',
     },
     {
-      icon: <Building2 className="h-8 w-8 text-indigo-600" />,
+      icon: <Building2 className="w-8 h-8 text-indigo-600" />,
       title: 'Top Companies',
       description: 'Connect with leading companies embracing remote work',
     },
     {
-      icon: <Globe className="h-8 w-8 text-indigo-600" />,
+      icon: <Globe className="w-8 h-8 text-indigo-600" />,
       title: 'Work Anywhere',
       description: 'Choose your workplace and maintain work-life balance',
     },
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
       {/* Hero Section - Sharp edges */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 to-blue-500 my-8">
+      <div className="relative my-8 overflow-hidden bg-gradient-to-r from-indigo-600 to-blue-500">
         <div className="absolute inset-0 bg-[url('/img/grid-pattern.svg')] opacity-20"></div>
         
-        <div className="relative z-10 text-center py-16 md:py-24 px-4 md:px-6">
-          <h1 className="text-4xl font-bold text-white sm:text-5xl md:text-6xl leading-tight">
+        <div className="relative z-10 px-4 py-16 text-center md:py-24 md:px-6">
+          <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl">
             Find Your Perfect Remote Job
           </h1>
-          <p className="mt-6 text-lg md:text-xl text-indigo-100 max-w-2xl mx-auto">
+          <p className="max-w-2xl mx-auto mt-6 text-lg text-indigo-100 md:text-xl">
             Connect with top companies hiring remote talent worldwide
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-4 mt-8">
             <ActionButton to="/jobs" variant="primary">
               Browse Jobs
             </ActionButton>
@@ -80,21 +80,21 @@ export default function Home() {
       </div>
 
       {/* Stats Section - Sharp edges */}
-      <div className="bg-white shadow-sm mb-16 py-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center p-4">
+      <div className="py-4 mb-16 bg-white shadow-sm">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div className="p-4 text-center">
             <div className="text-3xl font-bold text-indigo-600">1,200+</div>
             <div className="text-gray-600">Remote Jobs</div>
           </div>
-          <div className="text-center p-4">
+          <div className="p-4 text-center">
             <div className="text-3xl font-bold text-indigo-600">500+</div>
             <div className="text-gray-600">Companies</div>
           </div>
-          <div className="text-center p-4">
+          <div className="p-4 text-center">
             <div className="text-3xl font-bold text-indigo-600">50k+</div>
             <div className="text-gray-600">Job Seekers</div>
           </div>
-          <div className="text-center p-4">
+          <div className="p-4 text-center">
             <div className="text-3xl font-bold text-indigo-600">40+</div>
             <div className="text-gray-600">Countries</div>
           </div>
@@ -103,14 +103,14 @@ export default function Home() {
       
       {/* Features Section - Sharp edges */}
       <div className="mb-16">
-        <div className="text-center mb-12">
+        <div className="mb-12 text-center">
           <h2 className="text-3xl font-bold text-gray-900">Why Choose Us</h2>
-          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="max-w-2xl mx-auto mt-4 text-lg text-gray-600">
             We connect talented professionals with the best remote opportunities worldwide
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {features.map((feature, index) => (
             <FeatureCard key={index} {...feature} />
           ))}
@@ -118,7 +118,7 @@ export default function Home() {
       </div>
       
       {/* CTA Section - Sharp edges */}
-      <div className="bg-gray-50 p-8 mb-16">
+      <div className="p-8 mb-16 bg-gray-50">
         <div className="md:flex md:items-center md:justify-between">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Ready to start your remote journey?</h2>
