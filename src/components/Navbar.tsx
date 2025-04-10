@@ -11,6 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
+import logo from "../assets/Ravenz Research logo alone.png";
 
 export default function Navbar() {
   const [user, setUser] = useState<User | null>(null);
@@ -42,11 +43,12 @@ export default function Navbar() {
             onClick={closeSidebar}
           >
             <img
-              src="/src/assets/Ravenz Research logo alone.png"
+              // src="/src/assets/Ravenz Research logo alone.png"
+              src={logo}
               alt="Logo"
               className="w-8 h-8"
             />{" "}
-            <span className="font-bold text-xl text-[bg-emerald-400] font-['Inter']">
+            <span className="font-bold text-xl  font-['Inter']">
               Ravenz Research
             </span>
           </Link>
