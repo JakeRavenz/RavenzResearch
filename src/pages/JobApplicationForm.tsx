@@ -166,7 +166,7 @@ interface FileUploadProps {
   accept: string;
   currentUrl: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  required?: boolean;
+  
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({ 
@@ -184,7 +184,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
       type="file"
       accept={accept}
       onChange={onChange}
-      required= false
+      required=false
       className="w-full py-1"
     />
     {currentUrl && (
