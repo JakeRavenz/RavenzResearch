@@ -184,7 +184,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
       type="file"
       accept={accept}
       onChange={onChange}
-      required=false
+      required={required}
       className="w-full py-1"
     />
     {currentUrl && (
