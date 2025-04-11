@@ -277,9 +277,9 @@ export default function Jobs() {
                   <div className="mt-2 lg:mt-0 lg:text-right">
                     <p className="text-lg font-semibold text-gray-900">
                       {job.salary_min === job.salary_max 
-                        ? `${job.salary_min}k USD`
-                        : `${job.salary_min}k - ${job.salary_max}k USD`}
-                      <span className="text-gray-600 text-sm ml-1">/year</span>
+                        ? `${job.salary_min} USD`
+                        : `${${job.salary_max} USD`}
+                      <span className="text-gray-600 text-sm ml-1">per hour</span>
                     </p>
                   </div>
                 </div>
