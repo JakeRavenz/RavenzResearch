@@ -165,6 +165,7 @@ interface FileUploadProps {
   label: string;
   accept: string;
   currentUrl: string;
+  required?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   
 }
