@@ -230,7 +230,7 @@ return;
                   </div>
                   <div className="flex items-center">
                    
-                    <span>${job.salary_min} - ${job.salary_max} per hour</span>
+                    <span>${job.salary_max} per hour</span>
                   </div>
                 </div>
               </div>
