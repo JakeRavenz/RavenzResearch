@@ -49,7 +49,7 @@ const FormInput: React.FC<FormInputProps> = ({
   placeholder,
 }) => (
   <div className="mb-4">
-    <label className="block text-sm font-medium text-gray-700 mb-1">
+    <label className="block mb-1 text-sm font-medium text-gray-700">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
     <input
@@ -83,7 +83,7 @@ const FormSelect: React.FC<FormSelectProps> = ({
   required = false,
 }) => (
   <div className="mb-4">
-    <label className="block text-sm font-medium text-gray-700 mb-1">
+    <label className="block mb-1 text-sm font-medium text-gray-700">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
     <select
@@ -118,7 +118,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
   required = false,
 }) => (
   <div className="mb-4">
-    <label className="block text-sm font-medium text-gray-700 mb-1">
+    <label className="block mb-1 text-sm font-medium text-gray-700">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
     <CountryDropdown
@@ -144,7 +144,7 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
   required = false,
 }) => (
   <div className="mb-4">
-    <label className="block text-sm font-medium text-gray-700 mb-1">
+    <label className="block mb-1 text-sm font-medium text-gray-700">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
     <div className="w-full border rounded-md focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
@@ -177,18 +177,18 @@ const FileUpload: React.FC<FileUploadProps> = ({
   required = false 
 }) => (
   <div className="mb-4">
-    <label className="block text-sm font-medium text-gray-700 mb-1">
+    <label className="block mb-1 text-sm font-medium text-gray-700">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
     <input
       type="file"
       accept={accept}
       onChange={onChange}
-      required={required && !currentUrl}
+      // required={required && !currentUrl}
       className="w-full py-1"
     />
     {currentUrl && (
-      <div className="mt-1 text-sm text-gray-500 truncate max-w-full">
+      <div className="max-w-full mt-1 text-sm text-gray-500 truncate">
         <span className="font-medium">Current file:</span> {currentUrl.split('/').pop()}
       </div>
     )}
@@ -217,8 +217,8 @@ const SuccessMessage: React.FC<SuccessMessageProps> = ({
   }, [countdown, redirectUrl]);
 
   return (
-    <div className="text-center p-6 bg-white rounded-lg shadow">
-      <h2 className="text-2xl font-bold text-green-600 mb-4">✓ Success!</h2>
+    <div className="p-6 text-center bg-white rounded-lg shadow">
+      <h2 className="mb-4 text-2xl font-bold text-green-600">✓ Success!</h2>
       <p className="mb-4 text-gray-600">{message}</p>
       <div className="flex items-center justify-center space-x-2">
         <div className="w-8 h-8 border-4 border-blue-200 rounded-full animate-spin"></div>
@@ -480,13 +480,13 @@ export default function ProfileForm() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <div className="w-full border-b border-gray-200 bg-white shadow-sm">
+      <div className="w-full bg-white border-b border-gray-200 shadow-sm">
         <div className="w-full">
           <Navbar />
         </div>
       </div>
       
-      <div className="container mx-auto px-4 py-8">
+      <div className="container px-4 py-8 mx-auto">
         {success ? (
           <div className="max-w-3xl mx-auto">
             <SuccessMessage
@@ -497,11 +497,11 @@ export default function ProfileForm() {
             />
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="max-w-3xl mx-auto p-8 bg-white rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Profile Information</h2>
+          <form onSubmit={handleSubmit} className="max-w-3xl p-8 mx-auto bg-white rounded-lg shadow-md">
+            <h2 className="pb-2 mb-6 text-2xl font-bold text-gray-800 border-b">Profile Information</h2>
 
             {error && (
-              <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-md border border-red-200">
+              <div className="p-4 mb-6 text-red-600 border border-red-200 rounded-md bg-red-50">
                 {error}
               </div>
             )}
@@ -509,8 +509,8 @@ export default function ProfileForm() {
             <div className="space-y-6">
               {/* Personal Information */}
               <div>
-                <h3 className="text-lg font-medium text-gray-700 mb-4">Personal Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <h3 className="mb-4 text-lg font-medium text-gray-700">Personal Information</h3>
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                   <FormInput 
                     label="First Name" 
                     name="firstName" 
@@ -565,8 +565,8 @@ export default function ProfileForm() {
 
               {/* Address Information */}
               <div>
-                <h3 className="text-lg font-medium text-gray-700 mb-4">Address Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <h3 className="mb-4 text-lg font-medium text-gray-700">Address Information</h3>
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <FormInput 
                     label="Street Address" 
                     name="address" 
@@ -614,7 +614,7 @@ export default function ProfileForm() {
 
               {/* Document Uploads */}
               <div>
-                <h3 className="text-lg font-medium text-gray-700 mb-4">Documents</h3>
+                <h3 className="mb-4 text-lg font-medium text-gray-700">Documents</h3>
                 <div className="grid grid-cols-1 gap-6">
                   <FileUpload
                     label="Resume"
@@ -630,15 +630,15 @@ export default function ProfileForm() {
               </div>
             </div>
 
-            <div className="mt-8 pt-6 border-t border-gray-200">
+            <div className="pt-6 mt-8 border-t border-gray-200">
               <button 
                 type="submit" 
                 disabled={loading}
-                className="w-full md:w-auto float-right bg-blue-600 text-white py-2 px-8 rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors flex justify-center items-center"
+                className="flex items-center justify-center float-right w-full px-8 py-2 text-white transition-colors bg-blue-600 rounded-md md:w-auto hover:bg-blue-700 disabled:bg-blue-300"
               >
                 {loading ? (
                   <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 mr-3 -ml-1 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
