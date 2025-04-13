@@ -15,7 +15,6 @@ interface Job {
   created_at: string;
   requirements?: string[];
   what_we_offer?: string[];
-  responsibilities?: string[];
   company: {
     name: string;
     logo_url: string;
@@ -53,14 +52,18 @@ export default function JobDetails() {
     async function fetchJobDetails() {
       if (!id) return;
       try {
+        // Removed 'responsibilities' from the query since it doesn't exist in the database
         const { data, error } = await supabase
           .from('jobs')
           .select(`
-            *,
+            id, title, description, salary_min, salary_max, location, type, 
+            remote_level, created_at, requirements, what_we_offer, status,
             company:companies(name, logo_url)
           `)
           .eq('id', id)
+          .eq('status', 'Open')
           .single();
+          
         if (error) throw error;
         setJob(data);
       } catch (error) {
@@ -73,66 +76,102 @@ export default function JobDetails() {
   }, [id]);
 
   async function handleApplyNow() {
-    const { data: { user } } = await supabase.auth.getUser();
+    try {
+      if (!id) {
+        setModalMessage("Job ID is missing");
+        setShowModal(true);
+        return;
+      }
+
+      // Verify the job exists before continuing
+      const { data: jobExists, error: jobCheckError } = await supabase
+        .from('jobs')
+        .select('id')
+        .eq('id', id)
+        .eq('status', 'Open')
+        .single();
+        
+      if (jobCheckError || !jobExists) {
+        setModalMessage("This job posting no longer exists or is not open for applications");
+        setShowModal(true);
+        return;
+      }
+
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        setModalMessage("Please login to apply for this position");
+        setShowModal(true);
+        return;
+      }
     
-    if (!user) {
-      setModalMessage("Please login to apply for this position");
-      setShowModal(true);
-      return;
-    }
-  
-    // Check profile completeness
-    const { data: profile, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
-  
-    if (error || !profile?.first_name || !profile?.surname) {
-      setModalMessage("You need to complete your profile before applying.");
-      setShowModal(true);
-      return;
-    }
-  
-    // Check existing application
-    const { count } = await supabase
-      .from('applications')
-      .select('*', { count: 'exact' })
-      .eq('job_id', id)
-      .eq('user_id', user.id);
-  
-    if (count && count > 0) {
-      setModalMessage("You've already applied to this position");
+      // Check profile completeness
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('first_name, surname')
+        .eq('id', user.id)
+        .single();
+    
+      if (error || !profile?.first_name || !profile?.surname) {
+        setModalMessage("You need to complete your profile before applying.");
+        setShowModal(true);
+        return;
+      }
+    
+      // Check existing application
+      const { count, error: countError } = await supabase
+        .from('applications')
+        .select('*', { count: 'exact' })
+        .eq('job_id', id)
+        .eq('user_id', user.id);
+    
+      if (countError) {
+        console.error("Error checking existing application:", countError);
+      }
+        
+      if (count && count > 0) {
+        setModalMessage("You've already applied to this position");
+        setShowModal(true);
+        setApplyDisabled(true);
+        return;
+      }
+    
+      // Submit application
+      const { error: applyError } = await supabase
+        .from('applications')
+        .insert([{ 
+          job_id: id,
+          user_id: user.id,
+          status: 'pending'
+        }]);
+      
+      if (applyError) {
+        if (applyError.code === '23505') {
+          setModalMessage("You've already applied to this position");
+          setShowModal(true);
+          setApplyDisabled(true);
+          return;
+        }
+        else if (applyError.code === '23503') {
+          setModalMessage("Unable to submit application: the job posting may have been removed");
+          setShowModal(true);
+          return;
+        }
+        setModalMessage("Application failed: " + applyError.message);
+        setShowModal(true);
+        return;
+      }
+        
+      setModalMessage("✅ Application submitted successfully!");
       setShowModal(true);
       setApplyDisabled(true);
-      return;
+    } catch (error) {
+      console.error("Error in application process:", error);
+      setModalMessage("An unexpected error occurred");
+      setShowModal(true);
     }
-  
-  // Submit application
-const { error: applyError } = await supabase
-.from('applications')
-.insert([{ 
-  job_id: id,
-  user_id: user.id,
-  status: 'pending'
-}]);
-
-if (applyError) {
-if (applyError.code === '23505') {
-  setModalMessage("You've already applied to this position");
-  setShowModal(true);
-  setApplyDisabled(true);
-  return;
-}
-setModalMessage("Application failed: " + applyError.message);
-setShowModal(true);
-return;
-}
-  
-    setModalMessage("✅ Application submitted successfully!");
-    setShowModal(true);
-    setApplyDisabled(true);
   }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -170,7 +209,8 @@ return;
           onClose={() => {
             setShowModal(false);
             // If user needs to complete profile, redirect after closing modal
-            if (modalMessage === "You need to complete your profile before applying.") {
+            if (modalMessage === "You need to complete your profile before applying." || 
+                modalMessage === "Profile not found. Please create a profile first.") {
               navigate(`/jobs/apply`);
             }
           }}
@@ -230,7 +270,10 @@ return;
                   </div>
                   <div className="flex items-center">
                    
-                    <span>${job.salary_max} per hour</span>
+                    <span>
+  ${job.salary_max} per hour
+</span>
+
                   </div>
                 </div>
               </div>
