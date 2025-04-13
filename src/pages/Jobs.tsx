@@ -207,7 +207,7 @@ export default function Jobs() {
         </div>
       )}
 
-      <div className="flex justify-between items-center mb-6 px-1">
+      <div className="flex justify-between items-center mb-6 px-5">
         <div className="text-gray-600">
           {loading && jobs.length === 0 ? "Loading jobs..." : `${filteredJobs.length} jobs found`}
         </div>
