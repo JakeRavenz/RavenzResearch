@@ -622,7 +622,7 @@ export default function ProfileForm() {
                     accept=".pdf,.doc,.docx"
                     currentUrl={fileUrls.resumeUrl}
                     onChange={(e) => handleFileInputChange(e, 'resumes', 'resumeUrl')}
-                    required
+                    
                   />
                   <p className="mt-1 text-sm text-gray-500">
                     Accepted formats: PDF, DOC, or DOCX
