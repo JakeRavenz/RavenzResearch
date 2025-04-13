@@ -152,7 +152,7 @@ export default function Jobs() {
 
   return (
     <div className="w-full max-w-full mx-auto px-0 py-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 px-1">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 px-5">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Discover Opportunities</h1>
         <div className="flex flex-col w-full md:w-auto sm:flex-row gap-2">
           <div className="relative flex-grow">
