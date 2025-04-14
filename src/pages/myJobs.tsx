@@ -5,11 +5,17 @@ import toast from "react-hot-toast";
 
 interface Applications {
   id: string;
+  job_id: string;
   job_title: string;
   status: "pending" | "accepted" | "rejected";
   created_at: string;
 }
-
+interface Job {
+  id: string;
+    company: {
+       logo_url: string;
+  };
+}
 export default function MyJobs() {
   const navigate = useNavigate();
   const [applications, setApplications] = useState<Applications[]>([]);
@@ -32,10 +38,10 @@ export default function MyJobs() {
         }
         const { data, error } = await supabase
           .from("applications")
-          .select("id, job_title, status, created_at, user_id")
+          .select("id, job_id, job_title, status, created_at, user_id")
           .eq("user_id", user.id)
           .order("created_at", { ascending: false });
-        console.log("Fetched applications:", data);
+        // console.log("Fetched applications:", data);
 
         // Check if there was an error fetching the applications)
         if (error) throw error;
@@ -50,6 +56,30 @@ export default function MyJobs() {
 
     fetchApplications();
   }, [navigate, toast]);
+//   useEffect(() => {
+//     async function fetchJobDetails() {
+//       try {
+//         const jobIds = applications.map((app) => app.job_id); // Extract job IDs from applications
+//         const { data, error } = await supabase
+//           .from("jobs")
+//           .select(
+//             `
+//                id, 
+//               company:companies( logo_url)
+//             `
+//           )
+//           .in("id", jobIds)
+//           .order("created_at", { ascending: false });
+//         console.log("Fetched job details:", data);
+//         if (error) throw error;
+//       } catch (error) {
+//         console.error("Error fetching job details:", error);
+//       } finally {
+//         setLoading(false);
+//       }
+//     }
+//     fetchJobDetails();
+//   }, [applications]);
   // Function to handle canceling an application
   const handleCancelApplication = async (applicationId: string) => {
     try {
