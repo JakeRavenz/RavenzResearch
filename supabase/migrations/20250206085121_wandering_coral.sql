@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS applications (
   updated_at timestamptz DEFAULT now(),
   job_id uuid REFERENCES jobs(id) NOT NULL,
   user_id uuid REFERENCES auth.users(id) NOT NULL,
+  user_email text REFERENCES auth.users(email) NOT NULL,
   status text DEFAULT 'pending' CHECK (status IN ('pending', 'reviewing', 'accepted', 'rejected')),
   cover_letter text,
   UNIQUE(job_id, user_id)
