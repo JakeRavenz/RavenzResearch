@@ -95,7 +95,6 @@ export default function JobDetails() {
         return;
       }
 
-      console.log("Applying for job ID:", id);
       // Verify the job exists before continuing
       const { data: jobExists, error: jobCheckError } = await supabase
         .from("jobs")
@@ -111,7 +110,7 @@ export default function JobDetails() {
         setShowModal(true);
         return;
       }
-console.log("Job exists:", jobExists);
+      console.log("Job exists:", jobExists);
       // Check if user is logged in
       const {
         data: { user },
@@ -122,7 +121,7 @@ console.log("Job exists:", jobExists);
         setShowModal(true);
         return;
       }
-     
+
       // Check profile completeness
       const { data: profile, error } = await supabase
         .from("profiles")
@@ -135,12 +134,13 @@ console.log("Job exists:", jobExists);
         setShowModal(true);
         return;
       }
-     
+
       // Check existing application
       const { count, error: countError } = await supabase
         .from("applications")
         .select("*", { count: "exact" })
         .eq("job_id", id)
+
         .eq("user_id", user.id);
 
       if (countError) {
@@ -158,10 +158,12 @@ console.log("Job exists:", jobExists);
       const { error: applyError } = await supabase.from("applications").insert([
         {
           job_id: id,
-          user_id: user.id, email: user.email,
+          user_id: user.id,
+          email: user.email,
           first_name: profile.first_name,
           surname: profile.surname,
-          status: "pending", job_title: jobExists.title,
+          status: "pending",
+          job_title: jobExists.title,
         },
       ]);
 

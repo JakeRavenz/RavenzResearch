@@ -18,6 +18,7 @@ import Contact from "./pages/Contact";
 import PostJobForm from "./pages/postJobs";
 import Policies from "./pages/Policies";
 import TermsOfService from "./pages/TermsOfService";
+import MyJobs from "./pages/myJobs";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="/careers" element={<Careers />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/policies" element={<Policies />} />
+          <Route path="/myJobs" element={<MyJobs />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
         </Route>
       </Routes>
