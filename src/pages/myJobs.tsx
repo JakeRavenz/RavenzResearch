@@ -12,21 +12,24 @@ interface Applications {
 }
 interface Job {
   id: string;
-    company: {
-       logo_url: string;
+  company: {
+    logo_url: string;
+    name: string;
   };
 }
 export default function MyJobs() {
   const navigate = useNavigate();
   const [applications, setApplications] = useState<Applications[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingApplications, setLoadingApplications] = useState(true);
+  const [loadingJobDetails, setLoadingJobDetails] = useState(true);
   const [cancelling, setCancelling] = useState<string | null>(null);
+  const [jobDetails, setJobDetails] = useState<Job[]>([]);
   // Fetching the applications from the database
 
   useEffect(() => {
     async function fetchApplications() {
       try {
-        setLoading(true);
+        setLoadingApplications(true);
         const {
           data: { user },
           error: authError,
@@ -41,7 +44,6 @@ export default function MyJobs() {
           .select("id, job_id, job_title, status, created_at, user_id")
           .eq("user_id", user.id)
           .order("created_at", { ascending: false });
-        // console.log("Fetched applications:", data);
 
         // Check if there was an error fetching the applications)
         if (error) throw error;
@@ -50,36 +52,40 @@ export default function MyJobs() {
         console.error("Error fetching applications:", error);
         toast.error("Failed to load applications");
       } finally {
-        setLoading(false);
+        setLoadingApplications(false);
       }
     }
 
     fetchApplications();
   }, [navigate, toast]);
-//   useEffect(() => {
-//     async function fetchJobDetails() {
-//       try {
-//         const jobIds = applications.map((app) => app.job_id); // Extract job IDs from applications
-//         const { data, error } = await supabase
-//           .from("jobs")
-//           .select(
-//             `
-//                id, 
-//               company:companies( logo_url)
-//             `
-//           )
-//           .in("id", jobIds)
-//           .order("created_at", { ascending: false });
-//         console.log("Fetched job details:", data);
-//         if (error) throw error;
-//       } catch (error) {
-//         console.error("Error fetching job details:", error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     }
-//     fetchJobDetails();
-//   }, [applications]);
+  useEffect(() => {
+    async function fetchJobDetails() {
+      try {
+        const jobIds = applications.map((app) => app.job_id); // Extract job IDs from applications
+        const { data, error } = await supabase
+          .from("jobs")
+          .select(`id, company:companies(logo_url, name)`)
+          .in("id", jobIds)
+          .order("created_at", { ascending: false });
+        // Check if there was an error fetching the job details
+        if (error) throw error;
+        setJobDetails(
+          data.map((job) => ({
+            ...job,
+            company: Array.isArray(job.company) ? job.company[0] : job.company,
+          }))
+        ); // Set job details in state
+        setLoadingJobDetails(false);
+      } catch (error) {
+        console.error("Error fetching job details:", error);
+      } finally {
+        setLoadingJobDetails(false);
+      }
+    }
+    fetchJobDetails();
+  }, [
+    React.useMemo(() => applications.map((app) => app.job_id), [applications]),
+  ]);
   // Function to handle canceling an application
   const handleCancelApplication = async (applicationId: string) => {
     try {
@@ -89,14 +95,16 @@ export default function MyJobs() {
         .delete()
         .eq("id", applicationId);
 
-      if (error) throw error;
-      console.error(
-        `Error cancelling application with ID ${applicationId}:`,
-        error
-      );
+      if (error) {
+        console.error(
+          `Error cancelling application with ID ${applicationId}:`,
+          error
+        );
+        throw error;
+      }
 
       setApplications(
-        applications?.filter((app) => app.id !== applicationId) || null
+        applications?.filter((app) => app.id !== applicationId) || []
       );
       toast.success("Application cancelled successfully");
     } catch (error) {
@@ -107,7 +115,7 @@ export default function MyJobs() {
     }
   };
 
-  if (loading) {
+  if (loadingApplications || loadingJobDetails) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <div className="loader"></div>
@@ -142,7 +150,7 @@ export default function MyJobs() {
             Here are the jobs you have applied for.
           </p>
         </div>
-        <div className="border-t border-gray-200">
+        <div className="flex-col border-t border-gray-200 lg:flex-row lg:items-center lg:justify-center">
           <dl className="divide-y divide-gray-200">
             {applications?.map((application) => (
               <div
@@ -150,9 +158,30 @@ export default function MyJobs() {
                 className="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
               >
                 <dt className="text-sm font-medium text-gray-500">
-                  {application.job_title}
+                  <div className="flex items-center space-x-2">
+                    {jobDetails.map((job) => {
+                      if (job.id === application.job_id) {
+                        return (
+                          <div
+                            key={job.id}
+                            className="flex items-center space-x-2"
+                          >
+                            {job.company.logo_url ? (
+                              <img
+                                src={job.company.logo_url}
+                                alt={`${job.company.name} logo`}
+                                className="object-cover w-8 h-8 rounded-lg"
+                              />
+                            ) : null}
+                            <span>{application.job_title}</span>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })}
+                  </div>
                 </dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 ">
                   <div className="flex items-center space-x-2">
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${

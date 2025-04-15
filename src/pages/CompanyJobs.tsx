@@ -56,12 +56,12 @@ export default function CompanyJobs() {
   }, [id]);
 
   if (loading) {
-    return <div className="text-center py-8">Loading jobs...</div>;
+    return <div className="py-8 text-center">Loading jobs...</div>;
   }
 
   return (
-    <div className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-bold mb-6">
+    <div className="w-full max-w-screen-xl px-4 py-8 mx-auto sm:px-6 lg:px-8">
+      <h1 className="mb-6 text-3xl font-bold">
         Jobs for {companyName ? companyName : `Company ${id}`}
       </h1>
       {jobs.length === 0 ? (
@@ -71,11 +71,34 @@ export default function CompanyJobs() {
           {jobs.map((job) => (
             <li key={job.id} className="p-4 bg-white rounded-lg shadow">
               <h2 className="text-xl font-semibold">{job.title}</h2>
-              <p className="mt-1 text-gray-600">{job.description}</p>
+              <TruncatedDescription description={job.description} />
             </li>
           ))}
         </ul>
       )}
     </div>
+  );
+}
+
+function TruncatedDescription({ description }: { description: string }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const maxLength = 100; // Maximum number of characters to show before truncating
+
+  const toggleExpanded = () => setIsExpanded(!isExpanded);
+
+  return (
+    <p className="mt-1 text-gray-600">
+      {isExpanded || description.length <= maxLength
+        ? description
+        : `${description.slice(0, maxLength)}...`}
+      {description.length > maxLength && (
+        <button
+          onClick={toggleExpanded}
+          className="ml-2 text-blue-500 hover:underline"
+        >
+          {isExpanded ? 'See Less' : 'See More'}
+        </button>
+      )}
+    </p>
   );
 }

@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-import {
-  Briefcase,
-  MapPin,
-  Clock,
-  Building,
-  ArrowLeft,
-  DollarSign,
-} from "lucide-react";
+import { Briefcase, MapPin, Clock, Building, ArrowLeft } from "lucide-react";
 
 interface Job {
   id: string;
@@ -20,6 +13,7 @@ interface Job {
   type: string;
   remote_level: string;
   created_at: string;
+  status: string;
   requirements?: string[];
   what_we_offer?: string[];
   company: {
@@ -110,12 +104,10 @@ export default function JobDetails() {
         setShowModal(true);
         return;
       }
-      console.log("Job exists:", jobExists);
       // Check if user is logged in
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      console.log("Current user:", user, user?.email);
       if (!user) {
         setModalMessage("Please login to apply for this position");
         setShowModal(true);
@@ -140,7 +132,6 @@ export default function JobDetails() {
         .from("applications")
         .select("*", { count: "exact" })
         .eq("job_id", id)
-
         .eq("user_id", user.id);
 
       if (countError) {
@@ -349,7 +340,7 @@ export default function JobDetails() {
                   <span className="flex-grow ml-3 border-t border-gray-200"></span>
                 </h2>
                 <div className="leading-relaxed prose text-gray-700 max-w-none">
-                  {job.description}
+                  <TruncatedDescription description={job.description} />
                 </div>
               </section>
 
@@ -448,4 +439,26 @@ function formatTimeAgo(dateString: string) {
     const diffInDays = Math.floor(diffInHours / 24);
     return diffInDays === 1 ? "1 day ago" : `${diffInDays} days ago`;
   }
+}
+function TruncatedDescription({ description }: { description: string }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const maxLength = 100; // Maximum number of characters to show before truncating
+
+  const toggleExpanded = () => setIsExpanded(!isExpanded);
+
+  return (
+    <p className="mt-1 text-gray-600">
+      {isExpanded || description.length <= maxLength
+        ? description
+        : `${description.slice(0, maxLength)}...`}
+      {description.length > maxLength && (
+        <button
+          onClick={toggleExpanded}
+          className="ml-2 text-blue-500 hover:underline"
+        >
+          {isExpanded ? "See Less" : "See More"}
+        </button>
+      )}
+    </p>
+  );
 }
