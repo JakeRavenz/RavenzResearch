@@ -169,7 +169,7 @@ export default function JobDetails() {
           return;
         }
         if (email) {
-          await fetch("/api/send-jobApplication-email", {
+          await fetch("/api/send-jobApllication-email", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
