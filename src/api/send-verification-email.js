@@ -20,6 +20,17 @@ export default async function handler(req, res) {
   try {
     const { email, firstName, surname } = req.body;
     
+    // Validate input fields
+    if (!email || !email.includes('@')) {
+      return res.status(400).json({ success: false, message: 'Invalid or missing email address' });
+    }
+    if (!firstName || typeof firstName !== 'string') {
+      return res.status(400).json({ success: false, message: 'Invalid or missing first name' });
+    }
+    if (!surname || typeof surname !== 'string') {
+      return res.status(400).json({ success: false, message: 'Invalid or missing surname' });
+    }
+
     // Create Zoho SMTP transporter
     const transporter = nodemailer.createTransport({
       host: 'smtp.zoho.com',
@@ -79,3 +90,4 @@ export default async function handler(req, res) {
     return res.status(500).json({ success: false, message: 'Failed to send email', error: error.message });
   }
 }
+
