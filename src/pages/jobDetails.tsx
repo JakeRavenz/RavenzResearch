@@ -176,8 +176,8 @@ export default function JobDetails() {
               email,
               firstName: profile.first_name,
               jobTitle: jobExists.title,
-              jobPosition: Array.isArray(jobExists.company) 
-                ? (jobExists.company[0] as { name: string }).name 
+              jobPosition: Array.isArray(jobExists.company)
+                ? (jobExists.company[0] as { name: string }).name
                 : (jobExists.company as { name: string }).name,
               jobLink: `https://www.ravenzresearch.com/myjobs`,
             }),
