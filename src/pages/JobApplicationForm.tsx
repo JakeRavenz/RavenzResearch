@@ -332,7 +332,7 @@ export default function ProfileForm() {
       } = await supabase.auth.getSession();
 
       if (!session || !session.user) {
-        console.log("No active session found");
+        console.error("No active session found");
         console.log(session?.user);
         return;
       }

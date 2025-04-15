@@ -92,7 +92,7 @@ export default function JobDetails() {
       // Verify the job exists before continuing
       const { data: jobExists, error: jobCheckError } = await supabase
         .from("jobs")
-        .select("id, title")
+        .select("id, title, company:companies(name, logo_url)")
         .eq("id", id)
         .eq("status", "Open")
         .single();
@@ -157,7 +157,35 @@ export default function JobDetails() {
           job_title: jobExists.title,
         },
       ]);
-
+      // Send jobapplication success email (non-blocking)
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        const email = session?.user?.email;
+        if (!email) {
+          setModalMessage("Email not found in session data");
+          setShowModal(true);
+          return;
+        }
+        if (email) {
+          await fetch("/api/send-jobApplication-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email,
+              firstName: profile.first_name,
+              jobTitle: jobExists.title,
+              jobPosition: Array.isArray(jobExists.company) 
+                ? (jobExists.company[0] as { name: string }).name 
+                : (jobExists.company as { name: string }).name,
+              jobLink: `https://www.ravenzresearch.com/myjobs`,
+            }),
+          });
+        }
+      } catch (emailError) {
+        console.error("Email notification failed:", emailError);
+      }
       if (applyError) {
         if (applyError.code === "23505") {
           setModalMessage("You've already applied to this position");
