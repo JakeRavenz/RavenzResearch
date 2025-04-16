@@ -237,6 +237,7 @@ export default function JobDetails() {
           body: JSON.stringify({
             email,
             firstName: profile.first_name,
+            surname: profile.surname,
             jobTitle: jobExists.title,
             jobPosition: companyName,
             jobLink: `${window.location.origin}/myjobs`,

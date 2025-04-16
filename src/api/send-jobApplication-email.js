@@ -27,21 +27,22 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { email, firstName, jobTitle, jobLink, jobPosition } = req.body;
+    const { email, firstName, surname, jobTitle, jobLink, jobPosition } = req.body;
     
     console.log("Received job application email request:", {
       email,
       firstName,
+      surname,
       jobTitle,
       jobPosition,
       jobLink
     });
 
     // Validate required fields
-    if (!email || !firstName || !jobTitle) {
+    if (!email || !firstName || !surname || !jobTitle) {
       return res.status(400).json({
         success: false,
-        message: "Missing required fields: email, firstName, or jobTitle",
+        message: "Missing required fields: email, firstName, surname, or jobTitle",
       });
     }
 
@@ -76,7 +77,7 @@ export default async function handler(req, res) {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
           <h2 style="color: #3a86ff; text-align: center;">Congratulations on Your Application!</h2>
-          <p>Dear <strong>${firstName}</strong>,</p>
+          <p>Dear <strong>${firstName} ${surname}</strong>,</p>
           <p>We've successfully received your application for the <strong>${jobTitle}</strong> position at <strong>${jobPosition}</strong>. We are thrilled to have you as a candidate!</p>
           <p>Our team will review your submission shortly, and if your profile is shortlisted, you'll receive further instructions regarding the next steps, including identity verification and onboarding.</p>
           <p>In the meantime, please ensure your contact details remain active and check your email regularly for updates.</p>
