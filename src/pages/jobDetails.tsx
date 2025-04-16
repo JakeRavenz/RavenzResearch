@@ -91,7 +91,7 @@ export default function JobDetails() {
         setShowModal(true);
         return;
       }
-
+  
       // Verify the job exists before continuing
       const { data: jobExists, error: jobCheckError } = await supabase
         .from("jobs")
@@ -99,7 +99,7 @@ export default function JobDetails() {
         .eq("id", id)
         .eq("status", "Open")
         .single();
-
+  
       if (jobCheckError || !jobExists) {
         setModalMessage(
           "This job posting no longer exists or is not open for applications"
@@ -118,52 +118,69 @@ export default function JobDetails() {
         setShowModal(true);
         return;
       }
-
+  
       // Check profile completeness
-      const { data: profile, error } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("first_name, surname")
         .eq("id", user.id)
         .single();
-
-      if (error || !profile?.first_name || !profile?.surname) {
-        setModalMessage("You need to complete your profile before applying.");
+  
+      // Handle missing profile or incomplete profile data
+      if (profileError) {
+        console.error("Profile error:", profileError);
+        setModalMessage("Please complete your profile before applying");
         setShowModal(true);
         return;
       }
-
+  
+      // Check specifically for missing first_name or surname
+      if (!profile || !profile.first_name || !profile.first_name.trim()) {
+        setModalMessage("Please add your first name to your profile before applying");
+        setShowModal(true);
+        return;
+      }
+      
+      if (!profile || !profile.surname || !profile.surname.trim()) {
+        setModalMessage("Please add your surname to your profile before applying");
+        setShowModal(true);
+        return;
+      }
+  
       // Check existing application
       const { count, error: countError } = await supabase
         .from("applications")
         .select("*", { count: "exact" })
         .eq("job_id", id)
         .eq("user_id", user.id);
-
+  
       if (countError) {
         console.error("Error checking existing application:", countError);
       }
-
+  
       if (count && count > 0) {
         setModalMessage("You've already applied to this position");
         setShowModal(true);
         setApplyDisabled(true);
         return;
       }
-
+  
       // Submit application
-      const { error: applyError } = await supabase.from("applications").insert([
+      const { data: applicationData, error: applyError } = await supabase.from("applications").insert([
         {
           job_id: id,
           user_id: user.id,
           email: user.email,
-          first_name: profile.first_name,
-          surname: profile.surname,
+          first_name: profile.first_name.trim(),
+          surname: profile.surname.trim(),
           status: "pending",
           job_title: jobExists.title,
         },
-      ]);
+      ]).select();
       
       if (applyError) {
+        console.error("Application error:", applyError);
+        
         if (applyError.code === "23505") {
           setModalMessage("You've already applied to this position");
           setShowModal(true);
@@ -175,7 +192,12 @@ export default function JobDetails() {
           );
           setShowModal(true);
           return;
+        } else if (applyError.message && applyError.message.includes("surname")) {
+          setModalMessage("Please ensure your surname is properly set in your profile");
+          setShowModal(true);
+          return;
         }
+        
         setModalMessage("Application failed: " + applyError.message);
         setShowModal(true);
         return;
@@ -210,13 +232,13 @@ export default function JobDetails() {
       } catch (emailError) {
         console.error("Email notification failed:", emailError);
       }
-
+  
       setModalMessage("✅ Application submitted successfully!");
       setShowModal(true);
       setApplyDisabled(true);
     } catch (error) {
       console.error("Error in application process:", error);
-      setModalMessage("An unexpected error occurred");
+      setModalMessage("An unexpected error occurred. Please try again later.");
       setShowModal(true);
     } finally {
       setIsSubmitting(false);
