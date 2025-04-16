@@ -1,4 +1,3 @@
-// pages/api/send-jobApplication-email.js
 import nodemailer from "nodemailer";
 
 export default async function handler(req, res) {
@@ -27,45 +26,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { email, firstName, surname, jobTitle, jobLink, jobPosition } = req.body;
-    
-    console.log("Received job application email request:", {
-      email,
-      firstName,
-      surname,
-      jobTitle,
-      jobPosition,
-      jobLink
-    });
-
-    // Validate required fields with better whitespace handling
-    if (!email) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing required field: email",
-      });
-    }
-    
-    if (!firstName || firstName.trim() === "") {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid or missing firstName",
-      });
-    }
-    
-    if (!surname || surname.trim() === "") {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid or missing surname",
-      });
-    }
-    
-    if (!jobTitle) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing required field: jobTitle",
-      });
-    }
+    const { email, firstName, jobTitle, jobLink, jobPosition } = req.body;
 
     // Create Zoho SMTP transporter
     const transporter = nodemailer.createTransport({
@@ -81,55 +42,36 @@ export default async function handler(req, res) {
       },
     });
 
-    console.log("Email configuration:", {
-      host: "smtp.zoho.com",
-      user: process.env.EMAIL_USER,
-      replyTo: process.env.REPLY_EMAIL || process.env.EMAIL_USER
-    });
-
-    // Use the REPLY_EMAIL from .env or fall back to EMAIL_USER if not provided
-    const replyToEmail = process.env.REPLY_EMAIL || process.env.EMAIL_USER;
-    
-    // Trim values for email to ensure clean output
-    const trimmedFirstName = firstName.trim();
-    const trimmedSurname = surname.trim();
-    
     const mailOptions = {
-      from: `"Ravenz Research" <${process.env.REPLY_EMAIL || process.env.EMAIL_USER}>`,
+      from: `"Ravenz Research" <${process.env.REPLY_EMAIL}>`,
       to: email,
-      subject: `Application Received for ${jobTitle} - Ravenz Research`,
-      replyTo: replyToEmail,
+      subject: `Application Recieved for ${jobTitle} - Ravenz Research`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
-          <h2 style="color: #3a86ff; text-align: center;">Congratulations on Your Application!</h2>
-          <p>Dear <strong>${trimmedFirstName} ${trimmedSurname}</strong>,</p>
-          <p>We've successfully received your application for the <strong>${jobTitle}</strong> position at <strong>${jobPosition || 'our company'}</strong>. We are thrilled to have you as a candidate!</p>
-          <p>Our team will review your submission shortly, and if your profile is shortlisted, you'll receive further instructions regarding the next steps, including identity verification and onboarding.</p>
-          <p>In the meantime, please ensure your contact details remain active and check your email regularly for updates.</p>
-          <p>We appreciate your interest in joining our team and look forward to the possibility of working together.</p>
-          <p>You can view the job details and track your application status using the link below:</p>
-          <p><a href="${jobLink}" style="color: #3a86ff; text-decoration: none;">View Job Details</a></p>
-          <p>If you have any questions, feel free to reply to this email.</p>
-          <p>Best regards,<br><strong>Ravenz Research</strong><br>www.RavenzResearch.com</p>
-        </div>
-      `,
-    };
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
+        <h2 style="color: #3a86ff; text-align: center;">Congratulations on Your Application!</h2>
+        <p>Dear <strong>${trimmedFirstName} ${trimmedSurname}</strong>,</p>
+        <p>We've successfully received your application for the <strong>${jobTitle}</strong> position at <strong>${jobPosition || 'our company'}</strong>. We are thrilled to have you as a candidate!</p>
+        <p>Our team will review your submission shortly, and if your profile is shortlisted, you'll receive further instructions regarding the next steps, including identity verification and onboarding.</p>
+        <p>In the meantime, please ensure your contact details remain active and check your email regularly for updates.</p>
+        <p>We appreciate your interest in joining our team and look forward to the possibility of working together.</p>
+        <p>You can view the job details and track your application status using the link below:</p>
+        <p><a href="${jobLink}" style="color: #3a86ff; text-decoration: none;">View Job Details</a></p>
+        <p>If you have any questions, feel free to reply to this email.</p>
+        <p>Best regards,<br><strong>Ravenz Research</strong><br>www.RavenzResearch.com</p>
+      </div>
+    `,
+  };
 
-    // Send email
-    console.log("Attempting to send email...");
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent:", info.messageId);
-    
+    await transporter.sendMail(mailOptions);
     return res
       .status(200)
-      .json({ success: true, message: "Email sent successfully", messageId: info.messageId });
+      .json({ success: true, message: "Email sent successfully" });
   } catch (error) {
     console.error("Error sending email:", error);
     return res.status(500).json({
       success: false,
       message: "Failed to send email",
       error: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 }
