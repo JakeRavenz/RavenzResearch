@@ -94,9 +94,9 @@ export default function Profile() {
   const handleUpdateProfile = () => {
     navigate("/jobs/apply");
   };
-  const handleMyJobs = () => {
-    navigate("/myJobs");
-  };
+  // const handleMyJobs = () => {
+  //   navigate("/myJobs");
+  // };
 
   if (loading) {
     return (
@@ -142,12 +142,12 @@ export default function Profile() {
               >
                 Update Profile
               </button>
-              <button
+              {/* <button
                 onClick={handleMyJobs}
                 className="px-4 py-2 text-gray-600 transition-colors border border-gray-300 rounded-md hover:bg-gray-100"
               >
                 My Jobs
-              </button>
+              </button> */}
               <button
                 onClick={handleLogout}
                 className="px-4 py-2 text-gray-600 transition-colors border border-gray-300 rounded-md hover:bg-gray-100"

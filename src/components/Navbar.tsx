@@ -63,13 +63,13 @@ export default function Navbar() {
               <span>Jobs</span>
             </Link>
 
-            {/* <Link
-              to="/companies"
+            <Link
+              to="/myJobs"
               className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
             >
-              <BuildingOffice2Icon className="w-5 h-5" />
-              <span>Companies</span>
-            </Link> */}
+             <BriefcaseIcon className="w-5 h-5" />
+              <span className="w-5 h-5">myJobs</span>
+            </Link>
 
             <Link
               to="/aboutUs"
