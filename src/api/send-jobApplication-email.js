@@ -26,7 +26,21 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { email, firstName, jobTitle, jobLink, jobPosition } = req.body;
+    const { email, firstName, surname, jobTitle, jobPosition, jobLink } = req.body;
+
+    // Validate required fields
+    if (!email || !email.includes('@')) {
+      return res.status(400).json({ success: false, message: 'Invalid or missing email address' });
+    }
+    if (!firstName || typeof firstName !== 'string') {
+      return res.status(400).json({ success: false, message: 'Invalid or missing first name' });
+    }
+    if (!surname || typeof surname !== 'string') {
+      return res.status(400).json({ success: false, message: 'Invalid or missing surname' });
+    }
+    if (!jobTitle) {
+      return res.status(400).json({ success: false, message: 'Missing job title' });
+    }
 
     // Create Zoho SMTP transporter
     const transporter = nodemailer.createTransport({
@@ -43,13 +57,13 @@ export default async function handler(req, res) {
     });
 
     const mailOptions = {
-      from: `"Ravenz Research" <${process.env.REPLY_EMAIL}>`,
+      from: `"Ravenz Research" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: `Application Recieved for ${jobTitle} - Ravenz Research`,
+      subject: `Application Received for ${jobTitle} - Ravenz Research`,
       html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
         <h2 style="color: #3a86ff; text-align: center;">Congratulations on Your Application!</h2>
-        <p>Dear <strong>${trimmedFirstName} ${trimmedSurname}</strong>,</p>
+        <p>Dear <strong>${firstName} ${surname}</strong>,</p>
         <p>We've successfully received your application for the <strong>${jobTitle}</strong> position at <strong>${jobPosition || 'our company'}</strong>. We are thrilled to have you as a candidate!</p>
         <p>Our team will review your submission shortly, and if your profile is shortlisted, you'll receive further instructions regarding the next steps, including identity verification and onboarding.</p>
         <p>In the meantime, please ensure your contact details remain active and check your email regularly for updates.</p>
@@ -59,8 +73,9 @@ export default async function handler(req, res) {
         <p>If you have any questions, feel free to reply to this email.</p>
         <p>Best regards,<br><strong>Ravenz Research</strong><br>www.RavenzResearch.com</p>
       </div>
-    `,
-  };
+      `,
+      replyTo: process.env.REPLY_EMAIL || process.env.EMAIL_USER
+    };
 
     await transporter.sendMail(mailOptions);
     return res

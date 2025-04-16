@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import emailRoutes from './api/send-verification-email';
+import emailRoute from './api/send-jobApplication-email';
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api', emailRoutes);
+app.use('/api', emailRoute)
 
 // Start server
 app.listen(PORT, () => {
