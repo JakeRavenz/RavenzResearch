@@ -1,3 +1,4 @@
+// pages/api/send-jobApplication-email.js
 import nodemailer from "nodemailer";
 
 export default async function handler(req, res) {
@@ -12,22 +13,30 @@ export default async function handler(req, res) {
     "Access-Control-Allow-Headers",
     "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
   );
-  
+
   // Handle OPTIONS request (preflight)
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
-  
+
   // Only accept POST requests
   if (req.method !== "POST") {
     return res
       .status(405)
       .json({ success: false, message: "Method not allowed" });
   }
-  
+
   try {
     const { email, firstName, jobTitle, jobLink, jobPosition } = req.body;
     
+    console.log("Received job application email request:", {
+      email,
+      firstName,
+      jobTitle,
+      jobPosition,
+      jobLink
+    });
+
     // Validate required fields
     if (!email || !firstName || !jobTitle) {
       return res.status(400).json({
@@ -35,7 +44,7 @@ export default async function handler(req, res) {
         message: "Missing required fields: email, firstName, or jobTitle",
       });
     }
-    
+
     // Create Zoho SMTP transporter
     const transporter = nodemailer.createTransport({
       host: "smtp.zoho.com",
@@ -49,12 +58,18 @@ export default async function handler(req, res) {
         rejectUnauthorized: false,
       },
     });
-    
+
+    console.log("Email configuration:", {
+      host: "smtp.zoho.com",
+      user: process.env.EMAIL_USER,
+      replyTo: process.env.REPLY_EMAIL || process.env.EMAIL_USER
+    });
+
     // Use the REPLY_EMAIL from .env or fall back to EMAIL_USER if not provided
     const replyToEmail = process.env.REPLY_EMAIL || process.env.EMAIL_USER;
     
     const mailOptions = {
-      from: `"Ravenz Research" <noreply@ravenzresearch.com>`,
+      from: `"Ravenz Research" < ${process.env.REPLY_EMAIL}||${process.env.EMAIL_USER}>`,
       to: email,
       subject: `Application Received for ${jobTitle} - Ravenz Research`,
       replyTo: replyToEmail,
@@ -73,20 +88,22 @@ export default async function handler(req, res) {
         </div>
       `,
     };
-    
+
     // Send email
+    console.log("Attempting to send email...");
     const info = await transporter.sendMail(mailOptions);
     console.log("Email sent:", info.messageId);
     
     return res
       .status(200)
-      .json({ success: true, message: "Email sent successfully" });
+      .json({ success: true, message: "Email sent successfully", messageId: info.messageId });
   } catch (error) {
     console.error("Error sending email:", error);
     return res.status(500).json({
       success: false,
       message: "Failed to send email",
       error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 }

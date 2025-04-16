@@ -89,6 +89,7 @@ export default function JobDetails() {
       if (!id) {
         setModalMessage("Job ID is missing");
         setShowModal(true);
+        setIsSubmitting(false);
         return;
       }
   
@@ -105,6 +106,7 @@ export default function JobDetails() {
           "This job posting no longer exists or is not open for applications"
         );
         setShowModal(true);
+        setIsSubmitting(false);
         return;
       }
       
@@ -116,6 +118,7 @@ export default function JobDetails() {
       if (!user) {
         setModalMessage("Please login to apply for this position");
         setShowModal(true);
+        setIsSubmitting(false);
         return;
       }
   
@@ -131,6 +134,7 @@ export default function JobDetails() {
         console.error("Profile error:", profileError);
         setModalMessage("Please complete your profile before applying");
         setShowModal(true);
+        setIsSubmitting(false);
         return;
       }
   
@@ -138,12 +142,14 @@ export default function JobDetails() {
       if (!profile || !profile.first_name || !profile.first_name.trim()) {
         setModalMessage("Please add your first name to your profile before applying");
         setShowModal(true);
+        setIsSubmitting(false);
         return;
       }
       
       if (!profile || !profile.surname || !profile.surname.trim()) {
         setModalMessage("Please add your surname to your profile before applying");
         setShowModal(true);
+        setIsSubmitting(false);
         return;
       }
   
@@ -162,6 +168,7 @@ export default function JobDetails() {
         setModalMessage("You've already applied to this position");
         setShowModal(true);
         setApplyDisabled(true);
+        setIsSubmitting(false);
         return;
       }
   
@@ -185,31 +192,44 @@ export default function JobDetails() {
           setModalMessage("You've already applied to this position");
           setShowModal(true);
           setApplyDisabled(true);
+          setIsSubmitting(false);
           return;
         } else if (applyError.code === "23503") {
           setModalMessage(
             "Unable to submit application: the job posting may have been removed"
           );
           setShowModal(true);
+          setIsSubmitting(false);
           return;
         } else if (applyError.message && applyError.message.includes("surname")) {
           setModalMessage("Please ensure your surname is properly set in your profile");
           setShowModal(true);
+          setIsSubmitting(false);
           return;
         }
         
         setModalMessage("Application failed: " + applyError.message);
         setShowModal(true);
+        setIsSubmitting(false);
         return;
       }
       
       // Send jobapplication success email
       try {
+        console.log("Preparing to send application email notification");
         const email = user.email;
+        
         if (!email) {
           console.error("Email not found in user data");
+          setIsSubmitting(false);
           return;
         }
+        
+        const companyName = Array.isArray(jobExists.company)
+          ? jobExists.company[0].name
+          : jobExists.company.name;
+
+        console.log("Sending email to:", email);
         
         const response = await fetch("/api/send-jobApplication-email", {
           method: "POST",
@@ -218,19 +238,24 @@ export default function JobDetails() {
             email,
             firstName: profile.first_name,
             jobTitle: jobExists.title,
-            jobPosition: Array.isArray(jobExists.company)
-              ? jobExists.company[0].name
-              : jobExists.company.name,
-            jobLink: `https://www.ravenzresearch.com/myjobs`,
+            jobPosition: companyName,
+            jobLink: `${window.location.origin}/myjobs`,
           }),
         });
+        
+        console.log("Email API response status:", response.status);
         
         if (!response.ok) {
           const errorData = await response.json();
           console.error("Email API error:", errorData);
+          // We continue even if email fails, since the application was submitted
+        } else {
+          const responseData = await response.json();
+          console.log("Email send successful:", responseData);
         }
       } catch (emailError) {
         console.error("Email notification failed:", emailError);
+        // We don't set an error modal here as the application was successful
       }
   
       setModalMessage("✅ Application submitted successfully!");
