@@ -69,7 +69,7 @@ export default async function handler(req, res) {
     const replyToEmail = process.env.REPLY_EMAIL || process.env.EMAIL_USER;
     
     const mailOptions = {
-      from: `"Ravenz Research" < ${process.env.REPLY_EMAIL}||${process.env.EMAIL_USER}>`,
+      from: `"Ravenz Research" <${process.env.REPLY_EMAIL || process.env.EMAIL_USER}>`,
       to: email,
       subject: `Application Received for ${jobTitle} - Ravenz Research`,
       replyTo: replyToEmail,
