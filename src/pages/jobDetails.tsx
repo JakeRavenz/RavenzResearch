@@ -139,19 +139,23 @@ export default function JobDetails() {
       }
   
       // Check specifically for missing first_name or surname
-      if (!profile || !profile.first_name || !profile.first_name.trim()) {
+      if (!profile || !profile.first_name ) {
         setModalMessage("Please add your first name to your profile before applying");
         setShowModal(true);
         setIsSubmitting(false);
         return;
       }
       
-      if (!profile || !profile.surname || !profile.surname.trim()) {
+      if (!profile || !profile.surname || profile.surname.trim() === "") {
         setModalMessage("Please add your surname to your profile before applying");
         setShowModal(true);
         setIsSubmitting(false);
         return;
       }
+
+      // Prepare cleaned name values
+      const trimmedFirstName = profile.first_name.trim();
+      const trimmedSurname = profile.surname.trim();
   
       // Check existing application
       const { count, error: countError } = await supabase
@@ -178,8 +182,8 @@ export default function JobDetails() {
           job_id: id,
           user_id: user.id,
           email: user.email,
-          first_name: profile.first_name.trim(),
-          surname: profile.surname.trim(),
+          first_name: trimmedFirstName,
+          surname: trimmedSurname,
           status: "pending",
           job_title: jobExists.title,
         },
@@ -198,11 +202,6 @@ export default function JobDetails() {
           setModalMessage(
             "Unable to submit application: the job posting may have been removed"
           );
-          setShowModal(true);
-          setIsSubmitting(false);
-          return;
-        } else if (applyError.message && applyError.message.includes("surname")) {
-          setModalMessage("Please ensure your surname is properly set in your profile");
           setShowModal(true);
           setIsSubmitting(false);
           return;
@@ -236,8 +235,8 @@ export default function JobDetails() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             email,
-            firstName: profile.first_name,
-            surname: profile.surname,
+            firstName: trimmedFirstName,
+            surname: trimmedSurname,
             jobTitle: jobExists.title,
             jobPosition: companyName,
             jobLink: `${window.location.origin}/myjobs`,
@@ -315,12 +314,11 @@ export default function JobDetails() {
             setShowModal(false);
             // If user needs to complete profile, redirect after closing modal
             if (
-              modalMessage ===
-                "You need to complete your profile before applying." ||
-              modalMessage ===
-                "Profile not found. Please create a profile first."
+              modalMessage === "Please add your first name to your profile before applying" ||
+              modalMessage === "Please add your surname to your profile before applying" ||
+              modalMessage === "Please complete your profile before applying"
             ) {
-              navigate(`/jobs/apply`);
+              navigate("/profile");
             }
           }}
         />

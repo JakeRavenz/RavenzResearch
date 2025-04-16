@@ -38,11 +38,32 @@ export default async function handler(req, res) {
       jobLink
     });
 
-    // Validate required fields
-    if (!email || !firstName || !surname || !jobTitle) {
+    // Validate required fields with better whitespace handling
+    if (!email) {
       return res.status(400).json({
         success: false,
-        message: "Missing required fields: email, firstName, surname, or jobTitle",
+        message: "Missing required field: email",
+      });
+    }
+    
+    if (!firstName || firstName.trim() === "") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or missing firstName",
+      });
+    }
+    
+    if (!surname || surname.trim() === "") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or missing surname",
+      });
+    }
+    
+    if (!jobTitle) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required field: jobTitle",
       });
     }
 
@@ -69,6 +90,10 @@ export default async function handler(req, res) {
     // Use the REPLY_EMAIL from .env or fall back to EMAIL_USER if not provided
     const replyToEmail = process.env.REPLY_EMAIL || process.env.EMAIL_USER;
     
+    // Trim values for email to ensure clean output
+    const trimmedFirstName = firstName.trim();
+    const trimmedSurname = surname.trim();
+    
     const mailOptions = {
       from: `"Ravenz Research" <${process.env.REPLY_EMAIL || process.env.EMAIL_USER}>`,
       to: email,
@@ -77,8 +102,8 @@ export default async function handler(req, res) {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
           <h2 style="color: #3a86ff; text-align: center;">Congratulations on Your Application!</h2>
-          <p>Dear <strong>${firstName} ${surname}</strong>,</p>
-          <p>We've successfully received your application for the <strong>${jobTitle}</strong> position at <strong>${jobPosition}</strong>. We are thrilled to have you as a candidate!</p>
+          <p>Dear <strong>${trimmedFirstName} ${trimmedSurname}</strong>,</p>
+          <p>We've successfully received your application for the <strong>${jobTitle}</strong> position at <strong>${jobPosition || 'our company'}</strong>. We are thrilled to have you as a candidate!</p>
           <p>Our team will review your submission shortly, and if your profile is shortlisted, you'll receive further instructions regarding the next steps, including identity verification and onboarding.</p>
           <p>In the meantime, please ensure your contact details remain active and check your email regularly for updates.</p>
           <p>We appreciate your interest in joining our team and look forward to the possibility of working together.</p>
