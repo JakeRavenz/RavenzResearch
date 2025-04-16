@@ -1,6 +1,12 @@
 import nodemailer from "nodemailer";
 
 export default async function handler(req, res) {
+  // Add extensive logging
+  console.log("==== JOB APPLICATION EMAIL HANDLER TRIGGERED ====");
+  console.log("Request URL:", req.url);
+  console.log("Request method:", req.method);
+  console.log("Request body:", JSON.stringify(req.body, null, 2));
+  
   // Set CORS headers
   res.setHeader("Access-Control-Allow-Credentials", true);
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -20,6 +26,7 @@ export default async function handler(req, res) {
 
   // Only accept POST requests
   if (req.method !== "POST") {
+    console.log("Rejected non-POST method:", req.method);
     return res
       .status(405)
       .json({ success: false, message: "Method not allowed" });
@@ -27,20 +34,34 @@ export default async function handler(req, res) {
 
   try {
     const { email, firstName, surname, jobTitle, jobPosition, jobLink } = req.body;
+    
+    console.log("Extracted data from request:");
+    console.log("- email:", email);
+    console.log("- firstName:", firstName);
+    console.log("- surname:", surname);
+    console.log("- jobTitle:", jobTitle);
+    console.log("- jobPosition:", jobPosition);
+    console.log("- jobLink:", jobLink);
 
     // Validate required fields
     if (!email || !email.includes('@')) {
+      console.log("Validation failed: Invalid email:", email);
       return res.status(400).json({ success: false, message: 'Invalid or missing email address' });
     }
     if (!firstName || typeof firstName !== 'string') {
+      console.log("Validation failed: Invalid firstName:", firstName);
       return res.status(400).json({ success: false, message: 'Invalid or missing first name' });
     }
     if (!surname || typeof surname !== 'string') {
+      console.log("Validation failed: Invalid surname:", surname);
       return res.status(400).json({ success: false, message: 'Invalid or missing surname' });
     }
     if (!jobTitle) {
+      console.log("Validation failed: Missing jobTitle");
       return res.status(400).json({ success: false, message: 'Missing job title' });
     }
+
+    console.log("All validations passed, preparing email");
 
     // Create Zoho SMTP transporter
     const transporter = nodemailer.createTransport({
@@ -55,6 +76,8 @@ export default async function handler(req, res) {
         rejectUnauthorized: false,
       },
     });
+
+    console.log("Email transporter configured with user:", process.env.EMAIL_USER);
 
     const mailOptions = {
       from: `"Ravenz Research" <${process.env.EMAIL_USER}>`,
@@ -77,7 +100,18 @@ export default async function handler(req, res) {
       replyTo: process.env.REPLY_EMAIL || process.env.EMAIL_USER
     };
 
-    await transporter.sendMail(mailOptions);
+    console.log("Preparing to send email with options:", JSON.stringify({
+      from: mailOptions.from,
+      to: mailOptions.to,
+      subject: mailOptions.subject,
+      replyTo: mailOptions.replyTo
+    }, null, 2));
+
+    // Send the email
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully! MessageID:", info.messageId);
+    
+    console.log("Returning success response to client");
     return res
       .status(200)
       .json({ success: true, message: "Email sent successfully" });

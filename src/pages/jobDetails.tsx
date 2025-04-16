@@ -85,8 +85,11 @@ export default function JobDetails() {
     if (isSubmitting) return;
     setIsSubmitting(true);
     
+    console.log("handleApplyNow function triggered");
+    
     try {
       if (!id) {
+        console.log("Error: Job ID is missing");
         setModalMessage("Job ID is missing");
         setShowModal(true);
         setIsSubmitting(false);
@@ -94,6 +97,7 @@ export default function JobDetails() {
       }
   
       // Verify the job exists before continuing
+      console.log("Checking if job exists with ID:", id);
       const { data: jobExists, error: jobCheckError } = await supabase
         .from("jobs")
         .select("id, title, company:companies(name, logo_url)")
@@ -102,6 +106,7 @@ export default function JobDetails() {
         .single();
   
       if (jobCheckError || !jobExists) {
+        console.log("Job check error or job doesn't exist:", jobCheckError);
         setModalMessage(
           "This job posting no longer exists or is not open for applications"
         );
@@ -110,19 +115,26 @@ export default function JobDetails() {
         return;
       }
       
+      console.log("Job exists:", jobExists);
+      
       // Check if user is logged in
+      console.log("Checking if user is logged in");
       const {
         data: { user },
       } = await supabase.auth.getUser();
       
       if (!user) {
+        console.log("User not logged in");
         setModalMessage("Please login to apply for this position");
         setShowModal(true);
         setIsSubmitting(false);
         return;
       }
   
+      console.log("User is logged in with ID:", user.id);
+  
       // Check profile completeness
+      console.log("Checking profile completeness");
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("first_name, surname")
@@ -138,8 +150,11 @@ export default function JobDetails() {
         return;
       }
   
+      console.log("Retrieved profile:", profile);
+  
       // Check specifically for missing first_name or surname
-      if (!profile || !profile.first_name ) {
+      if (!profile || !profile.first_name) {
+        console.log("Missing first name");
         setModalMessage("Please add your first name to your profile before applying");
         setShowModal(true);
         setIsSubmitting(false);
@@ -147,17 +162,20 @@ export default function JobDetails() {
       }
       
       if (!profile || !profile.surname || profile.surname.trim() === "") {
+        console.log("Missing surname");
         setModalMessage("Please add your surname to your profile before applying");
         setShowModal(true);
         setIsSubmitting(false);
         return;
       }
-
+  
       // Prepare cleaned name values
       const trimmedFirstName = profile.first_name.trim();
       const trimmedSurname = profile.surname.trim();
+      console.log("Profile is complete. Names:", { trimmedFirstName, trimmedSurname });
   
       // Check existing application
+      console.log("Checking for existing application");
       const { count, error: countError } = await supabase
         .from("applications")
         .select("*", { count: "exact" })
@@ -169,6 +187,7 @@ export default function JobDetails() {
       }
   
       if (count && count > 0) {
+        console.log("User already applied to this job. Application count:", count);
         setModalMessage("You've already applied to this position");
         setShowModal(true);
         setApplyDisabled(true);
@@ -177,6 +196,7 @@ export default function JobDetails() {
       }
   
       // Submit application
+      console.log("Submitting application to database");
       const { data: applicationData, error: applyError } = await supabase.from("applications").insert([
         {
           job_id: id,
@@ -213,6 +233,8 @@ export default function JobDetails() {
         return;
       }
       
+      console.log("Application added to database successfully:", applicationData);
+      
       // Send jobapplication success email
       try {
         console.log("Preparing to send application email notification");
@@ -227,9 +249,18 @@ export default function JobDetails() {
         const companyName = Array.isArray(jobExists.company)
           ? jobExists.company[0].name
           : jobExists.company.name;
-
+  
         console.log("Sending email to:", email);
+        console.log("Email data being sent:", {
+          email,
+          firstName: trimmedFirstName,
+          surname: trimmedSurname,
+          jobTitle: jobExists.title,
+          jobPosition: companyName,
+          jobLink: `${window.location.origin}/myjobs`,
+        });
         
+        console.log("About to call API endpoint: /api/send-jobApplication-email");
         const response = await fetch("/api/send-jobApplication-email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -258,6 +289,7 @@ export default function JobDetails() {
         // We don't set an error modal here as the application was successful
       }
   
+      console.log("Setting success message and showing modal");
       setModalMessage("✅ Application submitted successfully!");
       setShowModal(true);
       setApplyDisabled(true);
@@ -266,21 +298,9 @@ export default function JobDetails() {
       setModalMessage("An unexpected error occurred. Please try again later.");
       setShowModal(true);
     } finally {
+      console.log("handleApplyNow function completing");
       setIsSubmitting(false);
     }
-  }
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center">
-          <div className="w-10 h-10 mx-auto border-4 border-blue-600 rounded-full animate-spin border-t-transparent"></div>
-          <p className="mt-4 font-medium text-gray-600">
-            Loading job details...
-          </p>
-        </div>
-      </div>
-    );
   }
 
   if (!job) {
