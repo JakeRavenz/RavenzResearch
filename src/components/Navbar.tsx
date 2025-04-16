@@ -65,10 +65,10 @@ export default function Navbar() {
 
             <Link
               to="/myJobs"
-              className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
+              className="flex items-center space-x-2 text-gray-700  pr-1  hover:text-indigo-600 font-['Inter']"
             >
              <BriefcaseIcon className="w-5 h-5" />
-              <span className="w-5 h-5">myJobs</span>
+              <span className="w-5 h-5 text-balanced">myJobs</span>
             </Link>
 
             <Link
@@ -153,14 +153,14 @@ export default function Navbar() {
               <span>Jobs</span>
             </Link>
 
-            {/* <Link
-              to="/companies"
+            <Link
+              to="/myJobs"
               className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
               onClick={closeSidebar}
             >
-              <BuildingOffice2Icon className="w-5 h-5" />
-              <span>Companies</span>
-            </Link> */}
+              <BriefcaseIcon className="w-5 h-5" />
+              <span>My Jobs</span>
+            </Link>
 
             <Link
               to="/aboutUs"
