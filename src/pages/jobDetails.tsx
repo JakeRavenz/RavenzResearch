@@ -48,12 +48,12 @@ export default function JobDetails() {
   const [modalMessage, setModalMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [applyDisabled, setApplyDisabled] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     async function fetchJobDetails() {
       if (!id) return;
       try {
-        // Removed 'responsibilities' from the query since it doesn't exist in the database
         const { data, error } = await supabase
           .from("jobs")
           .select(
@@ -82,6 +82,9 @@ export default function JobDetails() {
   }, [id]);
 
   async function handleApplyNow() {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    
     try {
       if (!id) {
         setModalMessage("Job ID is missing");
@@ -104,10 +107,12 @@ export default function JobDetails() {
         setShowModal(true);
         return;
       }
+      
       // Check if user is logged in
       const {
         data: { user },
       } = await supabase.auth.getUser();
+      
       if (!user) {
         setModalMessage("Please login to apply for this position");
         setShowModal(true);
@@ -157,35 +162,7 @@ export default function JobDetails() {
           job_title: jobExists.title,
         },
       ]);
-      // Send jobapplication success email (non-blocking)
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        const email = session?.user?.email;
-        if (!email) {
-          setModalMessage("Email not found in session data");
-          setShowModal(true);
-          return;
-        }
-        if (email) {
-          await fetch("/api/send-jobApplication-email", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email,
-              firstName: profile.first_name,
-              jobTitle: jobExists.title,
-              jobPosition: Array.isArray(jobExists.company)
-                ? (jobExists.company[0] as { name: string }).name
-                : (jobExists.company as { name: string }).name,
-              jobLink: `https://www.ravenzresearch.com/myjobs`,
-            }),
-          });
-        }
-      } catch (emailError) {
-        console.error("Email notification failed:", emailError);
-      }
+      
       if (applyError) {
         if (applyError.code === "23505") {
           setModalMessage("You've already applied to this position");
@@ -203,6 +180,36 @@ export default function JobDetails() {
         setShowModal(true);
         return;
       }
+      
+      // Send jobapplication success email
+      try {
+        const email = user.email;
+        if (!email) {
+          console.error("Email not found in user data");
+          return;
+        }
+        
+        const response = await fetch("/api/send-jobApplication-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            firstName: profile.first_name,
+            jobTitle: jobExists.title,
+            jobPosition: Array.isArray(jobExists.company)
+              ? jobExists.company[0].name
+              : jobExists.company.name,
+            jobLink: `https://www.ravenzresearch.com/myjobs`,
+          }),
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Email API error:", errorData);
+        }
+      } catch (emailError) {
+        console.error("Email notification failed:", emailError);
+      }
 
       setModalMessage("✅ Application submitted successfully!");
       setShowModal(true);
@@ -211,6 +218,8 @@ export default function JobDetails() {
       console.error("Error in application process:", error);
       setModalMessage("An unexpected error occurred");
       setShowModal(true);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -338,10 +347,10 @@ export default function JobDetails() {
               <div className="flex-shrink-0 hidden ml-auto md:block">
                 <button
                   onClick={handleApplyNow}
-                  disabled={applyDisabled}
+                  disabled={applyDisabled || isSubmitting}
                   className="w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
                 >
-                  Apply Now
+                  {isSubmitting ? "Applying..." : applyDisabled ? "Applied" : "Apply Now"}
                 </button>
               </div>
             </div>
@@ -350,10 +359,10 @@ export default function JobDetails() {
             <div className="mt-6 md:hidden">
               <button
                 onClick={handleApplyNow}
-                disabled={applyDisabled}
+                disabled={applyDisabled || isSubmitting}
                 className="w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Apply Now
+                {isSubmitting ? "Applying..." : applyDisabled ? "Applied" : "Apply Now"}
               </button>
             </div>
           </div>
@@ -434,10 +443,10 @@ export default function JobDetails() {
                   </div>
                   <button
                     onClick={handleApplyNow}
-                    disabled={applyDisabled}
+                    disabled={applyDisabled || isSubmitting}
                     className="flex-shrink-0 w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
                   >
-                    {applyDisabled ? "Applied" : "Apply for this position"}
+                    {isSubmitting ? "Applying..." : applyDisabled ? "Applied" : "Apply for this position"}
                   </button>
                 </div>
               </div>
@@ -468,6 +477,7 @@ function formatTimeAgo(dateString: string) {
     return diffInDays === 1 ? "1 day ago" : `${diffInDays} days ago`;
   }
 }
+
 function TruncatedDescription({ description }: { description: string }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const maxLength = 100; // Maximum number of characters to show before truncating
