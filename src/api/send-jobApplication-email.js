@@ -55,8 +55,8 @@ export default async function handler(req, res) {
       port: Number(process.env.SMTP_PORT || 587),
       secure: false,
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
+        user: process.env.REPLY_EMAIL,
+        pass: process.env.REPLY_PASSWORD,
       },
       tls: { rejectUnauthorized: false },
     });
@@ -64,7 +64,7 @@ export default async function handler(req, res) {
 
     // Application email template
     const mailOptions = {
-      from: `"Ravenz Research" <${process.env.EMAIL_USER}>`,
+      from: `"Ravenz Research" <${process.env.REPLY_EMAIL}>`,
       to: email,
       subject: `Application Received for ${jobTitle} - Ravenz Research`,
       html: `
@@ -81,8 +81,9 @@ export default async function handler(req, res) {
           <p>Best regards,<br><strong>Ravenz Research</strong><br>www.RavenzResearch.com</p>
         </div>
       `,
-      replyTo: process.env.REPLY_EMAIL || process.env.EMAIL_USER,
+      replyTo: process.env.EMAIL_USER,
     };
+    
 
     console.log("🟢 [send-jobApplication] sending subject:", mailOptions.subject);
 
