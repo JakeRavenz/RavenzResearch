@@ -647,7 +647,7 @@ export default function ProfileForm() {
                 <div className="grid grid-cols-1 gap-6">
                   <FileUpload
                     label="Resume"
-                    accept=".pdf,.doc,.docx"
+                    accept=".pdf,.doc,.docx" required
                     currentUrl={fileUrls.resumeUrl}
                     onChange={(e) =>
                       handleFileInputChange(e, "resumes", "resumeUrl")
