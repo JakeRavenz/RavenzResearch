@@ -260,7 +260,7 @@ export default function JobDetails() {
           jobLink: `${window.location.origin}/myjobs`,
         });
         
-        console.log("About to call API endpoint: /api/send-jobApplication-email");
+        console.log("About to call API endpoint: /apis/send-jobApplication-email");
         const response = await fetch("/apis/send-jobApplication-email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
