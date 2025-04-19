@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import emailRoutes from './apis/send-jobApplication-email';
+import emailRoutes from './api/send-jobApplication-email';
 import emailRoute from './api/send-jobApplication-email';
 
 dotenv.config();
