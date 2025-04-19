@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { Briefcase } from "lucide-react";
 
 interface Applications {
   id: string;
@@ -117,9 +118,12 @@ export default function MyJobs() {
 
   if (loadingApplications || loadingJobDetails) {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
-        <div className="loader"></div>
-        <p className="mt-4 text-gray-600">Loading your applications...</p>
+      <div className="flex items-center justify-center min-h-screen p-4 mx-auto bg-gray-50">
+        <div className="w-full max-w-md p-8 text-center bg-white rounded-lg shadow-lg">
+          <Briefcase className="w-16 h-16 mx-auto mt-6 mb-6 text-gray-400" />
+          <div className="w-8 h-8 mx-auto border-4 border-indigo-600 rounded-full animate-spin border-t-transparent"></div>
+          <p className="mt-4 text-gray-600">Loading job applications...</p>
+        </div>
       </div>
     );
   }

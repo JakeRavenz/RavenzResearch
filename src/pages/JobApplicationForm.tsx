@@ -186,7 +186,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
 }) => (
   <div className="mb-4">
     <label className="block mb-1 text-sm font-medium text-gray-700">
-      {label}
+      {label}{""} <span className="text-red-500">*</span>
     </label>
     <input
       type="file"

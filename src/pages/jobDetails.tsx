@@ -84,9 +84,9 @@ export default function JobDetails() {
   async function handleApplyNow() {
     if (isSubmitting) return;
     setIsSubmitting(true);
-    
+
     console.log("handleApplyNow function triggered");
-    
+
     try {
       if (!id) {
         console.log("Error: Job ID is missing");
@@ -95,7 +95,7 @@ export default function JobDetails() {
         setIsSubmitting(false);
         return;
       }
-  
+
       // Verify the job exists before continuing
       console.log("Checking if job exists with ID:", id);
       const { data: jobExists, error: jobCheckError } = await supabase
@@ -104,7 +104,7 @@ export default function JobDetails() {
         .eq("id", id)
         .eq("status", "Open")
         .single();
-  
+
       if (jobCheckError || !jobExists) {
         console.log("Job check error or job doesn't exist:", jobCheckError);
         setModalMessage(
@@ -114,15 +114,15 @@ export default function JobDetails() {
         setIsSubmitting(false);
         return;
       }
-      
+
       console.log("Job exists:", jobExists);
-      
+
       // Check if user is logged in
       console.log("Checking if user is logged in");
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      
+
       if (!user) {
         console.log("User not logged in");
         setModalMessage("Please login to apply for this position");
@@ -130,9 +130,9 @@ export default function JobDetails() {
         setIsSubmitting(false);
         return;
       }
-  
+
       console.log("User is logged in with ID:", user.id);
-  
+
       // Check profile completeness
       console.log("Checking profile completeness");
       const { data: profile, error: profileError } = await supabase
@@ -140,7 +140,7 @@ export default function JobDetails() {
         .select("first_name, surname")
         .eq("id", user.id)
         .single();
-  
+
       // Handle missing profile or incomplete profile data
       if (profileError) {
         console.error("Profile error:", profileError);
@@ -149,31 +149,38 @@ export default function JobDetails() {
         setIsSubmitting(false);
         return;
       }
-  
+
       console.log("Retrieved profile:", profile);
-  
+
       // Check specifically for missing first_name or surname
       if (!profile || !profile.first_name) {
         console.log("Missing first name");
-        setModalMessage("Please add your first name to your profile before applying");
+        setModalMessage(
+          "Please add your first name to your profile before applying"
+        );
         setShowModal(true);
         setIsSubmitting(false);
         return;
       }
-      
+
       if (!profile || !profile.surname || profile.surname.trim() === "") {
         console.log("Missing surname");
-        setModalMessage("Please add your surname to your profile before applying");
+        setModalMessage(
+          "Please add your surname to your profile before applying"
+        );
         setShowModal(true);
         setIsSubmitting(false);
         return;
       }
-  
+
       // Prepare cleaned name values
       const trimmedFirstName = profile.first_name.trim();
       const trimmedSurname = profile.surname.trim();
-      console.log("Profile is complete. Names:", { trimmedFirstName, trimmedSurname });
-  
+      console.log("Profile is complete. Names:", {
+        trimmedFirstName,
+        trimmedSurname,
+      });
+
       // Check existing application
       console.log("Checking for existing application");
       const { count, error: countError } = await supabase
@@ -181,37 +188,43 @@ export default function JobDetails() {
         .select("*", { count: "exact" })
         .eq("job_id", id)
         .eq("user_id", user.id);
-  
+
       if (countError) {
         console.error("Error checking existing application:", countError);
       }
-  
+
       if (count && count > 0) {
-        console.log("User already applied to this job. Application count:", count);
+        console.log(
+          "User already applied to this job. Application count:",
+          count
+        );
         setModalMessage("You've already applied to this position");
         setShowModal(true);
         setApplyDisabled(true);
         setIsSubmitting(false);
         return;
       }
-  
+
       // Submit application
       console.log("Submitting application to database");
-      const { data: applicationData, error: applyError } = await supabase.from("applications").insert([
-        {
-          job_id: id,
-          user_id: user.id,
-          email: user.email,
-          first_name: trimmedFirstName,
-          surname: trimmedSurname,
-          status: "pending",
-          job_title: jobExists.title,
-        },
-      ]).select();
-      
+      const { data: applicationData, error: applyError } = await supabase
+        .from("applications")
+        .insert([
+          {
+            job_id: id,
+            user_id: user.id,
+            email: user.email,
+            first_name: trimmedFirstName,
+            surname: trimmedSurname,
+            status: "pending",
+            job_title: jobExists.title,
+          },
+        ])
+        .select();
+
       if (applyError) {
         console.error("Application error:", applyError);
-        
+
         if (applyError.code === "23505") {
           setModalMessage("You've already applied to this position");
           setShowModal(true);
@@ -226,30 +239,33 @@ export default function JobDetails() {
           setIsSubmitting(false);
           return;
         }
-        
+
         setModalMessage("Application failed: " + applyError.message);
         setShowModal(true);
         setIsSubmitting(false);
         return;
       }
-      
-      console.log("Application added to database successfully:", applicationData);
-      
+
+      console.log(
+        "Application added to database successfully:",
+        applicationData
+      );
+
       // Send jobapplication success email
       try {
         console.log("Preparing to send application email notification");
         const email = user.email;
-        
+
         if (!email) {
           console.error("Email not found in user data");
           setIsSubmitting(false);
           return;
         }
-        
+
         const companyName = Array.isArray(jobExists.company)
           ? jobExists.company[0].name
           : jobExists.company.name;
-  
+
         console.log("Sending email to:", email);
         console.log("Email data being sent:", {
           email,
@@ -259,8 +275,10 @@ export default function JobDetails() {
           jobPosition: companyName,
           jobLink: `${window.location.origin}/myjobs`,
         });
-        
-        console.log("About to call API endpoint: /api/send-jobApplication-email");
+
+        console.log(
+          "About to call API endpoint: /api/send-jobApplication-email"
+        );
         const response = await fetch("/api/send-jobApplication-email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -273,9 +291,9 @@ export default function JobDetails() {
             jobLink: `${window.location.origin}/myjobs`,
           }),
         });
-        
+
         console.log("Email API response status:", response.status);
-        
+
         if (!response.ok) {
           const errorData = await response.json();
           console.error("Email API error:", errorData);
@@ -288,7 +306,7 @@ export default function JobDetails() {
         console.error("Email notification failed:", emailError);
         // We don't set an error modal here as the application was successful
       }
-  
+
       console.log("Setting success message and showing modal");
       setModalMessage("✅ Application submitted successfully!");
       setShowModal(true);
@@ -302,6 +320,19 @@ export default function JobDetails() {
       setIsSubmitting(false);
     }
   }
+  //if (loading) {
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen p-4 mx-auto bg-gray-50">
+        <div className="w-full max-w-md p-8 text-center bg-white rounded-lg shadow-lg">
+          <Briefcase className="w-16 h-16 mx-auto mt-6 mb-6 text-gray-400" />
+          <div className="w-8 h-8 mx-auto border-4 border-indigo-600 rounded-full animate-spin border-t-transparent"></div>
+          <p className="mt-4 text-gray-600">Loading job details...</p>
+        </div>
+      </div>
+    );
+  }
+  // Check if job does not exists
 
   if (!job) {
     return (
@@ -334,11 +365,37 @@ export default function JobDetails() {
             setShowModal(false);
             // If user needs to complete profile, redirect after closing modal
             if (
-              modalMessage === "Please add your first name to your profile before applying" ||
-              modalMessage === "Please add your surname to your profile before applying" ||
+              modalMessage ===
+                "Please add your first name to your profile before applying" ||
+              modalMessage ===
+                "Please add your surname to your profile before applying" ||
               modalMessage === "Please complete your profile before applying"
             ) {
               navigate("/profile");
+            }
+          }}
+        />
+      )}
+      {showModal && (
+        <Modal
+          message={modalMessage}
+          onClose={() => {
+            setShowModal(false);
+            // If user needs to login, redirect after closing modal
+            if (modalMessage === "Please login to apply for this position") {
+              navigate("/auth");
+            }
+          }}
+        />
+      )}
+      {showModal && (
+        <Modal
+          message={modalMessage}
+          onClose={() => {
+            setShowModal(false);
+            // If user needs to login, redirect after closing modal
+            if (modalMessage === "✅ Application submitted successfully!") {
+              navigate("/myJobs");
             }
           }}
         />
@@ -416,7 +473,11 @@ export default function JobDetails() {
                   disabled={applyDisabled || isSubmitting}
                   className="w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
                 >
-                  {isSubmitting ? "Applying..." : applyDisabled ? "Applied" : "Apply Now"}
+                  {isSubmitting
+                    ? "Applying..."
+                    : applyDisabled
+                    ? "Applied"
+                    : "Apply Now"}
                 </button>
               </div>
             </div>
@@ -428,7 +489,11 @@ export default function JobDetails() {
                 disabled={applyDisabled || isSubmitting}
                 className="w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? "Applying..." : applyDisabled ? "Applied" : "Apply Now"}
+                {isSubmitting
+                  ? "Applying..."
+                  : applyDisabled
+                  ? "Applied"
+                  : "Apply Now"}
               </button>
             </div>
           </div>
@@ -512,7 +577,11 @@ export default function JobDetails() {
                     disabled={applyDisabled || isSubmitting}
                     className="flex-shrink-0 w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
                   >
-                    {isSubmitting ? "Applying..." : applyDisabled ? "Applied" : "Apply for this position"}
+                    {isSubmitting
+                      ? "Applying..."
+                      : applyDisabled
+                      ? "Applied"
+                      : "Apply for this position"}
                   </button>
                 </div>
               </div>
