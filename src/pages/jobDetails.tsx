@@ -263,8 +263,8 @@ export default function JobDetails() {
         }
 
         const companyName = Array.isArray(jobExists.company)
-          ? jobExists.company[0].name
-          : jobExists.company.name;
+          ? (jobExists.company[0] as { name: string }).name
+          : (jobExists.company as { name: string }).name;
 
         console.log("Sending email to:", email);
         console.log("Email data being sent:", {
