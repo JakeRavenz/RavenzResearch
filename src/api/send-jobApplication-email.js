@@ -51,7 +51,7 @@ export default async function handler(req, res) {
     });
 
     const mailOptions = {
-      from: `"Ravenz Research Careers" <${process.env.EMAIL_USER}>`,
+      from: `"Ravenz Research Careers" <${process.env.REPLY_EMAIL}>`,
       to: email,
       subject: `Application Received for ${safeJobTitle} – Ravenz Research`,
       html: `
