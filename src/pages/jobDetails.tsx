@@ -261,7 +261,7 @@ export default function JobDetails() {
         });
         
         console.log("About to call API endpoint: /api/send-jobApplication-email");
-        const response = await fetch("/api/send-jobApplication-email", {
+        const response = await fetch("/apis/send-jobApplication-email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
