@@ -140,7 +140,6 @@ export default function JobDetails() {
         .select("first_name, surname, gender")
         .eq("id", user.id)
         .single();
-      console.log("this is the profile:", profile);
       // Handle missing profile or incomplete profile data
       if (profileError) {
         console.error("Profile error:", profileError);
@@ -153,7 +152,7 @@ export default function JobDetails() {
       console.log("Retrieved profile:", profile);
 
       // Check specifically for missing first_name or surname
-      if (!profile || !profile.first_name) {
+      if (!profile || !profile.first_name || profile.first_name.trim() === "") {
         console.log("Missing first name");
         setModalMessage(
           "Please add your first name to your profile before applying"
@@ -162,7 +161,16 @@ export default function JobDetails() {
         setIsSubmitting(false);
         return;
       }
-
+      // check specifically if profile is verified
+      // if (!profile || !profile.verified) {
+      //   console.log("Profile not verified");
+      //   setModalMessage(
+      //     "Please verify your profile before applying for this position"
+      //   );
+      //   setShowModal(true);
+      //   setIsSubmitting(false);
+      //   return;
+      // }
       if (!profile || !profile.surname || profile.surname.trim() === "") {
         console.log("Missing surname");
         setModalMessage(
@@ -220,7 +228,8 @@ export default function JobDetails() {
             first_name: trimmedFirstName,
             surname: trimmedSurname,
             status: "pending",
-            job_title: jobExists.title, gender: gender,
+            job_title: jobExists.title,
+            gender: gender,
           },
         ])
         .select();

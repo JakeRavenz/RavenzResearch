@@ -8,7 +8,7 @@ import Profile from "./pages/Profile";
 import Auth from "./pages/Auth";
 import Jobs from "./pages/Jobs";
 import JobDetails from "./pages/jobDetails";
-import JobApplicationForm from "./pages/JobApplicationForm";
+import UpdateProfile from "./pages/UpdateProfile";
 import Layout from "./components/layout";
 import AboutUs from "./pages/AboutUs";
 import CompanyForm from "./pages/createCompanies";
@@ -28,7 +28,7 @@ function App() {
         <Route path="/jobs/:id" element={<JobDetails />} />
         <Route path="/company-bio" element={<CompanyForm />} />
         <Route path="/post-job" element={<PostJobForm />} />
-        <Route path="/jobs/apply" element={<JobApplicationForm />} />
+        <Route path="/jobs/apply" element={<UpdateProfile />} />
 
         {/* All other routes wrapped with Layout */}
         <Route element={<Layout />}>
