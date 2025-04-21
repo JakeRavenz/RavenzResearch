@@ -42,8 +42,8 @@ export default async function handler(req, res) {
       port: 587,
       secure: false,
       auth: {
-        user: process.env.REPLY_EMAIL,
-        pass: process.env.REPLY_PASSWORD,
+        user: process.env.NO_REPLY_EMAIL,
+        pass: process.env.NO_REPLY_EMAIL_PASSWORD,
       },
       tls: {
         rejectUnauthorized: false,
@@ -51,7 +51,7 @@ export default async function handler(req, res) {
     });
 
     const mailOptions = {
-      from: `"Ravenz Research Careers" <${process.env.REPLY_EMAIL}>`,
+      from: `"Ravenz Research Careers" <${process.env.NO_REPLY_EMAIL}>`,
       to: email,
       subject: `Application Received for ${safeJobTitle} – Ravenz Research`,
       html: `
@@ -65,9 +65,14 @@ export default async function handler(req, res) {
 
             <p>Thank you for applying for the <strong>${safeJobTitle}</strong> role at <strong>Ravenz Research</strong>. We have successfully received your application for the position of <strong>${safeJobPosition}</strong>.</p>
 
-            <p>Our recruitment team is currently reviewing applications, and we will be in touch with next steps shortly.</p>
+            <p>Our recruitment team is currently reviewing your application, and we will be in touch with the next steps shortly.</p>
 
-            <p>In the meantime, if you’d like to learn more about the role or our company, please visit the link below:</p>
+            <p>In the meantime, if you’d like to learn more about the role, or our company, please visit the button below:</p> 
+            <div style="text-align: center; margin: 20px 0;">
+              <a href="${safeJobLink}" style="background-color: #3a86ff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">View Job Details</a>
+            </div>
+
+            <p>If you experience any issues with the button above, copy and paste the URL below into your browser</p>
             <p><a href="${safeJobLink}" style="color: #3a86ff;" target="_blank">${safeJobLink}</a></p>
 
             <p>We appreciate your interest in joining our team!</p>
@@ -78,7 +83,8 @@ export default async function handler(req, res) {
           </div>
         </div>
       `,
-      replyTo: process.env.EMAIL_USER,
+      // The replyTo field is commented out because it is not currently required. Uncomment and set it if needed in the future.
+      // replyTo: process.env.EMAIL_USER,
     };
 
     await transporter.sendMail(mailOptions);
