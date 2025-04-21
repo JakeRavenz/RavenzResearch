@@ -187,13 +187,13 @@ const FileUpload: React.FC<FileUploadProps> = ({
   <div className="mb-4">
     <label className="block mb-1 text-sm font-medium text-gray-700">
       {label}
-      {""} <span className="text-red-500">*</span>
+      {""} {required && <span className="text-red-500">*</span>}
     </label>
     <input
       type="file"
       accept={accept}
       onChange={onChange}
-      required={required}
+      required={required && !currentUrl}
       className="w-full py-1"
     />
     {currentUrl && (
@@ -385,7 +385,7 @@ export default function ProfileForm() {
           gender: data.gender || "prefer not to say",
           p_id: data.p_id || null, // Include p_id
         });
-        console.log("profiles p_id:", data.p_id)
+        console.log("profiles p_id:", data.p_id);
 
         setFileUrls({
           resumeUrl: data.resume_url || "",
@@ -455,7 +455,8 @@ export default function ProfileForm() {
 
       // Update profile data
       const profileData = {
-        id: user.id, p_id: formData.p_id,
+        id: user.id,
+        p_id: formData.p_id,
         first_name: formData.firstName,
         middle_name: formData.middleName,
         surname: formData.surname,
@@ -476,14 +477,14 @@ export default function ProfileForm() {
         .from("profiles")
         .upsert(profileData, { onConflict: "p_id" }); // Specify the primary key column
 
-     
-        if (submitError) {
-          // Provide more detailed error logging
-          console.error("Supabase upsert error:", submitError);
-          // Check for specific error details if available
-          if (submitError.details) console.error("Error details:", submitError.details);
-          if (submitError.hint) console.error("Error hint:", submitError.hint);
-          throw new Error(`Database error: ${submitError.message}`); // Throw a more specific error
+      if (submitError) {
+        // Provide more detailed error logging
+        console.error("Supabase upsert error:", submitError);
+        // Check for specific error details if available
+        if (submitError.details)
+          console.error("Error details:", submitError.details);
+        if (submitError.hint) console.error("Error hint:", submitError.hint);
+        throw new Error(`Database error: ${submitError.message}`); // Throw a more specific error
       }
 
       // Send verification email (non-blocking)
@@ -683,14 +684,16 @@ export default function ProfileForm() {
                   <FileUpload
                     label="Resume"
                     accept=".pdf,.doc,.docx"
-                    required
+                    required={!fileUrls.resumeUrl}
                     currentUrl={fileUrls.resumeUrl}
                     onChange={(e) =>
                       handleFileInputChange(e, "resumes", "resumeUrl")
                     }
                   />
                   <p className="mt-1 text-sm text-gray-500">
-                    Accepted formats: PDF, DOC, or DOCX
+                    {fileUrls.resumeUrl
+                      ? "(Uploading a new file will replace the current one)."
+                      : " Accepted formats: PDF, DOC, or DOCX."}
                   </p>
                 </div>
               </div>
