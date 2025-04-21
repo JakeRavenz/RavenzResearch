@@ -513,7 +513,7 @@ export default function ProfileForm() {
       setSuccessMessage(
         "Profile updated successfully! Redirecting to job application..."
       );
-      // setRedirectUrl(`/jobs`);
+      setRedirectUrl(`/profile`);
       setSuccess(true);
       setCountdown(3); // Reset countdown to 3 seconds
     } catch (err: any) {
