@@ -42,6 +42,7 @@ interface Profile {
   id_type: string;
   id_number: string;
   education: EducationLevel;
+  gender: string; // Add gender field
 }
 
 export default function Profile() {
@@ -175,6 +176,7 @@ export default function Profile() {
                 Personal Information
               </h2>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <ProfileField label="Gender" value={profile?.gender} />
                 <ProfileField
                   label="Date of Birth"
                   value={profile?.date_of_birth}

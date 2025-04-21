@@ -137,10 +137,10 @@ export default function JobDetails() {
       console.log("Checking profile completeness");
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
-        .select("first_name, surname")
+        .select("first_name, surname, gender")
         .eq("id", user.id)
         .single();
-
+      console.log("this is the profile:", profile);
       // Handle missing profile or incomplete profile data
       if (profileError) {
         console.error("Profile error:", profileError);
@@ -176,9 +176,12 @@ export default function JobDetails() {
       // Prepare cleaned name values
       const trimmedFirstName = profile.first_name.trim();
       const trimmedSurname = profile.surname.trim();
+      const gender = profile.gender;
+
       console.log("Profile is complete. Names:", {
         trimmedFirstName,
         trimmedSurname,
+        gender,
       });
 
       // Check existing application
@@ -217,7 +220,7 @@ export default function JobDetails() {
             first_name: trimmedFirstName,
             surname: trimmedSurname,
             status: "pending",
-            job_title: jobExists.title,
+            job_title: jobExists.title, gender: gender,
           },
         ])
         .select();

@@ -20,7 +20,6 @@ interface ProfileFormData {
   middleName: string;
   surname: string;
   dateOfBirth: string;
-  // Destructured address fields
   address: string;
   city: string;
   region: string;
@@ -28,12 +27,13 @@ interface ProfileFormData {
   country: string;
   phoneNumber: string;
   education: EducationLevel;
+  gender: string; // Add gender field
+  p_id: string | null; // Include p_id
 }
 
 interface FileUrls {
   resumeUrl: string;
 }
-
 interface FormInputProps {
   label: string;
   type?: string;
@@ -186,7 +186,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
 }) => (
   <div className="mb-4">
     <label className="block mb-1 text-sm font-medium text-gray-700">
-      {label}{""} <span className="text-red-500">*</span>
+      {label}
+      {""} <span className="text-red-500">*</span>
     </label>
     <input
       type="file"
@@ -248,6 +249,14 @@ const educationOptions = [
   { value: "phd", label: "PhD / Doctorate" },
   { value: "other", label: "Other" },
 ];
+//gender options
+const genderOptions = [
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+  { value: "non binary", label: "Non-Binary" },
+  { value: "other", label: "Other" },
+  { value: "prefer not to say", label: "Prefer Not to Say" },
+];
 
 // Main component
 export default function ProfileForm() {
@@ -272,6 +281,8 @@ export default function ProfileForm() {
     country: "US",
     phoneNumber: "",
     education: "bachelors",
+    gender: "prefer not to say",
+    p_id: null,
   });
 
   const [fileUrls, setFileUrls] = useState<FileUrls>({
@@ -324,7 +335,16 @@ export default function ProfileForm() {
       country: value,
     }));
   };
+  // Special handler for gender select
+  const handleGenderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      gender: value,
+    }));
+  };
 
+  // Fetch profile data from Supabase
   const fetchProfile = async () => {
     try {
       const {
@@ -333,7 +353,6 @@ export default function ProfileForm() {
 
       if (!session || !session.user) {
         console.error("No active session found");
-        console.log(session?.user);
         return;
       }
 
@@ -342,19 +361,15 @@ export default function ProfileForm() {
         .select("*")
         .match({ id: session.user.id })
         .single();
-
       if (error) {
-        // This specific error code means no profile found
         if (error.code === "PGRST116") {
           console.log("No profile found for this user, creating a new one");
-          // Continue with empty form data for new user
           return;
         }
         throw error;
       }
 
       if (data) {
-        // Update form data with profile information
         setFormData({
           firstName: data.first_name || "",
           middleName: data.middle_name || "",
@@ -367,7 +382,10 @@ export default function ProfileForm() {
           country: data.country || "US",
           phoneNumber: data.phone_number || "",
           education: data.education || "bachelors",
+          gender: data.gender || "prefer not to say",
+          p_id: data.p_id || null, // Include p_id
         });
+        console.log("profiles p_id:", data.p_id)
 
         setFileUrls({
           resumeUrl: data.resume_url || "",
@@ -437,7 +455,7 @@ export default function ProfileForm() {
 
       // Update profile data
       const profileData = {
-        id: user.id,
+        id: user.id, p_id: formData.p_id,
         first_name: formData.firstName,
         middle_name: formData.middleName,
         surname: formData.surname,
@@ -449,15 +467,24 @@ export default function ProfileForm() {
         country: formData.country,
         phone_number: formData.phoneNumber,
         education: formData.education,
+        gender: formData.gender,
         updated_at: new Date(),
         resume_url: fileUrls.resumeUrl,
       };
 
       const { error: submitError } = await supabase
         .from("profiles")
-        .upsert(profileData);
+        .upsert(profileData, { onConflict: "p_id" }); // Specify the primary key column
 
-      if (submitError) throw submitError;
+     
+        if (submitError) {
+          // Provide more detailed error logging
+          console.error("Supabase upsert error:", submitError);
+          // Check for specific error details if available
+          if (submitError.details) console.error("Error details:", submitError.details);
+          if (submitError.hint) console.error("Error hint:", submitError.hint);
+          throw new Error(`Database error: ${submitError.message}`); // Throw a more specific error
+      }
 
       // Send verification email (non-blocking)
       try {
@@ -485,7 +512,7 @@ export default function ProfileForm() {
       setSuccessMessage(
         "Profile updated successfully! Redirecting to job application..."
       );
-      setRedirectUrl(`/jobs`);
+      // setRedirectUrl(`/jobs`);
       setSuccess(true);
       setCountdown(3); // Reset countdown to 3 seconds
     } catch (err: any) {
@@ -556,6 +583,14 @@ export default function ProfileForm() {
                     name="surname"
                     value={formData.surname}
                     onChange={handleInputChange}
+                    required
+                  />
+                  <FormSelect
+                    label="Select Gender"
+                    name="gender"
+                    value={formData.gender}
+                    options={genderOptions}
+                    onChange={handleGenderChange}
                     required
                   />
 
@@ -647,7 +682,8 @@ export default function ProfileForm() {
                 <div className="grid grid-cols-1 gap-6">
                   <FileUpload
                     label="Resume"
-                    accept=".pdf,.doc,.docx" required
+                    accept=".pdf,.doc,.docx"
+                    required
                     currentUrl={fileUrls.resumeUrl}
                     onChange={(e) =>
                       handleFileInputChange(e, "resumes", "resumeUrl")
