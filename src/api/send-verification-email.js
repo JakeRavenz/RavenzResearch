@@ -80,7 +80,7 @@ export default async function handler(req, res) {
           </div>
         </div>
       `,
-      replyTo: process.env.NO_REPLY_EMAIL ? process.env.NO_REPLY_EMAIL : process.env.EMAIL_USER
+      replyTo: process.env.REPLY_EMAIL ? process.env.REPLY_EMAIL : process.env.EMAIL_USER
     };
     
     await transporter.sendMail(mailOptions);
