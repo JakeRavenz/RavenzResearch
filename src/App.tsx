@@ -19,7 +19,7 @@ import PostJobForm from "./pages/postJobs";
 import Policies from "./pages/Policies";
 import TermsOfService from "./pages/TermsOfService";
 import MyJobs from "./pages/myJobs";
-// import WhatsAppWidget from "./components/WhatsAppWidget";
+import WhatsAppWidget from "./components/WhatsAppWidget";
 
 function App() {
   return (
@@ -48,7 +48,7 @@ function App() {
           <Route path="/terms-of-service" element={<TermsOfService />} />
         </Route>
       </Routes>
-      {/* <WhatsAppWidget /> */}
+      <WhatsAppWidget />
       <Toaster position="bottom-right" />
     </Router>
   );
