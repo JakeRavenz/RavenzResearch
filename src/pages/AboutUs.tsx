@@ -1,4 +1,5 @@
 import React from "react";
+// import WhatsAppWidget from "../components/WhatsAppWidget";
 
 export default function AboutUs() {
   return (
@@ -41,7 +42,7 @@ export default function AboutUs() {
           Thank you for choosing Ravenz Research. We're excited to be a part of
           your remote work journey!
         </p>
-      </div>
+      </div> 
     </div>
   );
 }

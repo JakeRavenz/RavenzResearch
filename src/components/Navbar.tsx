@@ -7,7 +7,7 @@ import {
   XMarkIcon,
   InformationCircleIcon,
   QuestionMarkCircleIcon,
-  EnvelopeIcon,
+  EnvelopeIcon 
 } from "@heroicons/react/24/outline";
 import { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
@@ -52,7 +52,6 @@ export default function Navbar() {
               Ravenz Research
             </span>
           </Link>
-
           {/* Nav Links */}
           <div className="items-center hidden pr-6 ml-auto space-x-12 md:flex">
             <Link

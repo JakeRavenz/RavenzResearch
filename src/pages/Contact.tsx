@@ -1,3 +1,4 @@
+import { EnvelopeIcon } from "@heroicons/react/24/outline";
 import React from "react";
 
 export default function Contact() {
@@ -18,12 +19,12 @@ export default function Contact() {
             <p className="mb-2 text-gray-700">
               For general questions or information about Ravenz Research, please
               email us at:
-            </p>
+            </p>{" "}
             <a
               href="mailto:info@ravenzresearch.com"
-              className="text-blue-600 hover:text-blue-800"
+              className="flex gap-2 text-blue-600 hover:text-blue-800"
             >
-              info@ravenzresearch.com
+              <EnvelopeIcon className="w-5 h-5 mb-2" /><span>info@ravenzresearch.com</span>
             </a>
           </div>
           <div>
@@ -36,10 +37,10 @@ export default function Contact() {
             </p>
             <a
               href="mailto:support@ravenzresearch.com"
-              className="text-blue-600 hover:text-blue-800"
+              className="flex gap-2 text-blue-600 hover:text-blue-800"
             >
-              support@ravenzresearch.com
-            </a>
+               <EnvelopeIcon className="w-5 h-5 " /><span>support@ravenzresearch.com</span>
+            </a> 
           </div>
         </div>
       </div>
