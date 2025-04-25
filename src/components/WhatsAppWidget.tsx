@@ -31,8 +31,8 @@ const WhatsAppWidget = () => {
 
   if (!user || !isVisible || isClosed) return null;
 
-  const phoneNumber = "08032968251";
-  const message = "Hello! I would like to learn more about Ravenz Research.";
+  const phoneNumber = "+2348111548492"; // Replace with your WhatsApp number
+  const message =  "Hello! I need live support?";
   const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
     message
   )}`;

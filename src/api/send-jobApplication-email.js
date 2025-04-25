@@ -83,8 +83,7 @@ export default async function handler(req, res) {
           </div>
         </div>
       `,
-      // The replyTo field is commented out because it is not currently required. Uncomment and set it if needed in the future.
-      // replyTo: process.env.EMAIL_USER,
+   
     };
 
     await transporter.sendMail(mailOptions);

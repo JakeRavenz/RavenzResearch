@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Briefcase, Building2, Globe, ArrowRight } from "lucide-react";
+import heroImage from "../assets/images.png";
+import reasonImage from "../assets/3718985.jpg";
 
 interface FeatureCardProps {
   icon: React.ReactNode;
@@ -62,15 +64,21 @@ export default function Home() {
   return (
     <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
       {/* Hero Section - Sharp edges */}
-      <div className="relative my-8 overflow-hidden bg-gradient-to-r from-indigo-600 to-blue-500">
-        <div className="absolute inset-0 bg-[url('/img/grid-pattern.svg')] opacity-20"></div>
+      <div className="relative flex flex-col my-8 overflow-hidden md:flex-row-reverse bg-gradient-to-r from-indigo-600 to-blue-500">
+        <div className="p-6">
+          <img
+            src={heroImage}
+            alt="hero image"
+            className="object-cover w-full h-full rounded-lg shadow-lg "
+          />
+        </div>
 
-        <div className="relative z-10 px-4 py-16 text-center md:py-24 md:px-6">
+        <div className="relative z-10 pt-8 pb-16 text-center md:py-24 md:px-6 ">
           <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl">
             Find Your Perfect Remote Job
           </h1>
           <p className="max-w-2xl mx-auto mt-6 text-lg text-indigo-100 md:text-xl">
-            Connect with top companies hiring remote talent worldwide
+            Connect with top companies hiring remote talent worldwide.
           </p>
           <div className="flex flex-wrap justify-center gap-4 mt-8">
             <ActionButton to="/jobs" variant="primary">
@@ -106,7 +114,13 @@ export default function Home() {
       </div>
 
       {/* Features Section - Sharp edges */}
-      <div className="mb-16">
+      <div className="mb-16"><div className="p-6">
+          <img
+            src={reasonImage}
+            alt="hero image"
+            className="object-cover w-full h-full rounded-lg "
+          />
+        </div>
         <div className="mb-12 text-center">
           <h2 className="text-3xl font-bold text-gray-900">Why Choose Us</h2>
           <p className="max-w-2xl mx-auto mt-4 text-lg text-gray-600">
