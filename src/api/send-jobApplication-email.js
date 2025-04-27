@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-export default async function handler(req, res) {
+export default async function handler(req, res) {  console.log('*** JOB APPLICATION HANDLER TRIGGERED ***', new Date().toISOString());
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
