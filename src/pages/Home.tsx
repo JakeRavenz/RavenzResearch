@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Briefcase, Building2, Globe, ArrowRight } from "lucide-react";
 import heroImage from "../assets/images.png";
 import reasonImage from "../assets/3718985.jpg";
+import startImage from "../assets/3624001.jpg";
 
 interface FeatureCardProps {
   icon: React.ReactNode;
@@ -65,7 +66,7 @@ export default function Home() {
     <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
       {/* Hero Section - Sharp edges */}
       <div className="relative flex flex-col my-8 overflow-hidden md:flex-row-reverse bg-gradient-to-r from-indigo-600 to-blue-500">
-        <div className="p-6">
+        <div className="p-6 ">
           <img
             src={heroImage}
             alt="hero image"
@@ -114,10 +115,11 @@ export default function Home() {
       </div>
 
       {/* Features Section - Sharp edges */}
-      <div className="mb-16"><div className="p-6">
+      <div className="mb-16">
+        <div className="p-6">
           <img
             src={reasonImage}
-            alt="hero image"
+            alt="reason image"
             className="object-cover w-full h-full rounded-lg "
           />
         </div>
@@ -137,8 +139,15 @@ export default function Home() {
       </div>
 
       {/* CTA Section - Sharp edges */}
-      <div className="grid items-center p-8 m b-16 bg-gray-50">
-        <div className="md:flex md:items-center md:justify-between">
+      <div className="grid items-center p-8 mb-16 bg-gray-50">
+        <div className=" md:flex md:flex-row-reverse md:items-center md:justify-between">
+          <div className="p-6 md:w-1/2">
+            <img
+              src={startImage}
+              alt="start with us image"
+              className="object-cover w-full h-full rounded-lg shadow-md "
+            />
+          </div>
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900">
               Ready to start your remote journey?
