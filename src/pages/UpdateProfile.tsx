@@ -43,6 +43,8 @@ interface FormInputProps {
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;
+  min?: string;
+  max?: string;
 }
 
 // Components
@@ -54,6 +56,8 @@ const FormInput: React.FC<FormInputProps> = ({
   onChange,
   required = false,
   placeholder,
+  min,
+  max,
 }) => (
   <div className="mb-4">
     <label className="block mb-1 text-sm font-medium text-gray-700">
@@ -66,6 +70,8 @@ const FormInput: React.FC<FormInputProps> = ({
       onChange={onChange}
       required={required}
       placeholder={placeholder}
+      min={min}
+      max={max}
       className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
     />
   </div>
@@ -149,23 +155,37 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
   value,
   onChange,
   required = false,
-}) => (
-  <div className="mb-4">
-    <label className="block mb-1 text-sm font-medium text-gray-700">
-      {label} {required && <span className="text-red-500">*</span>}
-    </label>
-    <div className="w-full border rounded-md focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
-      <PhoneInput
-        international
-        defaultCountry="US"
-        value={value}
-        onChange={onChange}
-        className="w-full px-3 py-2"
-        inputClassName="w-full border-0 focus:ring-0 focus:outline-none"
-      />
+}) => {
+  const [error, setError] = useState<string | null>(null);
+
+  const checkPhoneValidity = (value: string | undefined) => {
+    if (value && value.replace(/\D/g, "").length < 7) {
+      setError("Phone number must be at least 7 digits.");
+    } else {
+      setError(null);
+    }
+    onChange(value);
+  };
+
+  return (
+    <div className="mb-4">
+      <label className="block mb-1 text-sm font-medium text-gray-700">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      <div className="w-full border rounded-md focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
+        <PhoneInput
+          international
+          defaultCountry="US"
+          value={value}
+          onChange={checkPhoneValidity}
+          required={required}
+          className="w-full px-3 py-2 border-0 focus:ring-0 focus:outline-none"
+        />
+      </div>
+      {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
     </div>
-  </div>
-);
+  );
+};
 
 // File upload component
 interface FileUploadProps {
@@ -289,7 +309,11 @@ export default function ProfileForm() {
 
   useEffect(() => {
     fetchProfile();
-  }, []);
+  }, []); // Calculate min and max dates
+  const currentYear = new Date().getFullYear();
+  const minYear = currentYear - 60;
+  const minDate = `${minYear}-01-01`;
+  const maxDate = `2007-12-31`; // Set max date to the end of 2007
 
   // Countdown effect that triggers after success
   useEffect(() => {
@@ -442,7 +466,12 @@ export default function ProfileForm() {
     e.preventDefault();
     setLoading(true);
     setError("");
-
+    const digitsOnly = formData.phoneNumber.replace(/\D/g, "");
+    if (digitsOnly.length < 7) {
+      setError("Phone number must be at least 7 digits.");
+      setLoading(false);
+      return; // Stop submission if validation fails
+    }
     try {
       const {
         data: { user },
@@ -470,7 +499,7 @@ export default function ProfileForm() {
 
       const { error: submitError } = await supabase
         .from("profiles")
-        .upsert(profileData, ); // Specify the primary key column
+        .upsert(profileData); // Specify the primary key column
 
       if (submitError) {
         // Provide more detailed error logging
@@ -565,6 +594,7 @@ export default function ProfileForm() {
                     value={formData.firstName}
                     onChange={handleInputChange}
                     required
+                    placeholder="John"
                   />
 
                   <FormInput
@@ -572,6 +602,7 @@ export default function ProfileForm() {
                     name="middleName"
                     value={formData.middleName}
                     onChange={handleInputChange}
+                    placeholder="Optional"
                   />
 
                   <FormInput
@@ -580,6 +611,7 @@ export default function ProfileForm() {
                     value={formData.surname}
                     onChange={handleInputChange}
                     required
+                    placeholder="Doe"
                   />
                   <FormSelect
                     label="Select Gender"
@@ -597,6 +629,8 @@ export default function ProfileForm() {
                     value={formData.dateOfBirth}
                     onChange={handleInputChange}
                     required
+                    min={minDate} // Pass the calculated min date
+                    max={maxDate} // Pass the max date (end of 2007)
                   />
 
                   <div>
