@@ -27,8 +27,7 @@ interface ProfileFormData {
   country: string;
   phoneNumber: string;
   education: EducationLevel;
-  gender: string; // Add gender field
-  p_id: string | null; // Include p_id
+  gender: string;
 }
 
 interface FileUrls {
@@ -282,7 +281,6 @@ export default function ProfileForm() {
     phoneNumber: "",
     education: "bachelors",
     gender: "prefer not to say",
-    p_id: null,
   });
 
   const [fileUrls, setFileUrls] = useState<FileUrls>({
@@ -383,9 +381,7 @@ export default function ProfileForm() {
           phoneNumber: data.phone_number || "",
           education: data.education || "bachelors",
           gender: data.gender || "prefer not to say",
-          p_id: data.p_id || null, // Include p_id
         });
-        // console.log("profiles p_id:", data.p_id);
 
         setFileUrls({
           resumeUrl: data.resume_url || "",
@@ -456,7 +452,6 @@ export default function ProfileForm() {
       // Update profile data
       const profileData = {
         id: user.id,
-        p_id: formData.p_id,
         first_name: formData.firstName,
         middle_name: formData.middleName,
         surname: formData.surname,
@@ -475,7 +470,7 @@ export default function ProfileForm() {
 
       const { error: submitError } = await supabase
         .from("profiles")
-        .upsert(profileData, { onConflict: "p_id" }); // Specify the primary key column
+        .upsert(profileData, ); // Specify the primary key column
 
       if (submitError) {
         // Provide more detailed error logging
