@@ -63,7 +63,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+    <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 bg-slate-100">
       {/* Hero Section - Sharp edges */}
       <div className="relative flex flex-col my-8 overflow-hidden md:flex-row-reverse bg-gradient-to-r from-indigo-600 to-blue-500">
         <div className="p-6 ">

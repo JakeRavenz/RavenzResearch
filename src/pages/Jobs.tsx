@@ -167,7 +167,7 @@ export default function Jobs() {
   );
 
   return (
-    <div className="w-full max-w-full px-0 py-8 mx-auto">
+    <div className="w-full max-w-full px-0 py-8 mx-auto bg-slate-100">
       <div className="flex flex-col items-start justify-between gap-4 px-5 mb-6 md:flex-row md:items-center">
         <h1 className="text-2xl font-bold text-gray-900 md:text-3xl">
           Discover Opportunities

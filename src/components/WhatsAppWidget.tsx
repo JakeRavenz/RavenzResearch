@@ -11,7 +11,7 @@ const WhatsAppWidget = () => {
     if (user && !isClosed) {
       const timer = setTimeout(() => {
         setIsVisible(true);
-      }, 25000);
+      }, 13000);
 
       return () => clearTimeout(timer);
     }
@@ -23,7 +23,7 @@ const WhatsAppWidget = () => {
     if (isVisible) {
       inactivityTimer = setTimeout(() => {
         setIsInactive(true);
-      }, 3000);
+      }, 4000);
     }
 
     return () => clearTimeout(inactivityTimer);
