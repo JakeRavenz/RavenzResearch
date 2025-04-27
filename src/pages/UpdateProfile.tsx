@@ -539,9 +539,9 @@ export default function ProfileForm() {
       setSuccessMessage(
        "Profile updated successfully! Redirecting to your profile..."
       );
-      // setRedirectUrl(`/profile`);
-      // setSuccess(true);
-      // setCountdown(3); // Reset countdown to 3 seconds
+      setRedirectUrl(`/profile`);
+      setSuccess(true);
+      setCountdown(3); // Reset countdown to 3 seconds
     } catch (err: any) {
       console.error("Profile update error:", err);
       setError(err.message || "Error updating profile. Please try again.");
