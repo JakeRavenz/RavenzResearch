@@ -69,6 +69,7 @@ export default function Home() {
         <div className="p-6 ">
           <img
             src={heroImage}
+            loading="lazy"
             alt="hero image"
             className="object-cover w-full h-full rounded-lg shadow-lg "
           />
@@ -119,6 +120,7 @@ export default function Home() {
         <div className="p-6">
           <img
             src={reasonImage}
+            loading="lazy"
             alt="reason image"
             className="object-cover w-full h-full rounded-lg "
           />
@@ -144,6 +146,7 @@ export default function Home() {
           <div className="p-6 md:w-1/2">
             <img
               src={startImage}
+              loading="lazy"
               alt="start with us image"
               className="object-cover w-full h-full rounded-lg shadow-md "
             />
