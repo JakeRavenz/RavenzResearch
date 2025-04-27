@@ -517,9 +517,10 @@ export default function ProfileForm() {
           data: { session },
         } = await supabase.auth.getSession();
         const email = session?.user?.email;
-
+        console.log("Email:"); // Log the email for debugging
         if (email) {
           await fetch("/api/send-verification-email", {
+            // Log the email for debugging
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -529,17 +530,18 @@ export default function ProfileForm() {
             }),
           });
         }
+        console.log("Email sent successfully");
       } catch (emailError) {
         console.error("Email notification failed:", emailError);
       }
 
       // Set success state and redirect info
       setSuccessMessage(
-        "Profile updated successfully! Redirecting to job application..."
+       "Profile updated successfully! Redirecting to your profile..."
       );
-      setRedirectUrl(`/profile`);
-      setSuccess(true);
-      setCountdown(3); // Reset countdown to 3 seconds
+      // setRedirectUrl(`/profile`);
+      // setSuccess(true);
+      // setCountdown(3); // Reset countdown to 3 seconds
     } catch (err: any) {
       console.error("Profile update error:", err);
       setError(err.message || "Error updating profile. Please try again.");
@@ -549,7 +551,7 @@ export default function ProfileForm() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-slate-100">
       <div className="w-full bg-white border-b border-gray-200 shadow-sm">
         <div className="w-full">
           <Navbar />
