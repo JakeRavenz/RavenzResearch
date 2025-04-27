@@ -67,7 +67,7 @@ export default async function handler(req, res) {
 
             <p>Our recruitment team is currently reviewing your application, and we will be in touch with the next steps shortly.</p>
 
-            <p>In the meantime, if you’d like to learn more about the role, or our company, please visit the button below:</p> 
+            <p>In the meantime, if you’d like to learn more about the role, or our company, please click the button below:</p> 
             <div style="text-align: center; margin: 20px 0;">
               <a href="${safeJobLink}" style="background-color: #3a86ff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">View Job Details</a>
             </div>
