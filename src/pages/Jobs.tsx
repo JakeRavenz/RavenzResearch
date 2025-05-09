@@ -329,10 +329,10 @@ export default function Jobs() {
                     <Briefcase className="h-4 w-4 mr-1.5 text-gray-500" />
                     <span>{job.type}</span>
                   </div>
-                  <div className="flex items-center">
+                  {/* <div className="flex items-center">
                     <Clock className="h-4 w-4 mr-1.5 text-gray-500" />
                     <span>{formatTimeAgo(job.created_at)}</span>
-                  </div>
+                  </div> */}
                 </div>
 
                 {/* Tags - Wrap on smaller screens */}
