@@ -4,7 +4,7 @@ import { Briefcase, Building2, Globe, ArrowRight } from "lucide-react";
 import heroImage from "../assets/images.png";
 import reasonImage from "../assets/3718985.jpg";
 import startImage from "../assets/3624001.jpg";
-
+import  useAuthHook  from "../hooks/useAuth";
 interface FeatureCardProps {
   icon: React.ReactNode;
   title: string;
@@ -44,6 +44,10 @@ const ActionButton: React.FC<{
 );
 
 export default function Home() {
+  const { user } = useAuthHook();
+
+  const isRavenzEmployee =
+    user && user.email && user.email.endsWith("@ravenzresearch.com");
   const features = [
     {
       icon: <Briefcase className="w-8 h-8 text-indigo-600" />,
@@ -86,9 +90,11 @@ export default function Home() {
             <ActionButton to="/jobs" variant="primary">
               Browse Jobs
             </ActionButton>
-            <ActionButton to="/companies" variant="secondary">
-              View Companies
-            </ActionButton>
+            {isRavenzEmployee && (
+              <ActionButton to="/companies" variant="secondary">
+                View Companies
+              </ActionButton>
+            )}
           </div>
         </div>
       </div>
