@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-import { Briefcase, MapPin, Clock, Building, ArrowLeft } from "lucide-react";
+import { Briefcase, MapPin, Building, ArrowLeft } from "lucide-react";
 
 interface Job {
   id: string;
@@ -29,7 +29,9 @@ function Modal({ message, onClose }: { message: string; onClose: () => void }) {
         <p className="text-center text-gray-800">{message}</p>
         <div className="flex justify-center mt-6">
           <button
-            onClick={onClose}
+            onClick={() => {
+              onClose(); // Call the onClose function
+            }}
             className="px-5 py-2 text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Close
@@ -85,7 +87,6 @@ export default function JobDetails() {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-
     try {
       if (!id) {
         setModalMessage("Job ID is missing");
@@ -125,7 +126,9 @@ export default function JobDetails() {
         // console.log("User not logged in");
         setModalMessage("Please login to apply for this position");
         setShowModal(true);
+        console.log("showModal state:", showModal); // Debug log
         setIsSubmitting(false);
+        // navigate("/auth");
         return;
       }
 
@@ -152,9 +155,7 @@ export default function JobDetails() {
       // Check specifically for missing first_name or surname
       if (!profile || !profile.first_name || profile.first_name.trim() === "") {
         // console.log("Missing first name");
-        setModalMessage(
-          "Please add your first name to your profile before applying"
-        );
+        setModalMessage("Please complete your profile before applying");
         setShowModal(true);
         setIsSubmitting(false);
         return;
@@ -171,9 +172,7 @@ export default function JobDetails() {
       // }
       if (!profile || !profile.surname || profile.surname.trim() === "") {
         // console.log("Missing surname");
-        setModalMessage(
-          "Please add your surname to your profile before applying"
-        );
+        setModalMessage("Please complete your profile before applying");
         setShowModal(true);
         setIsSubmitting(false);
         return;
@@ -276,19 +275,6 @@ export default function JobDetails() {
           ? (jobExists.company[0] as { name: string }).name
           : (jobExists.company as { name: string }).name;
 
-        // console.log("Sending email to:", email);
-        // console.log("Email data being sent:", {
-        //   email,
-        //   firstName: trimmedFirstName,
-        //   surname: trimmedSurname,
-        //   jobTitle: jobExists.title,
-        //   jobPosition: companyName,
-        //   jobLink: `${window.location.origin}/myjobs`,
-        // });
-
-        // console.log(
-        //   "About to call API endpoint: /api/send-jobApplication-email"
-        // );
         const response = await fetch("/api/send-jobApplication-email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -373,39 +359,23 @@ export default function JobDetails() {
           message={modalMessage}
           onClose={() => {
             setShowModal(false);
-            // If user needs to complete profile, redirect after closing modal
-            if (
-              modalMessage ===
-                "Please add your first name to your profile before applying" ||
-              modalMessage ===
-                "Please add your surname to your profile before applying" ||
-              modalMessage === "Please complete your profile before applying"
-            ) {
-              navigate("/profile");
-            }
-          }}
-        />
-      )}
-      {showModal && (
-        <Modal
-          message={modalMessage}
-          onClose={() => {
-            setShowModal(false);
-            // If user needs to login, redirect after closing modal
-            if (modalMessage === "Please login to apply for this position") {
-              navigate("/auth");
-            }
-          }}
-        />
-      )}
-      {showModal && (
-        <Modal
-          message={modalMessage}
-          onClose={() => {
-            setShowModal(false);
-            // If user needs to login, redirect after closing modal
-            if (modalMessage === "✅ Application submitted successfully!") {
-              navigate("/myJobs");
+            switch (modalMessage) {
+              case "Please login to apply for this position":
+                navigate("/auth");
+                break;
+              case "This job posting no longer exists or is not open for applications":
+              case "Application failed":
+              case "Application failed: ":
+              case "Unable to submit application":
+                navigate("/jobs");
+                break;
+              case "Please complete your profile before applying":
+                navigate("/profile");
+                break;
+                case "You've already applied to this position":
+                case "✅ Application submitted successfully!":
+                navigate("/myJobs");
+                break;
             }
           }}
         />
@@ -466,10 +436,10 @@ export default function JobDetails() {
                     <Briefcase className="w-5 h-5 mr-2 text-gray-500" />
                     <span>{job.type}</span>
                   </div>
-                  <div className="flex items-center">
+                  {/* <div className="flex items-center">
                     <Clock className="w-5 h-5 mr-2 text-gray-500" />
                     <span>Posted {formatTimeAgo(job.created_at)}</span>
-                  </div>
+                  </div> */}
                   <div className="flex items-center">
                     <span>${job.salary_max} per hour</span>
                   </div>
