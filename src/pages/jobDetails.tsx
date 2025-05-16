@@ -126,7 +126,6 @@ export default function JobDetails() {
         // console.log("User not logged in");
         setModalMessage("Please login to apply for this position");
         setShowModal(true);
-        console.log("showModal state:", showModal); // Debug log
         setIsSubmitting(false);
         // navigate("/auth");
         return;

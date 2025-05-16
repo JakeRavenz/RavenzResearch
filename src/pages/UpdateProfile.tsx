@@ -28,6 +28,8 @@ interface ProfileFormData {
   phoneNumber: string;
   education: EducationLevel;
   gender: string;
+  payment_method: string;
+  paymentAccountDetails: string;
 }
 
 interface FileUrls {
@@ -113,6 +115,52 @@ const FormSelect: React.FC<FormSelectProps> = ({
         </option>
       ))}
     </select>
+  </div>
+);
+
+// Radio Group Input component
+interface RadioOption {
+  value: string;
+  label: string;
+}
+
+interface RadioGroupInputProps {
+  label: string;
+  name: keyof ProfileFormData; // Ensure name is a key of ProfileFormData
+  value: string;
+  options: RadioOption[];
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; // Radio inputs use HTMLInputElement
+  required?: boolean;
+}
+
+const RadioGroupInput: React.FC<RadioGroupInputProps> = ({
+  label,
+  name,
+  value,
+  options,
+  onChange,
+  required = false,
+}) => (
+  <div className="mb-4">
+    <label className="block mb-1 text-sm font-medium text-gray-700">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <div className="mt-2 space-y-2 sm:space-y-0 sm:flex sm:space-x-4">
+      {options.map((option) => (
+        <label key={option.value} className="flex items-center">
+          <input
+            type="radio"
+            name={name} // Name attribute is crucial for radio group behavior
+            value={option.value}
+            checked={value === option.value}
+            onChange={onChange}
+            required={required}
+            className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+          />
+          <span className="ml-2 text-sm text-gray-700">{option.label}</span>
+        </label>
+      ))}
+    </div>
   </div>
 );
 
@@ -301,6 +349,8 @@ export default function ProfileForm() {
     phoneNumber: "",
     education: "bachelors",
     gender: "prefer not to say",
+    payment_method: "select payment method",
+    paymentAccountDetails: "",
   });
 
   const [fileUrls, setFileUrls] = useState<FileUrls>({
@@ -405,6 +455,8 @@ export default function ProfileForm() {
           phoneNumber: data.phone_number || "",
           education: data.education || "bachelors",
           gender: data.gender || "prefer not to say",
+          payment_method: data.payment_method || "",
+          paymentAccountDetails: data.payment_account_details || "",
         });
 
         setFileUrls({
@@ -493,6 +545,8 @@ export default function ProfileForm() {
         phone_number: formData.phoneNumber,
         education: formData.education,
         gender: formData.gender,
+        preferred_payment_method: formData.preferredPaymentMethod,
+        payment_account_details: formData.paymentAccountDetails,
         updated_at: new Date(),
         resume_url: fileUrls.resumeUrl,
       };
@@ -537,7 +591,7 @@ export default function ProfileForm() {
 
       // Set success state and redirect info
       setSuccessMessage(
-       "Profile updated successfully! Redirecting to your profile..."
+        "Profile updated successfully! Redirecting to your profile..."
       );
       setRedirectUrl(`/profile`);
       setSuccess(true);
@@ -547,6 +601,39 @@ export default function ProfileForm() {
       setError(err.message || "Error updating profile. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const paymentMethodOptions = [
+    { value: "airtm", label: "Airtm" },
+    { value: "payoneer", label: "Payoneer" },
+    { value: "paypal", label: "PayPal" },
+    { value: "other", label: "Other" },
+  ];
+
+  const getPaymentAccountDetailsLabel = (method: string): string => {
+    switch (method) {
+      case "paypal":
+        return "PayPal Email";
+      case "payoneer":
+        return "Payoneer Email";
+      case "airtm":
+        return "Airtm Email/Username";
+      default:
+        return "Payment Account Details";
+    }
+  };
+
+  const getPaymentAccountDetailsPlaceholder = (method: string): string => {
+    switch (method) {
+      case "paypal":
+        return "Enter your PayPal email address";
+      case "payoneer":
+        return "Enter your Payoneer email address";
+      case "airtm":
+        return "Enter your Airtm email or username";
+      default:
+        return "Enter account details (e.g., bank info, other ID)";
     }
   };
 
@@ -640,7 +727,7 @@ export default function ProfileForm() {
                       label="Phone Number"
                       value={formData.phoneNumber}
                       onChange={handlePhoneChange}
-                      required
+                      // required
                     />
                   </div>
 
@@ -654,7 +741,6 @@ export default function ProfileForm() {
                   />
                 </div>
               </div>
-
               {/* Address Information */}
               <div>
                 <h3 className="mb-4 text-lg font-medium text-gray-700">
@@ -704,8 +790,33 @@ export default function ProfileForm() {
                     required
                   />
                 </div>
+              </div>{" "}
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <RadioGroupInput
+                  label="Preferred Payment Method"
+                  name="preferredPaymentMethod"
+                  value={formData.preferredPaymentMethod}
+                  options={paymentMethodOptions}
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
-
+              {formData.preferredPaymentMethod && (
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <FormInput
+                    label={getPaymentAccountDetailsLabel(
+                      formData.preferredPaymentMethod
+                    )}
+                    name="paymentAccountDetails"
+                    value={formData.paymentAccountDetails}
+                    onChange={handleInputChange}
+                    required={!!formData.preferredPaymentMethod} // Required if a payment method is selected
+                    placeholder={getPaymentAccountDetailsPlaceholder(
+                      formData.preferredPaymentMethod
+                    )}
+                  />
+                </div>
+              )}
               {/* Document Uploads */}
               <div>
                 <h3 className="mb-4 text-lg font-medium text-gray-700">
@@ -715,7 +826,7 @@ export default function ProfileForm() {
                   <FileUpload
                     label="Resume"
                     accept=".pdf,.doc,.docx"
-                    required={!fileUrls.resumeUrl}
+                    // required={!fileUrls.resumeUrl}
                     currentUrl={fileUrls.resumeUrl}
                     onChange={(e) =>
                       handleFileInputChange(e, "resumes", "resumeUrl")
@@ -734,24 +845,16 @@ export default function ProfileForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex items-center justify-center float-right w-full px-8 py-2 text-white transition-colors bg-blue-600 rounded-md md:w-auto hover:bg-blue-700 disabled:bg-blue-300"
+                className="flex items-center justify-center float-right w-full px-8 py-2 text-white transition-colors bg-blue-600 rounded-md select-none md:w-auto hover:bg-blue-700 disabled:bg-blue-300"
               >
                 {loading ? (
                   <>
                     <svg
-                      className="w-5 h-5 mr-3 -ml-1 text-white animate-spin"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
+                      className="w-5 h-5 mr-2 text-white animate-spin"
                       viewBox="0 0 24 24"
+                      fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
                       <path
                         className="opacity-75"
                         fill="currentColor"

@@ -22,6 +22,24 @@ const EDUCATION_LABELS: Record<EducationLevel, string> = {
   other: "Other",
 };
 
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  paypal: "PayPal",
+  airtm: "AirTM",
+  payoneer: "Payoneer",
+  other: "Other",
+};
+
+const getPaymentAccountDetailsLabelForDisplay = (method?: string): string => {
+  if (!method) return "Payment Account Details";
+  switch (method) {
+    case "paypal": return "PayPal Email";
+    case "payoneer": return "Payoneer Email";
+    case "airtm": return "Airtm Email/Username";
+    case "other": return "Payment Account Details";
+    default: return "Account Details";
+  }
+};
+
 interface Profile {
   id: string;
   first_name: string;
@@ -43,6 +61,8 @@ interface Profile {
   id_number: string;
   education: EducationLevel;
   gender: string; // Add gender field
+  payment_method: string; 
+  payment_account_details?: string;
 }
 
 export default function Profile() {
@@ -196,8 +216,16 @@ export default function Profile() {
                 <ProfileField label="ID Type" value={profile?.id_type} />
                 <ProfileField label="ID Number" value={profile?.id_number} />
                 <ProfileField
-                  label="Work Experience"
-                  value={profile?.work_experience}
+                  label="Preferred Payment Method"
+                  value={
+                    profile?.payment_method
+                      ? PAYMENT_METHOD_LABELS[profile.payment_method]
+                      : "Not provided"
+                  }
+                />
+                <ProfileField
+                  label={getPaymentAccountDetailsLabelForDisplay(profile?.payment_method)}
+                  value={profile?.payment_account_details}
                 />
               </div>
             </section>
