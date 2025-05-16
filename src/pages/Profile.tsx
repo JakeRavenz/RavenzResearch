@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase";
 import { User } from "lucide-react";
 import toast from "react-hot-toast";
 import "react-phone-number-input/style.css";
+import { PayPalIcon, AirTMIcon, PayoneerIcon } from "../assets/icons";
 
 type EducationLevel =
   | "high_school"
@@ -22,21 +23,41 @@ const EDUCATION_LABELS: Record<EducationLevel, string> = {
   other: "Other",
 };
 
-const PAYMENT_METHOD_LABELS: Record<string, string> = {
-  paypal: "PayPal",
-  airtm: "AirTM",
-  payoneer: "Payoneer",
+const PAYMENT_METHOD_LABELS: Record<string, React.ReactNode> = {
+  paypal: (
+    <>
+      <PayPalIcon />
+      PayPal
+    </>
+  ),
+  airtm: (
+    <>
+      <AirTMIcon />
+      AirTM
+    </>
+  ),
+  payoneer: (
+    <>
+      <PayoneerIcon />
+      Payoneer
+    </>
+  ),
   other: "Other",
 };
 
 const getPaymentAccountDetailsLabelForDisplay = (method?: string): string => {
   if (!method) return "Payment Account Details";
   switch (method) {
-    case "paypal": return "PayPal Email";
-    case "payoneer": return "Payoneer Email";
-    case "airtm": return "Airtm Email/Username";
-    case "other": return "Payment Account Details";
-    default: return "Account Details";
+    case "paypal":
+      return "PayPal Email";
+    case "payoneer":
+      return "Payoneer Email";
+    case "airtm":
+      return "Airtm Email/Username";
+    case "other":
+      return "Payment Account Details";
+    default:
+      return "Account Details";
   }
 };
 
@@ -61,7 +82,7 @@ interface Profile {
   id_number: string;
   education: EducationLevel;
   gender: string; // Add gender field
-  payment_method: string; 
+  payment_method: string;
   payment_account_details?: string;
 }
 
@@ -224,7 +245,9 @@ export default function Profile() {
                   }
                 />
                 <ProfileField
-                  label={getPaymentAccountDetailsLabelForDisplay(profile?.payment_method)}
+                  label={getPaymentAccountDetailsLabelForDisplay(
+                    profile?.payment_method
+                  )}
                   value={profile?.payment_account_details}
                 />
               </div>
@@ -297,9 +320,8 @@ export default function Profile() {
 // Reusable profile field component to maintain consistent styling
 interface ProfileFieldProps {
   label: string;
-  value: string | null | undefined;
+  value: React.ReactNode;
 }
-
 const ProfileField: React.FC<ProfileFieldProps> = ({ label, value }) => (
   <div>
     <h3 className="mb-1 text-sm font-medium text-gray-700">{label}</h3>

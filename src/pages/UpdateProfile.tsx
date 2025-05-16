@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
+import type { JSX } from "react";
 import { supabase } from "../lib/supabase";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { CountryDropdown } from "react-country-region-selector";
+
+import { PayPalIcon, AirTMIcon, PayoneerIcon } from "../assets/icons";
 
 // Types
 type EducationLevel =
@@ -121,15 +124,15 @@ const FormSelect: React.FC<FormSelectProps> = ({
 // Radio Group Input component
 interface RadioOption {
   value: string;
-  label: string;
+  label: string | JSX.Element;
 }
 
 interface RadioGroupInputProps {
   label: string;
-  name: keyof ProfileFormData; // Ensure name is a key of ProfileFormData
+  name: keyof ProfileFormData;
   value: string;
   options: RadioOption[];
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; // Radio inputs use HTMLInputElement
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
 }
 
@@ -150,7 +153,7 @@ const RadioGroupInput: React.FC<RadioGroupInputProps> = ({
         <label key={option.value} className="flex items-center">
           <input
             type="radio"
-            name={name} // Name attribute is crucial for radio group behavior
+            name={name}
             value={option.value}
             checked={value === option.value}
             onChange={onChange}
@@ -545,7 +548,7 @@ export default function ProfileForm() {
         phone_number: formData.phoneNumber,
         education: formData.education,
         gender: formData.gender,
-       payment_method: formData.payment_method,
+        payment_method: formData.payment_method,
         payment_account_details: formData.paymentAccountDetails,
         updated_at: new Date(),
         resume_url: fileUrls.resumeUrl,
@@ -605,9 +608,33 @@ export default function ProfileForm() {
   };
 
   const paymentMethodOptions = [
-    { value: "airtm", label: "Airtm" },
-    { value: "payoneer", label: "Payoneer" },
-    { value: "paypal", label: "PayPal" },
+    {
+      value: "paypal",
+      label: (
+        <>
+          <PayPalIcon />
+          PayPal
+        </>
+      ),
+    },
+    {
+      value: "airtm",
+      label: (
+        <>
+          <AirTMIcon />
+          AirTM
+        </>
+      ),
+    },
+    {
+      value: "payoneer",
+      label: (
+        <>
+          <PayoneerIcon />
+          Payoneer
+        </>
+      ),
+    },
     { value: "other", label: "Other" },
   ];
 
