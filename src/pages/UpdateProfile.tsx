@@ -338,6 +338,9 @@ export default function ProfileForm() {
   const [successMessage, setSuccessMessage] = useState("");
   const [countdown, setCountdown] = useState(5); // 5-second countdown for redirect
   const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
+  const [paymentAccountError, setPaymentAccountError] = useState<string | null>(
+    null
+  );
 
   const [formData, setFormData] = useState<ProfileFormData>({
     firstName: "",
@@ -352,7 +355,7 @@ export default function ProfileForm() {
     phoneNumber: "",
     education: "bachelors",
     gender: "prefer not to say",
-    payment_method: "select payment method",
+    payment_method: "add payment method",
     paymentAccountDetails: "",
   });
 
@@ -385,6 +388,33 @@ export default function ProfileForm() {
     };
   }, [success, countdown, redirectUrl, navigate]);
 
+  const validatePaymentAccountDetails = (method: string, value: string) => {
+    if (!value) return "This field is required.";
+    switch (method) {
+      case "paypal":
+      case "payoneer":
+        // Simple email regex
+        if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,}$/.test(value)) {
+          return "Please enter a valid email address.";
+        }
+        break;
+      case "airtm":
+        // Airtm allows username or email, so accept either
+        if (
+          !/^[\w-.]+@([\w-]+\.)+[\w-]{2,}$/.test(value) && // not email
+          !/^[a-zA-Z0-9_.-]{3,}$/.test(value) // not a valid username
+        ) {
+          return "Enter a valid Airtm email or username (at least 3 characters).";
+        }
+        break;
+      default:
+        if (value.length < 3) {
+          return "Please enter valid account details.";
+        }
+    }
+    return null;
+  };
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -393,6 +423,22 @@ export default function ProfileForm() {
       ...prev,
       [name]: value,
     }));
+
+    if (name === "paymentAccountDetails") {
+      const error = validatePaymentAccountDetails(
+        formData.payment_method,
+        value
+      );
+      setPaymentAccountError(error);
+    }
+    if (name === "payment_method") {
+      // Reset error and details when payment method changes
+      setPaymentAccountError(null);
+      setFormData((prev) => ({
+        ...prev,
+        paymentAccountDetails: "",
+      }));
+    }
   };
 
   // Special handler for phone input
@@ -521,12 +567,25 @@ export default function ProfileForm() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    // const digitsOnly = formData.phoneNumber.replace(/\D/g, "");
+ // const digitsOnly = formData.phoneNumber.replace(/\D/g, "");
     // if (digitsOnly.length < 7) {
     //   setError("Phone number must be at least 7 digits.");
     //   setLoading(false);
     //   return; // Stop submission if validation fails
     // }
+    // Validate payment account details before submitting
+    if (formData.payment_method) {
+      const error = validatePaymentAccountDetails(
+        formData.payment_method,
+        formData.paymentAccountDetails
+      );
+      setPaymentAccountError(error);
+      if (error) {
+        setLoading(false);
+        return;
+      }
+    }
+
     try {
       const {
         data: { user },
@@ -574,10 +633,8 @@ export default function ProfileForm() {
           data: { session },
         } = await supabase.auth.getSession();
         const email = session?.user?.email;
-        console.log("Email:"); // Log the email for debugging
         if (email) {
           await fetch("/api/send-verification-email", {
-            // Log the email for debugging
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -825,7 +882,7 @@ export default function ProfileForm() {
                   value={formData.payment_method}
                   options={paymentMethodOptions}
                   onChange={handleInputChange}
-                  required
+                  // required
                 />
               </div>
               {formData.payment_method && (
@@ -837,11 +894,16 @@ export default function ProfileForm() {
                     name="paymentAccountDetails"
                     value={formData.paymentAccountDetails}
                     onChange={handleInputChange}
-                    required={!!formData.payment_method} // Required if a payment method is selected
+                    // required={!!formData.payment_method}
                     placeholder={getPaymentAccountDetailsPlaceholder(
                       formData.payment_method
                     )}
                   />
+                  {paymentAccountError && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {paymentAccountError}
+                    </p>
+                  )}
                 </div>
               )}
               {/* Document Uploads */}
