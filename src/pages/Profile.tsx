@@ -113,7 +113,7 @@ export default function Profile() {
   };
 
   const handleUpdateProfile = () => {
-    navigate("/jobs/apply");
+    navigate("/update-profile");
   };
   // const handleMyJobs = () => {
   //   navigate("/myJobs");

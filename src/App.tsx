@@ -29,7 +29,7 @@ function App() {
         <Route path="/jobs/:id" element={<JobDetails />} />
         <Route path="/company-bio" element={<CompanyForm />} />
         <Route path="/post-job" element={<PostJobForm />} />
-        <Route path="/jobs/apply" element={<UpdateProfile />} />
+        <Route path="/update-profile" element={<UpdateProfile />} />
 
         {/* All other routes wrapped with Layout */}
         <Route element={<Layout />}>
