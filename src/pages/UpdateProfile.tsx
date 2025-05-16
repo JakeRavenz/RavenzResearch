@@ -518,12 +518,12 @@ export default function ProfileForm() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const digitsOnly = formData.phoneNumber.replace(/\D/g, "");
-    if (digitsOnly.length < 7) {
-      setError("Phone number must be at least 7 digits.");
-      setLoading(false);
-      return; // Stop submission if validation fails
-    }
+    // const digitsOnly = formData.phoneNumber.replace(/\D/g, "");
+    // if (digitsOnly.length < 7) {
+    //   setError("Phone number must be at least 7 digits.");
+    //   setLoading(false);
+    //   return; // Stop submission if validation fails
+    // }
     try {
       const {
         data: { user },
@@ -545,7 +545,7 @@ export default function ProfileForm() {
         phone_number: formData.phoneNumber,
         education: formData.education,
         gender: formData.gender,
-        preferred_payment_method: formData.preferredPaymentMethod,
+       payment_method: formData.payment_method,
         payment_account_details: formData.paymentAccountDetails,
         updated_at: new Date(),
         resume_url: fileUrls.resumeUrl,
@@ -794,25 +794,25 @@ export default function ProfileForm() {
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <RadioGroupInput
                   label="Preferred Payment Method"
-                  name="preferredPaymentMethod"
-                  value={formData.preferredPaymentMethod}
+                  name="payment_method"
+                  value={formData.payment_method}
                   options={paymentMethodOptions}
                   onChange={handleInputChange}
                   required
                 />
               </div>
-              {formData.preferredPaymentMethod && (
+              {formData.payment_method && (
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <FormInput
                     label={getPaymentAccountDetailsLabel(
-                      formData.preferredPaymentMethod
+                      formData.payment_method
                     )}
                     name="paymentAccountDetails"
                     value={formData.paymentAccountDetails}
                     onChange={handleInputChange}
-                    required={!!formData.preferredPaymentMethod} // Required if a payment method is selected
+                    required={!!formData.payment_method} // Required if a payment method is selected
                     placeholder={getPaymentAccountDetailsPlaceholder(
-                      formData.preferredPaymentMethod
+                      formData.payment_method
                     )}
                   />
                 </div>
