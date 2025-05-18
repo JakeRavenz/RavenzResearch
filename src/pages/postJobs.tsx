@@ -186,52 +186,58 @@ export default function PostJobForm() {
 
   if (success) {
     return (
-      <div className="text-center p-6 bg-white rounded-lg shadow">
-        <h2 className="text-2xl font-bold text-green-600 mb-4">Job Posted Successfully!</h2>
-        <p className="mb-6">Your job listing has been published and is now visible to candidates.</p>
-        <div className="flex justify-center gap-4">
-          <button 
-            onClick={() => setSuccess(false)} 
-            className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition-colors"
-          >
-            Post Another Job
-          </button>
-          <button 
-            onClick={() => navigate('/')} 
-            className="bg-gray-200 text-gray-800 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors"
-          >
-           Home
-          </button>
+      <div className="max-w-4xl mx-auto p-6 bg-slate-100 dark:bg-gray-900 text-center">
+        <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow">
+          <h2 className="text-2xl font-bold text-green-600 dark:text-green-400 mb-4">Job Posted Successfully!</h2>
+          <p className="mb-6 text-gray-700 dark:text-gray-300">Your job listing has been published and is now visible to candidates.</p>
+          <div className="flex justify-center gap-4">
+            <button 
+              onClick={() => setSuccess(false)} 
+              className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 transition-colors"
+            >
+              Post Another Job
+            </button>
+            <button 
+              onClick={() => navigate('/')} 
+              className="bg-gray-200 text-gray-800 px-6 py-2 rounded-md hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors"
+            >
+             Home
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow">
-      <h1 className="text-2xl font-bold mb-6">Post a New Job</h1>
+    <div className="py-8 px-4 bg-slate-100 dark:bg-gray-900">
+    <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow">
+      <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Post a New Job</h1>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-md border border-red-200">
+        <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-md border border-red-200 dark:bg-red-900_bg_opacity_25 dark:text-red-300 dark:border-red-600">
           {error}
         </div>
       )}
 
-      {companies.length === 0 ? (
-        <div className="mb-6 p-4 bg-yellow-50 text-yellow-700 rounded-md border border-yellow-200">
+      {companies.length === 0 && !loading && ( // Added !loading to prevent showing this while companies are still fetching
+        <div className="mb-6 p-4 bg-yellow-50 text-yellow-700 rounded-md border border-yellow-200 dark:bg-yellow-900_bg_opacity_25 dark:text-yellow-300 dark:border-yellow-600">
           <p className="font-medium">You need to create a company profile before posting a job.</p>
           <button 
             onClick={() => navigate('/create-company')}
-            className="mt-2 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-4 py-2 rounded-md transition-colors"
+            className="mt-2 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-4 py-2 rounded-md transition-colors dark:bg-yellow-700_bg_opacity_50 dark:text-yellow-200 dark:hover:bg-yellow-600_bg_opacity_50"
           >
             Create Company Profile
           </button>
         </div>
-      ) : (
+      )}
+
+      {companies.length > 0 && (
+        <div className="flex justify-center gap-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Company Selection */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Select Company *
             </label>
             <select
@@ -239,7 +245,7 @@ export default function PostJobForm() {
               value={formData.company_id || ''}
               onChange={handleInputChange}
               required
-              className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               {companies.map(company => (
                 <option key={company.id} value={company.id}>
@@ -251,7 +257,7 @@ export default function PostJobForm() {
 
           {/* Job Title */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Job Title *
             </label>
             <input
@@ -261,13 +267,13 @@ export default function PostJobForm() {
               onChange={handleInputChange}
               required
               placeholder="e.g. Senior Frontend Developer"
-              className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
             />
           </div>
 
           {/* Job Description */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Job Description *
             </label>
             <textarea
@@ -277,13 +283,13 @@ export default function PostJobForm() {
               required
               rows={8}
               placeholder="Describe the role, responsibilities, and ideal candidate..."
-              className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
             />
           </div>
 
           {/* Salary Range */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Minimum Salary
             </label>
             <input
@@ -293,12 +299,12 @@ export default function PostJobForm() {
               onChange={handleNumberChange}
               placeholder="e.g. 50000"
               min="0"
-              className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Maximum Salary
             </label>
             <input
@@ -308,13 +314,13 @@ export default function PostJobForm() {
               onChange={handleNumberChange}
               placeholder="e.g. 70000"
               min="0"
-              className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
             />
           </div>
 
           {/* Location */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Location *
             </label>
             <input
@@ -324,13 +330,13 @@ export default function PostJobForm() {
               onChange={handleInputChange}
               required
               placeholder="e.g. New York, NY"
-              className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
             />
           </div>
 
           {/* Job Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Job Type *
             </label>
             <select
@@ -338,7 +344,7 @@ export default function PostJobForm() {
               value={formData.type}
               onChange={handleInputChange}
               required
-              className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               <option value="Full-time">Full-time</option>
               <option value="Part-time">Part-time</option>
@@ -351,7 +357,7 @@ export default function PostJobForm() {
 
           {/* Remote Level */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Remote Level *
             </label>
             <select
@@ -359,7 +365,7 @@ export default function PostJobForm() {
               value={formData.remote_level}
               onChange={handleInputChange}
               required
-              className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               <option value="On-site">On-site</option>
               <option value="hybrid">Hybrid</option>
@@ -369,7 +375,7 @@ export default function PostJobForm() {
 
           {/* Status */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Status *
             </label>
             <select
@@ -377,7 +383,7 @@ export default function PostJobForm() {
               value={formData.status}
               onChange={handleInputChange}
               required
-              className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               <option value="Open">Open</option>
               <option value="Closed">Closed</option>
@@ -387,7 +393,7 @@ export default function PostJobForm() {
 
           {/* Requirements */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Requirements
             </label>
             <div className="flex mb-2">
@@ -396,13 +402,13 @@ export default function PostJobForm() {
                 value={newRequirement}
                 onChange={(e) => setNewRequirement(e.target.value)}
                 placeholder="Add a job requirement"
-                className="flex-grow px-3 py-2 border rounded-l-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="flex-grow px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-l-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                 onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addRequirement())}
               />
               <button
                 type="button"
                 onClick={addRequirement}
-                className="px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700"
+                className="px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
               >
                 Add
               </button>
@@ -411,12 +417,12 @@ export default function PostJobForm() {
               {formData.requirements.length > 0 ? (
                 <ul className="space-y-2">
                   {formData.requirements.map((req, index) => (
-                    <li key={index} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-md">
-                      <span>{req}</span>
+                    <li key={index} className="flex items-center justify-between px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-md">
+                      <span className="text-gray-800 dark:text-gray-200">{req}</span>
                       <button
                         type="button"
                         onClick={() => removeRequirement(index)}
-                        className="text-red-500 hover:text-red-700"
+                        className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
                       >
                         Remove
                       </button>
@@ -424,14 +430,14 @@ export default function PostJobForm() {
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-gray-500">No requirements added yet</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">No requirements added yet</p>
               )}
             </div>
           </div>
 
           {/* Benefits */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               What We Offer (Benefits)
             </label>
             <div className="flex mb-2">
@@ -440,13 +446,13 @@ export default function PostJobForm() {
                 value={newBenefit}
                 onChange={(e) => setNewBenefit(e.target.value)}
                 placeholder="Add a benefit or perk"
-                className="flex-grow px-3 py-2 border rounded-l-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="flex-grow px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-l-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                 onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addBenefit())}
               />
               <button
                 type="button"
                 onClick={addBenefit}
-                className="px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700"
+                className="px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
               >
                 Add
               </button>
@@ -455,12 +461,12 @@ export default function PostJobForm() {
               {formData.what_we_offer.length > 0 ? (
                 <ul className="space-y-2">
                   {formData.what_we_offer.map((benefit, index) => (
-                    <li key={index} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-md">
-                      <span>{benefit}</span>
+                    <li key={index} className="flex items-center justify-between px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-md">
+                      <span className="text-gray-800 dark:text-gray-200">{benefit}</span>
                       <button
                         type="button"
                         onClick={() => removeBenefit(index)}
-                        className="text-red-500 hover:text-red-700"
+                        className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
                       >
                         Remove
                       </button>
@@ -468,18 +474,19 @@ export default function PostJobForm() {
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-gray-500">No benefits added yet</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">No benefits added yet</p>
               )}
             </div>
           </div>
+        </div>
         </div>
       )}
 
       <div className="mt-8">
         <button 
           type="submit" 
-          disabled={loading || companies.length === 0}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors flex justify-center items-center"
+          disabled={loading || companies.length === 0 && !error} // Disable if no companies and no error (meaning still loading or genuinely no companies)
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 disabled:bg-blue-300 dark:disabled:bg-blue-800 transition-colors flex justify-center items-center"
         >
           {loading ? (
             <>
@@ -495,5 +502,6 @@ export default function PostJobForm() {
         </button>
       </div>
     </form>
+    </div>
   );
 }

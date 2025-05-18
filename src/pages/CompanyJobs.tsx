@@ -56,21 +56,21 @@ export default function CompanyJobs() {
   }, [id]);
 
   if (loading) {
-    return <div className="py-8 text-center">Loading jobs...</div>;
+    return <div className="py-8 text-center text-gray-700 dark:text-gray-300">Loading jobs...</div>;
   }
 
   return (
-    <div className="w-full max-w-screen-xl px-4 py-8 mx-auto sm:px-6 lg:px-8">
-      <h1 className="mb-6 text-3xl font-bold">
+    <div className="w-full max-w-screen-xl px-4 py-8 mx-auto sm:px-6 lg:px-8 bg-slate-100 dark:bg-gray-900">
+      <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
         Jobs for {companyName ? companyName : `Company ${id}`}
       </h1>
       {jobs.length === 0 ? (
-        <p className="text-gray-600">No jobs found for this company.</p>
+        <p className="text-gray-600 dark:text-gray-400">No jobs found for this company.</p>
       ) : (
         <ul className="space-y-4">
           {jobs.map((job) => (
-            <li key={job.id} className="p-4 bg-white rounded-lg shadow">
-              <h2 className="text-xl font-semibold">{job.title}</h2>
+            <li key={job.id} className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{job.title}</h2>
               <TruncatedDescription description={job.description} />
             </li>
           ))}
@@ -87,14 +87,14 @@ function TruncatedDescription({ description }: { description: string }) {
   const toggleExpanded = () => setIsExpanded(!isExpanded);
 
   return (
-    <p className="mt-1 text-gray-600">
+    <p className="mt-1 text-gray-600 dark:text-gray-400">
       {isExpanded || description.length <= maxLength
         ? description
         : `${description.slice(0, maxLength)}...`}
       {description.length > maxLength && (
         <button
           onClick={toggleExpanded}
-          className="ml-2 text-blue-500 hover:underline"
+          className="ml-2 text-blue-500 dark:text-blue-400 hover:underline"
         >
           {isExpanded ? 'See Less' : 'See More'}
         </button>
