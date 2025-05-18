@@ -25,14 +25,14 @@ interface Job {
 function Modal({ message, onClose }: { message: string; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-xl">
-        <p className="text-center text-gray-800">{message}</p>
+      <div className="w-full max-w-md p-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl">
+        <p className="text-center text-gray-800 dark:text-gray-100">{message}</p>
         <div className="flex justify-center mt-6">
           <button
             onClick={() => {
               onClose(); // Call the onClose function
             }}
-            className="px-5 py-2 text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="px-5 py-2 text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Close
           </button>
@@ -318,31 +318,30 @@ export default function JobDetails() {
   //if (loading) {
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen p-4 mx-auto bg-gray-50">
-        <div className="w-full max-w-md p-8 text-center bg-white rounded-lg shadow-lg">
-          <Briefcase className="w-16 h-16 mx-auto mt-6 mb-6 text-gray-400" />
-          <div className="w-8 h-8 mx-auto border-4 border-indigo-600 rounded-full animate-spin border-t-transparent"></div>
-          <p className="mt-4 text-gray-600">Loading job details...</p>
+      <div className="flex items-center justify-center min-h-screen p-4 mx-auto bg-gray-50 dark:bg-gray-900">
+        <div className="w-full max-w-md p-8 text-center bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+          <Briefcase className="w-16 h-16 mx-auto mt-6 mb-6 text-gray-400 dark:text-gray-500" />
+          <div className="w-8 h-8 mx-auto border-4 border-indigo-600 dark:border-indigo-400 rounded-full animate-spin border-t-transparent"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading job details...</p>
         </div>
       </div>
     );
   }
   // Check if job does not exists
-
   if (!job) {
     return (
-      <div className="flex items-center justify-center min-h-screen p-4 bg-gray-50">
-        <div className="w-full max-w-md p-8 text-center bg-white rounded-lg shadow-lg">
-          <Briefcase className="w-16 h-16 mx-auto text-gray-400" />
-          <h3 className="mt-6 text-xl font-semibold text-gray-900">
+      <div className="flex items-center justify-center min-h-screen p-4 bg-gray-50 dark:bg-gray-900">
+        <div className="w-full max-w-md p-8 text-center bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+          <Briefcase className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500" />
+          <h3 className="mt-6 text-xl font-semibold text-gray-900 dark:text-white">
             Job not found
           </h3>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-gray-600 dark:text-gray-400">
             The job you're looking for doesn't exist or has been removed.
           </p>
           <button
             onClick={() => navigate("/jobs")}
-            className="w-full px-6 py-3 mt-6 text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
+            className="w-full px-6 py-3 mt-6 text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
           >
             Back to Jobs
           </button>
@@ -352,7 +351,7 @@ export default function JobDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {showModal && (
         <Modal
           message={modalMessage}
@@ -381,11 +380,11 @@ export default function JobDetails() {
       )}
 
       {/* Header with Back Button */}
-      <div className="sticky top-0 z-10 bg-white border-b shadow-sm">
+      <div className="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
         <div className="max-w-6xl px-4 py-4 mx-auto sm:px-6 lg:px-8">
           <button
             onClick={() => navigate("/jobs")}
-            className="flex items-center font-medium text-gray-600 transition-colors hover:text-gray-900"
+            className="flex items-center font-medium text-gray-600 dark:text-gray-300 transition-colors hover:text-gray-900 dark:hover:text-white"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
             <span>Back to Jobs</span>
@@ -394,7 +393,7 @@ export default function JobDetails() {
       </div>
 
       <div className="max-w-6xl px-4 py-6 mx-auto sm:px-6 lg:px-8 sm:py-10">
-        <div className="overflow-hidden bg-white shadow-md rounded-xl">
+        <div className="overflow-hidden bg-white dark:bg-gray-800 shadow-md rounded-xl">
           {/* Job Header */}
           <div className="p-6 border-b sm:p-8">
             <div className="flex flex-col gap-6 md:flex-row md:items-start">
@@ -407,24 +406,24 @@ export default function JobDetails() {
                     className="object-cover w-20 h-20 rounded-lg shadow-sm"
                   />
                 ) : (
-                  <div className="flex items-center justify-center w-20 h-20 bg-gray-100 rounded-lg shadow-sm">
-                    <Building className="w-10 h-10 text-gray-400" />
+                  <div className="flex items-center justify-center w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-sm">
+                    <Building className="w-10 h-10 text-gray-400 dark:text-gray-500" />
                   </div>
                 )}
               </div>
 
               {/* Job Info */}
               <div className="flex-grow">
-                <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">
                   {job.title}
                 </h1>
-                <div className="mt-1 mb-4 text-lg text-gray-700 sm:text-xl">
+                <div className="mt-1 mb-4 text-lg text-gray-700 dark:text-gray-300 sm:text-xl">
                   {job.company.name}
                 </div>
 
-                <div className="flex flex-wrap text-gray-600 gap-y-2 gap-x-6">
+                <div className="flex flex-wrap text-gray-600 dark:text-gray-400 gap-y-2 gap-x-6">
                   <div className="flex items-center">
-                    <MapPin className="w-5 h-5 mr-2 text-gray-500" />
+                    <MapPin className="w-5 h-5 mr-2 text-gray-500 dark:text-gray-400" />
                     <span>
                       {job.remote_level === "fully_remote"
                         ? "Remote"
@@ -432,7 +431,7 @@ export default function JobDetails() {
                     </span>
                   </div>
                   <div className="flex items-center">
-                    <Briefcase className="w-5 h-5 mr-2 text-gray-500" />
+                    <Briefcase className="w-5 h-5 mr-2 text-gray-500 dark:text-gray-400" />
                     <span>{job.type}</span>
                   </div>
                   {/* <div className="flex items-center">
@@ -450,7 +449,7 @@ export default function JobDetails() {
                 <button
                   onClick={handleApplyNow}
                   disabled={applyDisabled || isSubmitting}
-                  className="w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
+                  className="w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
                 >
                   {isSubmitting
                     ? "Applying..."
@@ -466,7 +465,7 @@ export default function JobDetails() {
               <button
                 onClick={handleApplyNow}
                 disabled={applyDisabled || isSubmitting}
-                className="w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting
                   ? "Applying..."
@@ -482,41 +481,40 @@ export default function JobDetails() {
             <div className="space-y-10">
               {/* About the Role */}
               <section>
-                <h2 className="flex items-center mb-4 text-xl font-semibold text-gray-900">
+                <h2 className="flex items-center mb-4 text-xl font-semibold text-gray-900 dark:text-white">
                   <span className="mr-2">About the Role</span>
-                  <span className="flex-grow ml-3 border-t border-gray-200"></span>
+                  <span className="flex-grow ml-3 border-t border-gray-200 dark:border-gray-700"></span>
                 </h2>
-                <div className="leading-relaxed prose text-gray-700 max-w-none">
+                <div className="leading-relaxed prose text-gray-700 dark:text-gray-300 max-w-none">
                   <TruncatedDescription description={job.description} />
                 </div>
               </section>
 
               {/* Requirements */}
               <section>
-                <h2 className="flex items-center mb-4 text-xl font-semibold text-gray-900">
+                <h2 className="flex items-center mb-4 text-xl font-semibold text-gray-900 dark:text-white">
                   <span className="mr-2">Requirements</span>
-                  <span className="flex-grow ml-3 border-t border-gray-200"></span>
+                  <span className="flex-grow ml-3 border-t border-gray-200 dark:border-gray-700"></span>
                 </h2>
-                <ul className="space-y-2 text-gray-700">
+                <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                   {job.requirements && job.requirements.length > 0 ? (
                     job.requirements.map((req, index) => (
                       <li key={index} className="flex items-start">
-                        <span className="flex-shrink-0 inline-block w-2 h-2 mt-2 mr-3 bg-blue-600 rounded-full"></span>
+                        <span className="flex-shrink-0 inline-block w-2 h-2 mt-2 mr-3 bg-blue-600 dark:bg-blue-400 rounded-full"></span>
                         <span>{req}</span>
                       </li>
                     ))
                   ) : (
                     <li className="flex items-start">
-                      <span className="flex-shrink-0 inline-block w-2 h-2 mt-2 mr-3 bg-blue-600 rounded-full"></span>
+                      <span className="flex-shrink-0 inline-block w-2 h-2 mt-2 mr-3 bg-blue-600 dark:bg-blue-400 rounded-full"></span>
                       <span>No specific requirements listed.</span>
                     </li>
                   )}
                 </ul>
               </section>
-
               {/* What We Offer */}
               <section>
-                <h2 className="flex items-center mb-4 text-xl font-semibold text-gray-900">
+                <h2 className="flex items-center mb-4 text-xl font-semibold text-gray-900 dark:text-white">
                   <span className="mr-2">What We Offer</span>
                   <span className="flex-grow ml-3 border-t border-gray-200"></span>
                 </h2>
@@ -539,14 +537,14 @@ export default function JobDetails() {
             </div>
 
             {/* Apply Section */}
-            <div className="pt-8 mt-10 border-t border-gray-200">
-              <div className="p-6 rounded-lg bg-blue-50 sm:p-8">
+            <div className="pt-8 mt-10 border-t border-gray-200 dark:border-gray-700">
+              <div className="p-6 rounded-lg bg-blue-50 dark:bg-blue-900_bg_opacity_25 sm:p-8">
                 <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <h2 className="mb-2 text-xl font-semibold text-gray-900">
+                    <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
                       Ready to join {job.company.name}?
                     </h2>
-                    <p className="text-gray-700">
+                    <p className="text-gray-700 dark:text-gray-300">
                       Submit your application today and take the next step in
                       your career.
                     </p>
@@ -554,7 +552,7 @@ export default function JobDetails() {
                   <button
                     onClick={handleApplyNow}
                     disabled={applyDisabled || isSubmitting}
-                    className="flex-shrink-0 w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
+                    className="flex-shrink-0 w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
                   >
                     {isSubmitting
                       ? "Applying..."
@@ -599,14 +597,14 @@ function TruncatedDescription({ description }: { description: string }) {
   const toggleExpanded = () => setIsExpanded(!isExpanded);
 
   return (
-    <p className="mt-1 text-gray-600">
+    <p className="mt-1 text-gray-600 dark:text-gray-400">
       {isExpanded || description.length <= maxLength
         ? description
         : `${description.slice(0, maxLength)}...`}
       {description.length > maxLength && (
         <button
           onClick={toggleExpanded}
-          className="ml-2 text-blue-500 hover:underline"
+          className="ml-2 text-blue-500 dark:text-blue-400 hover:underline"
         >
           {isExpanded ? "See Less" : "See More"}
         </button>

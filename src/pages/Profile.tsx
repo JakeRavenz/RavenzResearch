@@ -142,9 +142,9 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
-        <div className="w-8 h-8 border-4 border-indigo-600 rounded-full animate-spin border-t-transparent"></div>
-        <p className="mt-4 text-gray-600">Loading profile...</p>
+      <div className="flex flex-col items-center justify-center min-h-screen py-12 bg-slate-100 dark:bg-gray-900">
+        <div className="w-8 h-8 border-4 border-indigo-600 dark:border-indigo-400 rounded-full animate-spin border-t-transparent"></div>
+        <p className="mt-4 text-gray-600 dark:text-gray-400">Loading profile...</p>
       </div>
     );
   }
@@ -154,8 +154,8 @@ export default function Profile() {
     .join(" ");
 
   return (
-    <div className="w-full max-w-screen-xl px-4 mx-auto sm:px-6 lg:px-8">
-      <div className="bg-white rounded-lg shadow-sm">
+    <div className="w-full max-w-screen-xl px-4 mx-auto sm:px-6 lg:px-8 bg-slate-100 dark:bg-gray-900">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
         <div className="p-6">
           {/* Header section with avatar and name */}
           <div className="flex flex-wrap items-start justify-between gap-4 md:flex-nowrap">
@@ -167,12 +167,12 @@ export default function Profile() {
                   className="object-cover w-20 h-20 rounded-full"
                 />
               ) : (
-                <div className="flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full">
-                  <User className="w-10 h-10 text-gray-400" />
+                <div className="flex items-center justify-center w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-full">
+                  <User className="w-10 h-10 text-gray-400 dark:text-gray-500" />
                 </div>
               )}
               <div>
-                <h1 className="text-xl font-bold text-gray-900 md:text-2xl">
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white md:text-2xl">
                   {fullName || "No name provided"}
                 </h1>
               </div>
@@ -180,19 +180,19 @@ export default function Profile() {
             <div className="flex space-x-3">
               <button
                 onClick={handleUpdateProfile}
-                className="px-4 py-2 text-white transition-colors bg-indigo-600 rounded-md hover:bg-indigo-700"
+                className="px-4 py-2 text-white transition-colors bg-indigo-600 rounded-md hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
               >
                 Update Profile
               </button>
               {/* <button
                 onClick={handleMyJobs}
-                className="px-4 py-2 text-gray-600 transition-colors border border-gray-300 rounded-md hover:bg-gray-100"
+                className="px-4 py-2 text-gray-600 dark:text-gray-300 transition-colors border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 My Jobs
               </button> */}
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 text-gray-600 transition-colors border border-gray-300 rounded-md hover:bg-gray-100"
+                className="px-4 py-2 text-gray-600 dark:text-gray-300 transition-colors border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 Logout
               </button>
@@ -202,17 +202,17 @@ export default function Profile() {
           {/* Profile content sections */}
           {/* <div className="mt-6 space-y-8">
             <section>
-              <h2 className="mb-3 text-lg font-semibold text-gray-900">
+              <h2 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
                 About
               </h2>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-300">
                 {profile?.bio || "No bio information provided"}
               </p>
             </section> */}
 
             {/* Personal Information */}
-            <section>
-              <h2 className="mb-3 text-lg font-semibold text-gray-900">
+            <section className="mt-6">
+              <h2 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
                 Personal Information
               </h2>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -254,7 +254,7 @@ export default function Profile() {
 
             {/* Address Information */}
             <section>
-              <h2 className="mb-3 text-lg font-semibold text-gray-900">
+              <h2 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
                 Address Information
               </h2>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -274,11 +274,11 @@ export default function Profile() {
 
             {/* Documents */}
             <section>
-              <h2 className="mb-3 text-lg font-semibold text-gray-900">
+              <h2 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
                 Documents
               </h2>
               <div>
-                <h3 className="mb-2 text-sm font-medium text-gray-700">
+                <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   Resume
                 </h3>
                 {profile?.resume_url ? (
@@ -286,7 +286,7 @@ export default function Profile() {
                     href={profile.resume_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center text-indigo-600 hover:text-indigo-800 hover:underline"
+                    className="inline-flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:underline"
                   >
                     View Resume
                     <svg
@@ -305,7 +305,7 @@ export default function Profile() {
                     </svg>
                   </a>
                 ) : (
-                  <p className="text-gray-500">No resume uploaded</p>
+                  <p className="text-gray-500 dark:text-gray-400">No resume uploaded</p>
                 )}
               </div>
             </section>
@@ -323,7 +323,7 @@ interface ProfileFieldProps {
 }
 const ProfileField: React.FC<ProfileFieldProps> = ({ label, value }) => (
   <div>
-    <h3 className="mb-1 text-sm font-medium text-gray-700">{label}</h3>
-    <p className="text-gray-600">{value || "Not provided"}</p>
+    <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">{label}</h3>
+    <p className="text-gray-600 dark:text-gray-400">{value || "Not provided"}</p>
   </div>
 );
