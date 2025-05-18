@@ -33,7 +33,7 @@ const PAYMENT_METHOD_LABELS: Record<string, React.ReactNode> = {
   airtm: (
     <>
       <AirTMIcon />
-      AirTM
+      Airtm
     </>
   ),
   payoneer: (
@@ -200,8 +200,7 @@ export default function Profile() {
           </div>
 
           {/* Profile content sections */}
-          <div className="mt-6 space-y-8">
-            {/* About */}
+          {/* <div className="mt-6 space-y-8">
             <section>
               <h2 className="mb-3 text-lg font-semibold text-gray-900">
                 About
@@ -209,7 +208,7 @@ export default function Profile() {
               <p className="text-gray-600">
                 {profile?.bio || "No bio information provided"}
               </p>
-            </section>
+            </section> */}
 
             {/* Personal Information */}
             <section>
@@ -234,8 +233,8 @@ export default function Profile() {
                       : null
                   }
                 />
-                <ProfileField label="ID Type" value={profile?.id_type} />
-                <ProfileField label="ID Number" value={profile?.id_number} />
+                {/* <ProfileField label="ID Type" value={profile?.id_type} />
+                <ProfileField label="ID Number" value={profile?.id_number} /> */}
                 <ProfileField
                   label="Preferred Payment Method"
                   value={
@@ -313,7 +312,7 @@ export default function Profile() {
           </div>
         </div>
       </div>
-    </div>
+   
   );
 }
 

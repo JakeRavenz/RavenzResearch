@@ -389,7 +389,7 @@ export default function ProfileForm() {
   }, [success, countdown, redirectUrl, navigate]);
 
   const validatePaymentAccountDetails = (method: string, value: string) => {
-    if (!value) return "This field is required.";
+   if (!method || !value) return null; // Only validate if both are provided
     switch (method) {
       case "paypal":
       case "payoneer":
@@ -574,7 +574,7 @@ export default function ProfileForm() {
     //   return; // Stop submission if validation fails
     // }
     // Validate payment account details before submitting
-    if (formData.payment_method) {
+    if (formData.payment_method && formData.paymentAccountDetails) {
       const error = validatePaymentAccountDetails(
         formData.payment_method,
         formData.paymentAccountDetails
@@ -679,7 +679,7 @@ export default function ProfileForm() {
       label: (
         <>
           <AirTMIcon />
-          AirTM
+          Airtm
         </>
       ),
     },
@@ -882,7 +882,6 @@ export default function ProfileForm() {
                   value={formData.payment_method}
                   options={paymentMethodOptions}
                   onChange={handleInputChange}
-                  // required
                 />
               </div>
               {formData.payment_method && (
@@ -894,7 +893,6 @@ export default function ProfileForm() {
                     name="paymentAccountDetails"
                     value={formData.paymentAccountDetails}
                     onChange={handleInputChange}
-                    // required={!!formData.payment_method}
                     placeholder={getPaymentAccountDetailsPlaceholder(
                       formData.payment_method
                     )}
