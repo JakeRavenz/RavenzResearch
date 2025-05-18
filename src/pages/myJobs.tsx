@@ -118,11 +118,11 @@ export default function MyJobs() {
 
   if (loadingApplications || loadingJobDetails) {
     return (
-      <div className="flex items-center justify-center min-h-screen p-4 mx-auto bg-gray-50">
-        <div className="w-full max-w-md p-8 text-center bg-white rounded-lg shadow-lg">
-          <Briefcase className="w-16 h-16 mx-auto mt-6 mb-6 text-gray-400" />
-          <div className="w-8 h-8 mx-auto border-4 border-indigo-600 rounded-full animate-spin border-t-transparent"></div>
-          <p className="mt-4 text-gray-600">Loading job applications...</p>
+      <div className="flex items-center justify-center min-h-screen p-4 mx-auto bg-gray-50 dark:bg-gray-900">
+        <div className="w-full max-w-md p-8 text-center bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+          <Briefcase className="w-16 h-16 mx-auto mt-6 mb-6 text-gray-400 dark:text-gray-500" />
+          <div className="w-8 h-8 mx-auto border-4 border-indigo-600 dark:border-indigo-400 rounded-full animate-spin border-t-transparent"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading job applications...</p>
         </div>
       </div>
     );
@@ -130,11 +130,11 @@ export default function MyJobs() {
   // If there are no applications, show a message
   if (applications?.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
-        <h2 className="text-2xl font-bold text-gray-900">
+      <div className="flex flex-col items-center justify-center py-12 bg-slate-100 dark:bg-gray-900">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
           No Applications Found
         </h2>
-        <p className="mt-4 text-gray-600">
+        <p className="mt-4 text-gray-600 dark:text-gray-400">
           You have not applied for any jobs yet.
         </p>
       </div>
@@ -143,25 +143,25 @@ export default function MyJobs() {
   // If there are applications, display them
 
   return (
-    <div className="container px-4 py-8 mx-auto">
-      <h1 className="mb-8 text-3xl font-bold text-gray-900">My Jobs</h1>
-      <div className="overflow-hidden bg-white shadow sm:rounded-lg">
+    <div className="container px-4 py-8 mx-auto bg-slate-100 dark:bg-gray-900">
+      <h1 className="mb-8 text-3xl font-bold text-gray-900 dark:text-white">My Jobs</h1>
+      <div className="overflow-hidden bg-white dark:bg-gray-800 shadow sm:rounded-lg">
         <div className="px-4 py-5 sm:px-6">
-          <h3 className="text-lg font-medium leading-6 text-gray-900">
+          <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-white">
             Applications
           </h3>
-          <p className="max-w-2xl mt-1 text-sm text-gray-500">
+          <p className="max-w-2xl mt-1 text-sm text-gray-500 dark:text-gray-400">
             Here are the jobs you have applied for.
           </p>
         </div>
-        <div className="flex-col border-t border-gray-200 lg:flex-row lg:items-center lg:justify-center">
-          <dl className="divide-y divide-gray-200">
+        <div className="flex-col border-t border-gray-200 dark:border-gray-700 lg:flex-row lg:items-center lg:justify-center">
+          <dl className="divide-y divide-gray-200 dark:divide-gray-700">
             {applications?.map((application) => (
               <div
                 key={application.id}
                 className="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
               >
-                <dt className="text-sm font-medium text-gray-500">
+                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
                   <div className="flex items-center space-x-2">
                     {jobDetails.map((job) => {
                       if (job.id === application.job_id) {
@@ -174,7 +174,7 @@ export default function MyJobs() {
                               <img
                                 src={job.company.logo_url}
                                 alt={`${job.company.name} logo`}
-                                className="object-cover w-8 h-8 rounded-lg"
+                                className="object-cover w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700"
                               />
                             ) : null}
                             <span>{application.job_title}</span>
@@ -185,15 +185,15 @@ export default function MyJobs() {
                     })}
                   </div>
                 </dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 ">
+                <dd className="mt-1 text-sm text-gray-900 dark:text-white sm:col-span-2 sm:mt-0 ">
                   <div className="flex items-center space-x-2">
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${
                         application.status === "accepted"
-                          ? "bg-green-100 text-green-800"
+                          ? "bg-green-100 text-green-800 dark:bg-green-700_bg_opacity_50 dark:text-green-300"
                           : application.status === "rejected"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-yellow-100 text-yellow-800"
+                          ? "bg-red-100 text-red-800 dark:bg-red-700_bg_opacity_50 dark:text-red-300"
+                          : "bg-yellow-100 text-yellow-800 dark:bg-yellow-700_bg_opacity_50 dark:text-yellow-300"
                       }`}
                     >
                       {application.status}
@@ -201,7 +201,7 @@ export default function MyJobs() {
                     <button
                       onClick={() => handleCancelApplication(application.id)}
                       className={`text-red-600 hover:text-red-900 ${
-                        cancelling === application.id
+                        cancelling === application.id 
                           ? "opacity-50 cursor-not-allowed"
                           : ""
                       }`}
@@ -212,7 +212,7 @@ export default function MyJobs() {
                         : "Cancel Application"}
                     </button>
                   </div>
-                  <p className="mt-2 text-sm text-gray-500">
+                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                     Applied on{" "}
                     {new Date(application.created_at).toLocaleDateString()}
                   </p>
