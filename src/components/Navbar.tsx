@@ -7,15 +7,20 @@ import {
   XMarkIcon,
   InformationCircleIcon,
   QuestionMarkCircleIcon,
-  EnvelopeIcon 
+  EnvelopeIcon,
 } from "@heroicons/react/24/outline";
 import { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 import logo from "../assets/Ravenz Research logo alone.png";
+import { useTheme } from "../contexts/ThemeContext";
+import useAuth from "../hooks/useAuth"; // Ensure this path is correct
+import { Sun, Moon, LogIn, UserPlus, UserCircle, LogOut } from 'lucide-react';
+import toast from "react-hot-toast";
 
 export default function Navbar() {
   const [user, setUser] = useState<User | null>(null);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -34,7 +39,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="bg-white border-b border-gray-200 h-[80px] w-full">
+      <nav className="bg-white border-b border-gray-200 h-[80px] w-full dark:border-gray-700 dark:bg-gray-900 shadow-md">
         <div className="flex items-center h-full">
           {/* Logo Section */}
           <Link
@@ -48,56 +53,58 @@ export default function Navbar() {
               alt="Logo"
               className="w-8 h-8"
             />{" "}
-            <span className="font-bold text-xl  font-['Inter']">
+            <span className="font-bold text-xl text-gray-700 dark:text-slate-400 font-['Inter']">
               Ravenz Research
             </span>
           </Link>
           {/* Nav Links */}
-          <div className="items-center hidden pr-6 ml-auto space-x-12 md:flex">
+          <div className="items-center hidden pr-6 ml-auto space-x-12 md:flex ">
             <Link
               to="/jobs"
-              className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
+              className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-600 font-['Inter']"
             >
               <BriefcaseIcon className="w-5 h-5" />
               <span>Jobs</span>
             </Link>
-
             <Link
               to="/myJobs"
-              className="flex items-center space-x-2 text-gray-700  pr-1  hover:text-indigo-600 font-['Inter']"
+              className="flex items-center space-x-2 text-gray-700 dark:text-slate-400 dark:hover:text-indigo-600 pr-1  hover:text-indigo-600 font-['Inter']"
             >
-             <BriefcaseIcon className="w-5 h-5" />
+              <BriefcaseIcon className="w-5 h-5" />
               <span className="w-5 h-5 text-balanced">myJobs</span>
             </Link>
-
             <Link
               to="/aboutUs"
-              className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
+              className="flex items-center space-x-2 text-gray-700 dark:text-slate-400 dark:hover:text-indigo-600 hover:text-indigo-600 font-['Inter']"
             >
               <InformationCircleIcon className="w-5 h-5" />
               <span>About Us</span>
             </Link>
-
             <Link
               to="/faq"
-              className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
+              className="flex items-center space-x-2 text-gray-700 dark:text-slate-400 dark:hover:text-indigo-600 hover:text-indigo-600 font-['Inter']"
             >
               <QuestionMarkCircleIcon className="w-5 h-5" />
               <span>FAQ</span>
             </Link>
-
             <Link
               to="/contact"
-              className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
+              className="flex items-center space-x-2 text-gray-700 dark:text-slate-400 dark:hover:text-indigo-600 hover:text-indigo-600 font-['Inter']"
             >
               <EnvelopeIcon className="w-5 h-5" />
               <span>Contact Us</span>
-            </Link>
-
+            </Link>{" "}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-md text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
+              aria-label="Toggle theme"
+            >
+              {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+            </button>
             {user ? (
               <Link
                 to="/profile"
-                className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 font-['Inter']"
+                className="flex items-center space-x-2 text-gray-700 dark:text-slate-400 dark:hover:text-indigo-600 hover:text-indigo-600 font-['Inter']"
               >
                 <UserIcon className="w-5 h-5" />
                 <span>Profile</span>
@@ -105,9 +112,9 @@ export default function Navbar() {
             ) : (
               <Link
                 to="/auth"
-                className="bg-emerald-400 text-white px-6 py-2 hover:bg-emerald-400 font-['Inter']"
+                className="bg-emerald-400 text-white px-6 py-2 hover:bg-emerald-600 font-['Inter']"
               >
-                Sign In
+                <LogIn size={20} />sign in
               </Link>
             )}
           </div>

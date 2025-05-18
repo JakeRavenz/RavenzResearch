@@ -167,9 +167,9 @@ export default function Jobs() {
   );
 
   return (
-    <div className="w-full max-w-full px-0 py-8 mx-auto bg-slate-100">
+    <div className="w-full max-w-full px-0 py-8 mx-auto bg-slate-100 dark:bg-gray-900">
       <div className="flex flex-col items-start justify-between gap-4 px-5 mb-6 md:flex-row md:items-center">
-        <h1 className="text-2xl font-bold text-gray-900 md:text-3xl">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white md:text-3xl">
           Discover Opportunities
         </h1>
         <div className="flex flex-col w-full gap-2 md:w-auto sm:flex-row">
@@ -180,12 +180,12 @@ export default function Jobs() {
               placeholder="Search jobs..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full py-2 pl-10 pr-4 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
             />
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center justify-center px-4 py-2 transition-colors bg-gray-100 rounded-lg hover:bg-gray-200"
+            className="flex items-center justify-center px-4 py-2 transition-colors bg-gray-100 dark:bg-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
           >
             <Filter className="w-4 h-4 mr-2" />
             Filters
@@ -194,12 +194,12 @@ export default function Jobs() {
       </div>
 
       {showFilters && (
-        <div className="grid grid-cols-1 gap-4 p-4 mx-1 mb-6 bg-white rounded-lg shadow-sm sm:grid-cols-2 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 p-4 mx-1 mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm sm:grid-cols-2 md:grid-cols-4">
           <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">
+            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
               Job Type
             </label>
-            <select className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
               <option value="">All Types</option>
               <option value="full_time">Full Time</option>
               <option value="part_time">Part Time</option>
@@ -207,10 +207,10 @@ export default function Jobs() {
             </select>
           </div>
           <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">
+            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
               Location
             </label>
-            <select className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
               <option value="">All Locations</option>
               <option value="remote">Remote</option>
               <option value="us">United States</option>
@@ -218,28 +218,29 @@ export default function Jobs() {
             </select>
           </div>
           <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">
+            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
               Remote Level
             </label>
-            <select className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
               <option value="">Any</option>
               <option value="fully_remote">Fully Remote</option>
               <option value="hybrid">Hybrid</option>
               <option value="onsite">On-site</option>
             </select>
           </div>
+          {/* Add another filter option if needed to make it 4 columns */}
         </div>
       )}
 
       <div className="flex items-center justify-between px-5 mb-6">
-        <div className="text-gray-600">
+        <div className="text-gray-600 dark:text-gray-400">
           {loading && jobs.length === 0
             ? "Loading jobs..."
             : `${filteredJobs.length} jobs found`}
         </div>
         <Link
           to="/jobs"
-          className="flex items-center font-medium text-blue-600 hover:text-blue-800 group"
+          className="flex items-center font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 group"
         >
           View all jobs
           <span className="ml-1 transition-transform transform group-hover:translate-x-1">
@@ -256,12 +257,12 @@ export default function Jobs() {
             <JobSkeletonLoader />
           </>
         ) : filteredJobs.length === 0 ? (
-          <div className="py-16 text-center bg-white rounded-lg shadow-sm">
+          <div className="py-16 text-center bg-white dark:bg-gray-800 rounded-lg shadow-sm">
             <Briefcase className="w-16 h-16 mx-auto text-gray-400" />
-            <h3 className="mt-6 text-xl font-medium text-gray-900">
+            <h3 className="mt-6 text-xl font-medium text-gray-900 dark:text-white">
               No jobs found
             </h3>
-            <p className="max-w-md mx-auto mt-2 text-gray-600">
+            <p className="max-w-md mx-auto mt-2 text-gray-600 dark:text-gray-400">
               {searchTerm
                 ? "Try adjusting your search criteria or check back later for new opportunities."
                 : "We don't have any open positions right now. Please check back soon for new opportunities."}
@@ -269,7 +270,7 @@ export default function Jobs() {
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm("")}
-                className="px-4 py-2 mt-4 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
+                className="px-4 py-2 mt-4 text-white transition-colors bg-blue-600 dark:bg-blue-500 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
               >
                 Clear search
               </button>
@@ -279,7 +280,7 @@ export default function Jobs() {
           filteredJobs.map((job) => (
             <div
               key={job.id}
-              className="flex flex-col gap-4 p-4 transition-all bg-white border border-gray-100 rounded-lg cursor-pointer sm:p-6 hover:border-blue-200 hover:shadow-md sm:flex-row"
+              className="flex flex-col gap-4 p-4 transition-all bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg cursor-pointer sm:p-6 hover:border-blue-200 dark:hover:border-blue-600 hover:shadow-md sm:flex-row"
               onClick={() => navigate(`/jobs/${job.id}`)}
             >
               {/* Company Logo - Stack on mobile, side by side on larger screens */}
@@ -291,7 +292,7 @@ export default function Jobs() {
                     className="object-cover w-12 h-12 rounded-lg"
                   />
                 ) : (
-                  <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-lg">
+                  <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-lg">
                     <Building className="w-6 h-6 text-gray-400" />
                   </div>
                 )}
@@ -301,17 +302,17 @@ export default function Jobs() {
                 {/* Job Title and Salary - Stack on mobile, side by side on larger screens */}
                 <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
                   <div>
-                    <h2 className="text-lg font-semibold text-gray-900 hover:text-blue-600">
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400">
                       {job.title}
                     </h2>
-                    <p className="text-gray-600">{job.company.name}</p>
+                    <p className="text-gray-600 dark:text-gray-400">{job.company.name}</p>
                   </div>
                   <div className="mt-2 lg:mt-0 lg:text-right">
-                    <p className="text-lg font-semibold text-gray-900">
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
                       {job.salary_min === job.salary_max
                         ? `${job.salary_min} USD`
                         : `${job.salary_max} USD`}
-                      <span className="ml-1 text-sm text-gray-600">
+                      <span className="ml-1 text-sm text-gray-600 dark:text-gray-400">
                         {" "}
                         per hour
                       </span>
@@ -320,7 +321,7 @@ export default function Jobs() {
                 </div>
 
                 {/* Job Details - Responsive grid for various screen sizes */}
-                <div className="flex flex-wrap mt-3 text-sm text-gray-600 gap-y-2 gap-x-4">
+                <div className="flex flex-wrap mt-3 text-sm text-gray-600 dark:text-gray-400 gap-y-2 gap-x-4">
                   <div className="flex items-center">
                     <MapPin className="h-4 w-4 mr-1.5 text-gray-500" />
                     <span>{job.location}</span>
@@ -338,18 +339,18 @@ export default function Jobs() {
                 {/* Tags - Wrap on smaller screens */}
                 <div className="flex flex-wrap gap-2 mt-4">
                   {/* Yellow tag shows job.remote_level */}
-                  <span className="px-3 py-1 text-sm font-medium text-yellow-800 bg-yellow-100 rounded-full">
+                  <span className="px-3 py-1 text-sm font-medium text-yellow-800 bg-yellow-100 dark:text-yellow-300 dark:bg-yellow-700_bg_opacity_50 rounded-full">
                     {job.remote_level}
                   </span>
                   {/* Purple tag shows job.type directly */}
-                  <span className="px-3 py-1 text-sm font-medium text-purple-800 bg-purple-100 rounded-full">
+                  <span className="px-3 py-1 text-sm font-medium text-purple-800 bg-purple-100 dark:text-purple-300 dark:bg-purple-700_bg_opacity_50 rounded-full">
                     {job.type}
                   </span>
                   {/* Only show "New" tag if job is less than 7 days old */}
                   {(new Date().getTime() - new Date(job.created_at).getTime()) /
                     (1000 * 60 * 60 * 24) <
                     7 && (
-                    <span className="px-3 py-1 text-sm font-medium text-gray-800 bg-gray-100 rounded-full">
+                    <span className="px-3 py-1 text-sm font-medium text-gray-800 bg-gray-100 dark:text-gray-300 dark:bg-gray-700 rounded-full">
                       New
                     </span>
                   )}
@@ -364,7 +365,7 @@ export default function Jobs() {
       {!loading && filteredJobs.length > 0 && hasMoreJobs && (
         <div className="flex justify-center mt-8">
           <button
-            className="px-6 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
+            className="px-6 py-2 text-white transition-colors bg-blue-600 dark:bg-blue-500 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
             onClick={loadMoreJobs}
             disabled={loading}
           >

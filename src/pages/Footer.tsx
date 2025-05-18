@@ -60,16 +60,16 @@ const Footer = () => {
   }
 
   return (
-    <footer className="bg-white">
+    <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
       <div className="px-4 py-12 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className={`grid gap-8 ${gridClass}`}>
           {/* Company Section - Always visible */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900">Company</h3>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Company</h3>
             <ul className="mt-4 space-y-4">
               {navigation.company.map((item) => (
                 <li key={item.name}>
-                  <a href={item.href} className="text-gray-600 hover:text-gray-900">
+                  <a href={item.href} className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                     {item.name}
                   </a>
                 </li>
@@ -79,12 +79,12 @@ const Footer = () => {
 
           {/* Job Seekers Section */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900">For job seekers</h3>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">For job seekers</h3>
             <ul className="mt-4 space-y-4">
               {/* Show sign up link only to non-logged in users */}
               {!isLoggedIn && navigation.nonLoggedInUsers.map((item) => (
                 <li key={item.name}>
-                  <a href={item.href} className="text-gray-600 hover:text-gray-900">
+                  <a href={item.href} className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                     {item.name}
                   </a>
                 </li>
@@ -92,7 +92,7 @@ const Footer = () => {
               {/* Show job browsing option to everyone */}
               {navigation.jobSeekers.map((item) => (
                 <li key={item.name}>
-                  <a href={item.href} className="text-gray-600 hover:text-gray-900">
+                  <a href={item.href} className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                     {item.name}
                   </a>
                 </li>
@@ -103,11 +103,11 @@ const Footer = () => {
           {/* Companies Section - Only visible to Ravenz employees */}
           {isRavenzEmployee && (
             <div>
-              <h3 className="text-sm font-semibold text-gray-900">For companies</h3>
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white">For companies</h3>
               <ul className="mt-4 space-y-4">
                 {navigation.companies.map((item) => (
                   <li key={item.name}>
-                    <a href={item.href} className="text-gray-600 hover:text-gray-900">
+                    <a href={item.href} className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                       {item.name}
                     </a>
                   </li>
@@ -118,11 +118,11 @@ const Footer = () => {
 
           {/* Legal Section - Always visible */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900">Legal</h3>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Legal</h3>
             <ul className="mt-4 space-y-4">
               {navigation.legal.map((item) => (
                 <li key={item.name}>
-                  <a href={item.href} className="text-gray-600 hover:text-gray-900">
+                  <a href={item.href} className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                     {item.name}
                   </a>
                 </li>
@@ -132,8 +132,8 @@ const Footer = () => {
         </div>
 
         {/* Footer Bottom Section */}
-        <div className="pt-8 mt-12 border-t border-gray-200">
-          <p className="text-sm text-gray-600">
+        <div className="pt-8 mt-12 border-t border-gray-200 dark:border-gray-700">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Copyright © {new Date().getFullYear()}. Remote Technology, Inc. All rights reserved.
           </p>
 
@@ -144,7 +144,7 @@ const Footer = () => {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="text-sm text-gray-600 hover:text-gray-900"
+                  className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                 >
                   {item.name}
                 </a>
@@ -157,7 +157,7 @@ const Footer = () => {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="text-gray-600 hover:text-gray-900"
+                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
