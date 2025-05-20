@@ -21,15 +21,15 @@ export default function Auth() {
 
     try {
       const { error } = isSignUp
-        ? await supabase.auth.signUp({ 
-            email, 
+        ? await supabase.auth.signUp({
+            email,
             password,
             options: {
               data: {
                 first_name: firstName,
-                last_name: lastName
-              }
-            }
+                last_name: lastName,
+              },
+            },
           })
         : await supabase.auth.signInWithPassword({ email, password });
 
@@ -44,17 +44,20 @@ export default function Auth() {
       }
     } catch (error) {
       console.error("Authentication error:", error);
-      toast.error(error instanceof Error ? error.message : "An unknown error occurred");
+      toast.error(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
     } finally {
       setLoading(false);
     }
   }
 
-  const inputClassName = "block w-full px-3 py-2 mt-1 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 ease-in-out";
+  const inputClassName =
+    "block w-full px-3 py-2 mt-1 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 ease-in-out";
   const labelClassName = "block text-sm font-medium text-gray-700 mb-1";
 
   return (
-    <div className="max-w-md mx-auto px-4">
+    <div className="max-w-md px-4 mx-auto">
       <div className="mb-8 text-center">
         <Briefcase className="w-12 h-12 mx-auto text-indigo-600" />
         <h1 className="mt-4 text-3xl font-bold text-gray-900">
@@ -69,7 +72,8 @@ export default function Auth() {
 
       <div className="p-8 bg-white rounded-lg shadow-sm">
         <form onSubmit={handleSubmit} className="space-y-6">
-          /*  {isSignUp && (
+          {" "}
+          {/* {isSignUp && (
             <div className="flex space-x-4">
               <div className="w-1/2">
                 <label htmlFor="firstName" className={labelClassName}>
@@ -100,8 +104,8 @@ export default function Auth() {
                 />
               </div>
             </div>
-          )}*/
-          
+          )} */}
+         
           <div>
             <label htmlFor="email" className={labelClassName}>
               Email address
@@ -116,7 +120,6 @@ export default function Auth() {
               placeholder="you@example.com"
             />
           </div>
-          
           <div>
             <label htmlFor="password" className={labelClassName}>
               Password
@@ -142,7 +145,6 @@ export default function Auth() {
               </button>
             </div>
           </div>
-
           {isSignUp && (
             <div>
               <label htmlFor="confirmPassword" className={labelClassName}>
@@ -166,7 +168,6 @@ export default function Auth() {
               />
             </div>
           )}
-          
           <button
             type="submit"
             disabled={
@@ -176,7 +177,7 @@ export default function Auth() {
               ) ||
               (isSignUp && password !== confirmPassword)
             }
-            className="w-full px-4 py-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="w-full px-4 py-2 text-white transition-all duration-200 bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <span className="flex items-center justify-center">
@@ -190,14 +191,26 @@ export default function Auth() {
         </form>
 
         <div className="mt-6 text-center">
-          <button
+          <span
             onClick={() => setIsSignUp(!isSignUp)}
-            className="text-indigo-600 hover:text-indigo-700 hover:underline transition-colors duration-200"
+            className="transition-colors duration-200"
           >
-            {isSignUp
-              ? "Already have an account? Sign in"
-              : "Don't have an account? Sign up"}
-          </button>
+            {isSignUp ? (
+              <p className="text-gray-600">
+                Already have an account?{" "}
+                <span className="text-blue-600 underline cursor-pointer hover:text-blue-800">
+                  Sign in
+                </span>
+              </p>
+            ) : (
+              <p className="text-gray-600">
+                Don't have an account?{" "}
+                <span className="text-blue-600 underline cursor-pointer hover:text-blue-800">
+                  Sign up
+                </span>
+              </p>
+            )}
+          </span>
         </div>
       </div>
     </div>
