@@ -40,7 +40,7 @@ export default function Navbar() {
   return (
     <>
       <nav className="bg-white border-b border-gray-200 h-[80px] w-full dark:border-gray-700 dark:bg-gray-900 shadow-md">
-        <div className="flex items-center h-full">
+        <div className="flex items-center justify-between h-full">
           {/* Logo Section */}
           <Link
             to="/"
@@ -124,12 +124,22 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            className="pr-6 ml-auto text-gray-700 md:hidden"
-            onClick={toggleSidebar}
-          >
-            <Bars3Icon className="w-6 h-6" />
-          </button>
+
+          <div className="flex">
+            <button
+              onClick={toggleTheme}
+              className="p-2 text-gray-600 rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
+              aria-label="Toggle theme"
+            >
+              {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+            </button>{" "}
+            <button
+              className="pr-6 ml-auto text-gray-700 dark:hover:text-gray-500 md:hidden"
+              onClick={toggleSidebar}
+            >
+              <Bars3Icon className="w-6 h-6" />
+            </button>
+          </div>
         </div>
       </nav>
 
