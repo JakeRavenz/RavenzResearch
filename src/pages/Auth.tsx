@@ -69,7 +69,7 @@ export default function Auth() {
 
       <div className="p-8 bg-white rounded-lg shadow-sm">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {isSignUp && (
+          /*  {isSignUp && (
             <div className="flex space-x-4">
               <div className="w-1/2">
                 <label htmlFor="firstName" className={labelClassName}>
@@ -100,7 +100,7 @@ export default function Auth() {
                 />
               </div>
             </div>
-          )}
+          )}*/
           
           <div>
             <label htmlFor="email" className={labelClassName}>
