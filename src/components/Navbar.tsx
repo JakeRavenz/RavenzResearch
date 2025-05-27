@@ -128,7 +128,7 @@ export default function Navbar() {
           <div className="flex">
             <button
               onClick={toggleTheme}
-              className="p-2 text-gray-600 rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
+              className="p-2 text-gray-600 rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none md:hidden"
               aria-label="Toggle theme"
             >
               {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
