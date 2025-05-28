@@ -39,7 +39,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="bg-white border-b border-gray-200 h-[80px] w-full dark:border-gray-700 dark:bg-gray-900 shadow-md">
+      <nav className="bg-white border-b border-gray-200 h-[4.3rem] w-full dark:border-gray-700 dark:bg-gray-900 shadow-md sticky top-0 left-0 z-50">
         <div className="flex items-center justify-between h-full">
           {/* Logo Section */}
           <Link
