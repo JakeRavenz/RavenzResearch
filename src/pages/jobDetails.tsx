@@ -25,7 +25,7 @@ interface Job {
 function Modal({ message, onClose }: { message: string; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-      <div className="w-full max-w-md p-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl">
+      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-xl dark:bg-gray-800">
         <p className="text-center text-gray-800 dark:text-gray-100">{message}</p>
         <div className="flex justify-center mt-6">
           <button
@@ -254,12 +254,7 @@ export default function JobDetails() {
         return;
       }
 
-      // console.log(
-      //   "Application added to database successfully:",
-      //   applicationData
-      // );
-
-      // Send jobapplication success email
+        // Send jobapplication success email
       try {
         // console.log("Preparing to send application email notification");
         const email = user.email;
@@ -319,9 +314,9 @@ export default function JobDetails() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen p-4 mx-auto bg-gray-50 dark:bg-gray-900">
-        <div className="w-full max-w-md p-8 text-center bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+        <div className="w-full max-w-md p-8 text-center bg-white rounded-lg shadow-lg dark:bg-gray-800">
           <Briefcase className="w-16 h-16 mx-auto mt-6 mb-6 text-gray-400 dark:text-gray-500" />
-          <div className="w-8 h-8 mx-auto border-4 border-indigo-600 dark:border-indigo-400 rounded-full animate-spin border-t-transparent"></div>
+          <div className="w-8 h-8 mx-auto border-4 border-indigo-600 rounded-full dark:border-indigo-400 animate-spin border-t-transparent"></div>
           <p className="mt-4 text-gray-600 dark:text-gray-400">Loading job details...</p>
         </div>
       </div>
@@ -331,7 +326,7 @@ export default function JobDetails() {
   if (!job) {
     return (
       <div className="flex items-center justify-center min-h-screen p-4 bg-gray-50 dark:bg-gray-900">
-        <div className="w-full max-w-md p-8 text-center bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+        <div className="w-full max-w-md p-8 text-center bg-white rounded-lg shadow-lg dark:bg-gray-800">
           <Briefcase className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500" />
           <h3 className="mt-6 text-xl font-semibold text-gray-900 dark:text-white">
             Job not found
@@ -380,11 +375,11 @@ export default function JobDetails() {
       )}
 
       {/* Header with Back Button */}
-      <div className="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+      <div className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
         <div className="max-w-6xl px-4 py-4 mx-auto sm:px-6 lg:px-8">
           <button
             onClick={() => navigate("/jobs")}
-            className="flex items-center font-medium text-gray-600 dark:text-gray-300 transition-colors hover:text-gray-900 dark:hover:text-white"
+            className="flex items-center font-medium text-gray-600 transition-colors dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
             <span>Back to Jobs</span>
@@ -393,7 +388,7 @@ export default function JobDetails() {
       </div>
 
       <div className="max-w-6xl px-4 py-6 mx-auto sm:px-6 lg:px-8 sm:py-10">
-        <div className="overflow-hidden bg-white dark:bg-gray-800 shadow-md rounded-xl">
+        <div className="overflow-hidden bg-white shadow-md dark:bg-gray-800 rounded-xl">
           {/* Job Header */}
           <div className="p-6 border-b sm:p-8">
             <div className="flex flex-col gap-6 md:flex-row md:items-start">
@@ -406,7 +401,7 @@ export default function JobDetails() {
                     className="object-cover w-20 h-20 rounded-lg shadow-sm"
                   />
                 ) : (
-                  <div className="flex items-center justify-center w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-sm">
+                  <div className="flex items-center justify-center w-20 h-20 bg-gray-100 rounded-lg shadow-sm dark:bg-gray-700">
                     <Building className="w-10 h-10 text-gray-400 dark:text-gray-500" />
                   </div>
                 )}
@@ -500,13 +495,13 @@ export default function JobDetails() {
                   {job.requirements && job.requirements.length > 0 ? (
                     job.requirements.map((req, index) => (
                       <li key={index} className="flex items-start">
-                        <span className="flex-shrink-0 inline-block w-2 h-2 mt-2 mr-3 bg-blue-600 dark:bg-blue-400 rounded-full"></span>
+                        <span className="flex-shrink-0 inline-block w-2 h-2 mt-2 mr-3 bg-blue-600 rounded-full dark:bg-blue-400"></span>
                         <span>{req}</span>
                       </li>
                     ))
                   ) : (
                     <li className="flex items-start">
-                      <span className="flex-shrink-0 inline-block w-2 h-2 mt-2 mr-3 bg-blue-600 dark:bg-blue-400 rounded-full"></span>
+                      <span className="flex-shrink-0 inline-block w-2 h-2 mt-2 mr-3 bg-blue-600 rounded-full dark:bg-blue-400"></span>
                       <span>No specific requirements listed.</span>
                     </li>
                   )}
@@ -518,7 +513,7 @@ export default function JobDetails() {
                   <span className="mr-2">What We Offer</span>
                   <span className="flex-grow ml-3 border-t border-gray-200"></span>
                 </h2>
-                <ul className="space-y-2 text-gray-700">
+                <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                   {job.what_we_offer && job.what_we_offer.length > 0 ? (
                     job.what_we_offer.map((benefit, index) => (
                       <li key={index} className="flex items-start">
@@ -529,7 +524,7 @@ export default function JobDetails() {
                   ) : (
                     <li className="flex items-start">
                       <span className="flex-shrink-0 inline-block w-2 h-2 mt-2 mr-3 bg-green-500 rounded-full"></span>
-                      <span>No benefits information provided.</span>
+                      <span className="text-gray-700 dark:text-gray-300">No benefits information provided.</span>
                     </li>
                   )}
                 </ul>
@@ -541,10 +536,10 @@ export default function JobDetails() {
               <div className="p-6 rounded-lg bg-blue-50 dark:bg-blue-900_bg_opacity_25 sm:p-8">
                 <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
+                    <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-900">
                       Ready to join {job.company.name}?
                     </h2>
-                    <p className="text-gray-700 dark:text-gray-300">
+                    <p className="text-gray-700 dark:text-gray-700">
                       Submit your application today and take the next step in
                       your career.
                     </p>

@@ -132,14 +132,16 @@ function JobsCarousel() {
         setApi={setApi} // Pass the setApi function to get the API instance
         className="w-full"
       >
-        <CarouselContent className="-ml-1">
+        <CarouselContent className="-ml-4">
           {jobs.map((job: any) => (
             <CarouselItem
               key={job.id}
-              className="pl-1 basis-full md:basis-1/2 lg:basis-1/3"
+              className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/3 xl:basis-1/4"
             >
               {/* Added p-1 to CarouselItem for gutter, card itself is now full width within this padding */}
-              <div className="p-1">
+              <div className="h-full p-1">
+                {" "}
+                {/* Ensure card takes full height of the item */}
                 <div className="flex flex-col w-full h-full overflow-hidden transition-all duration-300 ease-in-out bg-white rounded-lg shadow-md dark:bg-gray-800 group hover:shadow-xl hover:-translate-y-1">
                   <div className="overflow-hidden">
                     <img
@@ -149,32 +151,32 @@ function JobsCarousel() {
                           : heroImage // Consider a more appropriate placeholder
                       }
                       alt={job.title}
-                      className="object-fill w-full h-40 transition-transform duration-300 md:h-48 group-hover:scale-105"
+                      className="object-fill w-full h-32 transition-transform duration-300 sm:h-36 md:h-40 group-hover:scale-105"
                     />
                   </div>
-                  <div className="flex flex-col flex-1 p-4 text-center md:p-6">
-                    <h3 className="mb-1 text-lg font-semibold text-indigo-700 transition-colors md:text-xl dark:text-indigo-400 group-hover:text-indigo-500 dark:group-hover:text-indigo-300">
+                  <div className="flex flex-col flex-1 p-3 text-center border sm:p-4">
+                    <h3 className="mb-1 text-base font-semibold text-indigo-700 transition-colors md:text-lg dark:text-indigo-400 group-hover:text-indigo-500 dark:group-hover:text-indigo-300">
                       {job.title}
                     </h3>
-                    <div className="mb-3 text-sm text-gray-500 dark:text-gray-400">
+                    <div className="mb-2 text-xs text-gray-500 sm:text-sm dark:text-gray-400">
                       {job.company?.name || "Unknown Company"}
                     </div>
-                    <div className="flex flex-col items-center gap-2 mb-4">
+                    <div className="flex items-center justify-around gap-4 mb-3 sm:gap-2">
                       <span className="px-3 py-1 text-xs font-medium text-yellow-800 bg-yellow-100 rounded-full dark:text-yellow-300 dark:bg-yellow-700/30">
                         {job.remote_level === "fully_remote" ||
                         job.location?.toLowerCase() === "remote"
                           ? "Remote"
                           : job.location || "On-site"}
                       </span>
-                      <span className="px-3 py-1 text-xs font-medium text-purple-800 bg-purple-100 rounded-full dark:text-purple-300 dark:bg-purple-700/30">
+                      <span className="px-2 py-0.5 text-xs font-medium text-purple-800 bg-purple-100 rounded-full sm:px-3 sm:py-1 dark:text-purple-300 dark:bg-purple-700/30">
                         {job.type || "N/A"}
                       </span>
                     </div>
                     <Link
                       to={`/jobDetails/${job.id}`}
-                      className="inline-block px-4 py-2 mt-auto text-sm font-semibold text-white transition-colors bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400"
+                      className="inline-block px-3 py-1.5 mt-auto text-xs font-semibold text-white transition-colors bg-indigo-600 rounded-md shadow-sm sm:text-sm hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400"
                     >
-                      View Job
+                      Learn More
                     </Link>
                   </div>
                 </div>
@@ -182,8 +184,8 @@ function JobsCarousel() {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="absolute left-[-10px] sm:left-[-20px] md:left-[-30px] top-1/2 -translate-y-1/2 z-10" />
-        <CarouselNext className="absolute right-[-10px] sm:right-[-20px] md:right-[-30px] top-1/2 -translate-y-1/2 z-10" />
+        {/* <CarouselPrevious className="absolute left-[-10px] sm:left-[-20px] md:left-[-30px] top-1/2 -translate-y-1/2 z-10" /> */}
+        {/* <CarouselNext className="absolute right-[-10px] sm:right-[-20px] md:right-[-30px] top-1/2 -translate-y-1/2 z-10" /> */}
       </Carousel>
 
       {/* Pagination dots */}
@@ -193,7 +195,11 @@ function JobsCarousel() {
             key={index}
             onClick={() => api?.scrollTo(index)}
             className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ease-in-out
-              ${currentSlide === index ? "bg-indigo-600 p-1" : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"}`}
+              ${
+                currentSlide === index
+                  ? "bg-indigo-600 p-1"
+                  : "bg-slate-100 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
+              }`}
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
@@ -204,7 +210,7 @@ function JobsCarousel() {
           to="/jobs"
           className="px-8 py-3 text-lg font-semibold text-white transition-colors bg-indigo-600 rounded shadow hover:bg-indigo-700"
         >
-          View All Jobs
+          View More Jobs
         </Link>
       </div>
     </div>
@@ -271,30 +277,30 @@ export default function Home() {
       {/* Stats Section - Sharp edges */}
       <div className="py-4 mb-16 bg-white shadow-sm">
         {" "}
-        <h2 className="text-3xl font-bold text-center text-gray-700 ">
-          Join our global crowd
+        <h2 className="mt-6 text-3xl font-bold text-center text-gray-700">
+          Join our Global Community
         </h2>
-        <p className="max-w-2xl mx-auto mt-6 text-lg text-gray-600">
+        <p className="max-w-2xl p-5 mx-auto mt-5 mb-5 text-lg text-gray-600">
           Whether you’re a student, a stay-at-home parent, a professional, or a
           retiree, our global community embraces everyone, regardless of their
           background or abilities
         </p>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           <div className="p-4 text-center">
-            <div className="text-3xl font-bold text-indigo-600">1,200+</div>
-            <div className="font-bold text-gray-600">Remote Jobs</div>
+            <div className="text-3xl font-extrabold text-indigo-600">1,200+</div>
+            <div className="font-serif text-xl font-extrabold text-gray-600">Remote Jobs</div>
           </div>
           <div className="p-4 text-center">
-            <div className="text-3xl font-bold text-indigo-600">500+</div>
-            <div className="font-bold text-gray-600">Companies</div>
+            <div className="text-3xl font-extrabold text-indigo-600">500+</div>
+            <div className="font-serif text-xl font-extrabold text-gray-600">Companies</div>
           </div>
           <div className="p-4 text-center">
-            <div className="text-3xl font-bold text-indigo-600">50k+</div>
-            <div className="font-bold text-gray-600">Job Seekers</div>
+            <div className="text-3xl font-extrabold text-indigo-600">50k+</div>
+            <div className="font-serif text-xl font-extrabold text-gray-600">Job Seekers</div>
           </div>
           <div className="p-4 text-center">
-            <div className="text-3xl font-bold text-indigo-600">40+</div>
-            <div className="font-bold text-gray-600">Countries</div>
+            <div className="text-3xl font-extrabold text-indigo-600">40+</div>
+            <div className="font-serif text-xl font-extrabold text-gray-600">Countries</div>
           </div>
         </div>
       </div>
@@ -325,6 +331,61 @@ export default function Home() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {features.map((feature, index) => (
             <FeatureCard key={index} {...feature} />
+          ))}
+        </div>
+      </div>
+
+      {/* Review Section - Grid of reviewer cards with overlaid text */}
+      <div className="mb-16">
+        <h2 className="mb-8 text-3xl font-bold text-center text-gray-900">
+          What Our Users Say
+        </h2>
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {/*
+          {
+            name: "Alice Johnson",
+            image: require("../assets/airfocus-e-qQv7FBiPM-unsplash.jpg"),
+            review:
+              "Ravenz helped me land my dream remote job! The process was smooth and the opportunities are real.",
+          },
+          {
+            name: "Brian Lee",
+            image: require("../assets/pooria-shahriari-9l4pbq7fTbY-unsplash.jpg"),
+            review:
+              "I love the flexibility. The platform is easy to use and the support team is fantastic!",
+          },
+          {
+            name: "Carla Mendes",
+            image: require("../assets/corinne-kutz-eeqFjT6q_sQ-unsplash.jpg"),
+            review:
+              "A great place to find legitimate remote work. I recommend it to all my friends.",
+          },
+          {
+            name: "David Kim",
+            image: require("../assets/pooria-shahriari-YtmDrGPuCcU-unsplash.jpg"),
+            review:
+              "The variety of jobs is impressive. I found both part-time and full-time roles easily.",
+          },
+        */}
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <div
+              key={idx}
+              className="relative flex items-end h-64 overflow-hidden rounded-lg shadow group"
+              style={{
+                backgroundImage: `url(https://source.unsplash.com/random?sig=${idx})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              <div className="absolute inset-0 transition-opacity bg-gradient-to-t from-black/70 via-black/30 to-transparent group-hover:from-black/80" />
+              <div className="relative z-10 w-full p-6 text-white">
+                <div className="mb-2 text-lg font-semibold">Reviewer Name</div>
+                <div className="text-sm opacity-90">
+                  “This is a sample review text for the reviewer card. It gives
+                  an idea about the reviewer's experience."
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </div>
