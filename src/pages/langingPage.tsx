@@ -1,18 +1,15 @@
-import React from 'react';
-import Navbar from '../components/Navbar';
-import Home from './Home';
-import Jobs from './Jobs';
-import Footer from './Footer';
+import React from "react";
+import Home from "./Home";
+
+import Faq from "./Faq";
 
 const landingPage = () => {
-    return (
-        <>
-         
-            <Home />
-            <Jobs />
-            
-        </>
-    );
-}
+  return (
+    <>
+      <Home />
+      <Faq />
+    </>
+  );
+};
 
-export default landingPage ;
+export default landingPage;

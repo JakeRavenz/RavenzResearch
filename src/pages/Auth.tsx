@@ -20,20 +20,43 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      const { error } = isSignUp
-        ? await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-              data: {
-                first_name: firstName,
-                last_name: lastName,
-              },
+      let signUpResult;
+      if (isSignUp) {
+        signUpResult = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              first_name: firstName,
+              last_name: lastName,
             },
-          })
-        : await supabase.auth.signInWithPassword({ email, password });
-
-      if (error) throw error;
+          },
+        });
+        const { error: signUpError, data } = signUpResult;
+        if (signUpError) throw signUpError;
+        // Insert email into profile table
+        if (data && data.user && data.user.email) {
+          await supabase
+            .from("profile")
+            .upsert([{ id: data.user.id, email: data.user.email }], {
+              onConflict: ["id"],
+            });
+        }
+      } else {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        // On sign in, upsert email into profile table as well
+        if (data && data.user && data.user.email) {
+          await supabase
+            .from("profile")
+            .upsert([{ id: data.user.id, email: data.user.email }], {
+              onConflict: ["id"],
+            });
+        }
+      }
 
       if (isSignUp) {
         toast.success("Account created successfully! Please sign in.");
@@ -105,7 +128,6 @@ export default function Auth() {
               </div>
             </div>
           )} */}
-         
           <div>
             <label htmlFor="email" className={labelClassName}>
               Email address
