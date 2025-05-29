@@ -10,10 +10,13 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
   type CarouselApi,
-} from "../components/ui/carousel"; // Ensure this path is correct
+} from "../components/ui/carousel"; 
+import Autoplay from "embla-carousel-autoplay";
+import reviewerImg1 from "../assets/airfocus-e-qQv7FBiPM-unsplash.jpg";
+import reviewerImg2 from "../assets/pooria-shahriari-9l4pbq7fTbY-unsplash.jpg";
+import reviewerImg3 from "../assets/corinne-kutz-eeqFjT6q_sQ-unsplash.jpg";
+import reviewerImg4 from "../assets/pooria-shahriari-YtmDrGPuCcU-unsplash.jpg";
 
 interface FeatureCardProps {
   icon: React.ReactNode;
@@ -115,12 +118,12 @@ function JobsCarousel() {
       <h2 className="mb-6 text-3xl font-bold text-center text-gray-900 dark:text-white">
         Featured Jobs
       </h2>
-      <p className="mb-4 text-lg text-center text-gray-600 dark:text-gray-800">
+      <p className="mb-4 text-lg text-center text-gray-600 dark:text-slate-300 ">
         Discover exciting remote job opportunities tailored for you. Explore a
         range of flexible job opportunities ranging from easy online tasks to
         full-time work in our clients’ offices.
       </p>
-      <p className="mb-6 text-lg text-center text-gray-600 dark:text-gray-800">
+      <p className="mb-6 text-lg text-center text-gray-600 dark:text-slate-300">
         Whether you’re looking for a side gig or a full-time career, we have
         options for you.
       </p>
@@ -173,7 +176,7 @@ function JobsCarousel() {
                       </span>
                     </div>
                     <Link
-                      to={`/jobDetails/${job.id}`}
+                      to={`/jobs/${job.id}`}
                       className="inline-block px-3 py-1.5 mt-auto text-xs font-semibold text-white transition-colors bg-indigo-600 rounded-md shadow-sm sm:text-sm hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400"
                     >
                       Learn More
@@ -219,6 +222,10 @@ function JobsCarousel() {
 
 export default function Home() {
   const { user } = useAuth();
+  const [reviewApi, setReviewApi] = useState<CarouselApi>();
+  const [reviewCurrentSlide, setReviewCurrentSlide] = useState(0);
+  const [reviewSlideCount, setReviewSlideCount] = useState(0);
+
 
   const isRavenzEmployee =
     user && user.email && user.email.endsWith("@ravenzresearch.com");
@@ -240,8 +247,30 @@ export default function Home() {
     },
   ];
 
+  useEffect(() => {
+    if (!reviewApi) {
+      return;
+    }
+    setReviewSlideCount(reviewApi.scrollSnapList().length);
+    setReviewCurrentSlide(reviewApi.selectedScrollSnap());
+
+    const onReviewSelect = () => {
+      if (reviewApi) {
+        setReviewCurrentSlide(reviewApi.selectedScrollSnap());
+      }
+    };
+
+    reviewApi.on("select", onReviewSelect);
+    reviewApi.on("reInit", onReviewSelect);
+
+    return () => {
+      reviewApi?.off("select", onReviewSelect);
+      reviewApi?.off("reInit", onReviewSelect);
+    };
+  }, [reviewApi]);
+
   return (
-    <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 bg-slate-300">
+    <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 bg-slate-300 dark:bg-slate-900">
       {/* Hero Section - Background image with overlay */}
       <div className="relative flex flex-col justify-center items-center my-8 overflow-hidden h-[420px] md:h-[500px] rounded-lg shadow-lg">
         {/* Background image with gradient overlay */}
@@ -275,32 +304,32 @@ export default function Home() {
       </div>
 
       {/* Stats Section - Sharp edges */}
-      <div className="py-4 mb-16 bg-white shadow-sm">
+      <div className="py-4 mb-16 bg-white shadow-sm dark:bg-slate-800">
         {" "}
-        <h2 className="mt-6 text-3xl font-bold text-center text-gray-700">
+        <h2 className="mt-6 text-3xl font-bold text-center text-gray-700 dark:text-slate-100">
           Join our Global Community
         </h2>
-        <p className="max-w-2xl p-5 mx-auto mt-5 mb-5 text-lg text-gray-600">
+        <p className="max-w-2xl p-5 mx-auto mt-5 mb-5 text-lg text-gray-600 dark:text-slate-200">
           Whether you’re a student, a stay-at-home parent, a professional, or a
           retiree, our global community embraces everyone, regardless of their
           background or abilities
         </p>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           <div className="p-4 text-center">
-            <div className="text-3xl font-extrabold text-indigo-600">1,200+</div>
-            <div className="font-serif text-xl font-extrabold text-gray-600">Remote Jobs</div>
+            <div className="text-3xl font-bold text-indigo-600">1,200+</div>
+            <div className="font-serif text-lg font-extrabold text-gray-600 dark:text-slate-300 ">Remote Jobs</div>
           </div>
           <div className="p-4 text-center">
-            <div className="text-3xl font-extrabold text-indigo-600">500+</div>
-            <div className="font-serif text-xl font-extrabold text-gray-600">Companies</div>
+            <div className="text-3xl font-bold text-indigo-600">500+</div>
+            <div className="font-serif text-lg font-extrabold text-gray-600 dark:text-slate-300 ">Companies</div>
           </div>
           <div className="p-4 text-center">
-            <div className="text-3xl font-extrabold text-indigo-600">50k+</div>
-            <div className="font-serif text-xl font-extrabold text-gray-600">Job Seekers</div>
+            <div className="text-3xl font-bold text-indigo-600">50k+</div>
+            <div className="font-serif text-lg font-extrabold text-gray-600 dark:text-slate-300 ">Job Seekers</div>
           </div>
           <div className="p-4 text-center">
-            <div className="text-3xl font-extrabold text-indigo-600">40+</div>
-            <div className="font-serif text-xl font-extrabold text-gray-600">Countries</div>
+            <div className="text-3xl font-bold text-indigo-600">40+</div>
+            <div className="font-serif text-lg font-extrabold text-gray-600 dark:text-slate-300">Countries</div>
           </div>
         </div>
       </div>
@@ -321,8 +350,8 @@ export default function Home() {
           />
         </div>
         <div className="mb-12 text-center">
-          <h2 className="text-3xl font-bold text-gray-900">Why Choose Us</h2>
-          <p className="max-w-2xl mx-auto mt-4 text-lg text-gray-600">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-slate-100">Why Choose Us</h2>
+          <p className="max-w-2xl mx-auto mt-4 text-lg text-gray-600 dark:text-slate-100">
             We connect talented professionals with the best remote opportunities
             worldwide
           </p>
@@ -335,63 +364,109 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Review Section - Grid of reviewer cards with overlaid text */}
+      {/* Review Section - Spotlight Carousel of reviewer cards */}
       <div className="mb-16">
-        <h2 className="mb-8 text-3xl font-bold text-center text-gray-900">
+        <h2 className="mb-8 text-3xl font-bold text-center text-gray-900 dark:text-white">
           What Our Users Say
         </h2>
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {/*
-          {
-            name: "Alice Johnson",
-            image: require("../assets/airfocus-e-qQv7FBiPM-unsplash.jpg"),
-            review:
-              "Ravenz helped me land my dream remote job! The process was smooth and the opportunities are real.",
-          },
-          {
-            name: "Brian Lee",
-            image: require("../assets/pooria-shahriari-9l4pbq7fTbY-unsplash.jpg"),
-            review:
-              "I love the flexibility. The platform is easy to use and the support team is fantastic!",
-          },
-          {
-            name: "Carla Mendes",
-            image: require("../assets/corinne-kutz-eeqFjT6q_sQ-unsplash.jpg"),
-            review:
-              "A great place to find legitimate remote work. I recommend it to all my friends.",
-          },
-          {
-            name: "David Kim",
-            image: require("../assets/pooria-shahriari-YtmDrGPuCcU-unsplash.jpg"),
-            review:
-              "The variety of jobs is impressive. I found both part-time and full-time roles easily.",
-          },
-        */}
-          {Array.from({ length: 4 }).map((_, idx) => (
-            <div
-              key={idx}
-              className="relative flex items-end h-64 overflow-hidden rounded-lg shadow group"
-              style={{
-                backgroundImage: `url(https://source.unsplash.com/random?sig=${idx})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            >
-              <div className="absolute inset-0 transition-opacity bg-gradient-to-t from-black/70 via-black/30 to-transparent group-hover:from-black/80" />
-              <div className="relative z-10 w-full p-6 text-white">
-                <div className="mb-2 text-lg font-semibold">Reviewer Name</div>
-                <div className="text-sm opacity-90">
-                  “This is a sample review text for the reviewer card. It gives
-                  an idea about the reviewer's experience."
+        <p className="max-w-2xl mx-auto mb-6 text-lg text-center text-gray-600 dark:text-slate-300">
+          Hear from our community of remote job seekers and employers about their
+          experiences with Ravenz.
+        </p>
+        {/* Carousel for reviews */}
+        
+        <Carousel
+          opts={{ align: "center", loop: true }}
+          setApi={setReviewApi}
+          plugins={[
+            Autoplay({
+              delay: 5000, // Autoplay delay in milliseconds (e.g., 5 seconds)
+              stopOnInteraction: true, // Stop autoplay on user interaction
+            }),
+          ]}
+          className="w-full max-w-3xl mx-auto"
+        >
+          <CarouselContent className="-ml-4"> {/* Increased negative margin */}
+            {[
+              {
+                name: "Alice Johnson",
+                image: reviewerImg1,
+                review:
+                  "Ravenz helped me land my dream remote job! The process was smooth and the opportunities are real.",
+              },
+              {
+                name: "Damian Lee",
+                image: reviewerImg2,
+                review:
+                  "I love the flexibility. The platform is easy to use and the support team is fantastic!",
+              },
+              {
+                name: "Carla Mendes",
+                image: reviewerImg3,
+                review:
+                  "A great place to find legitimate remote work. I recommend it to all my friends.",
+              },
+              {
+                name: "David Kim",
+                image: reviewerImg4,
+                review:
+                  "The variety of jobs is impressive. I found both part-time and full-time roles easily.",
+              },
+              {
+                name: "Juan Jahier",
+                image: reviewerImg4,
+                review:
+                  "The variety of jobs is impressive. I found both part-time and full-time roles easily.",
+              },
+            ].map((reviewer, idx) => (
+              <CarouselItem key={idx} className="pl-4 basis-full sm:basis-3/4 md:basis-1/2 lg:basis-2/5"> {/* Increased left padding */}
+                <div
+                  className={`relative flex flex-col items-center justify-end w-full max-w-md 
+                             transition-all duration-300 ease-in-out group bg-gray-900/80 shadow-xl overflow-hidden
+                             rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl 
+                             ${reviewCurrentSlide === idx 
+                               ? 'min-h-[300px] h-[300px] sm:h-[340px] md:h-[380px] scale-100 opacity-100' 
+                               : 'min-h-[260px] h-[260px] sm:h-[300px] md:h-[340px] scale-90 opacity-70'
+                             }`}
+                  style={{
+                    backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.2)), url(${reviewer.image})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                >
+                  <div className="absolute inset-0 transition-opacity group-hover:bg-black/40" />
+                  <div className="relative z-10 flex flex-col items-center justify-end w-full h-full p-8 text-center text-white">
+                    <div className="mb-4 text-xl font-bold drop-shadow-lg">{reviewer.name}</div>
+                    <div className="max-w-xs mx-auto text-base font-medium opacity-90 drop-shadow">
+                      “{reviewer.review}”
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent> 
+          {/* CarouselPrevious and CarouselNext are removed as per request */}
+        </Carousel>
+        {/* Pagination dots for review carousel */}
+        <div className="flex justify-center gap-2 mt-6">
+          {Array.from({ length: reviewSlideCount }).map((_, index) => (
+            <button
+              key={index}
+              onClick={() => reviewApi?.scrollTo(index)}
+              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ease-in-out
+                ${
+                  reviewCurrentSlide === index
+                    ? "bg-indigo-600 p-1"
+                    : "bg-slate-100 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
+                }`}
+              aria-label={`Go to review slide ${index + 1}`}
+            />
           ))}
         </div>
       </div>
 
       {/* CTA Section - Sharp edges */}
-      <div className="grid items-center p-8 mb-16 bg-gray-50">
+      <div className="grid items-center p-8 mb-16 bg-gray-50 dark:bg-slate-900">
         <div className=" md:flex md:flex-row-reverse md:items-center md:justify-between">
           <div className="p-6 md:w-1/2">
             <img
@@ -401,15 +476,19 @@ export default function Home() {
               className="object-cover w-full h-full rounded-lg shadow-md "
             />
           </div>
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900">
+          <div className="text-center md:w-1/2 md:text-left">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-100">
               Ready to start your remote journey?
             </h2>
-            <p className="mt-2 text-lg text-gray-600">
+            <p className="mt-2 text-lg text-gray-600 dark:text-slate-300">
               Join thousands of professionals who found their dream remote jobs.
             </p>
+            <div className="mt-6">
+              <ActionButton to="/auth" variant="primary">
+                Get Started Now
+              </ActionButton>
+            </div>
           </div>
-          <div className="mt-4 md:mt-0"></div>
         </div>
       </div>
     </div>

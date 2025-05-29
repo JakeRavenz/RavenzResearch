@@ -39,7 +39,7 @@ export default function Auth() {
           await supabase
             .from("profile")
             .upsert([{ id: data.user.id, email: data.user.email }], {
-              onConflict: ["id"],
+              onConflict: "id",
             });
         }
       } else {
@@ -53,7 +53,7 @@ export default function Auth() {
           await supabase
             .from("profile")
             .upsert([{ id: data.user.id, email: data.user.email }], {
-              onConflict: ["id"],
+              onConflict: "id",
             });
         }
       }
