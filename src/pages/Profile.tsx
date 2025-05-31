@@ -143,7 +143,7 @@ export default function Profile() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen py-12 bg-slate-100 dark:bg-gray-900">
-        <div className="w-8 h-8 border-4 border-indigo-600 dark:border-indigo-400 rounded-full animate-spin border-t-transparent"></div>
+        <div className="w-8 h-8 border-4 border-indigo-600 rounded-full dark:border-indigo-400 animate-spin border-t-transparent"></div>
         <p className="mt-4 text-gray-600 dark:text-gray-400">Loading profile...</p>
       </div>
     );
@@ -154,11 +154,10 @@ export default function Profile() {
     .join(" ");
 
   return (
-    <div className="w-full max-w-screen-xl px-4 mx-auto sm:px-6 lg:px-8 bg-slate-100 dark:bg-gray-900">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-        <div className="p-6">
-          {/* Header section with avatar and name */}
-          <div className="flex flex-wrap items-start justify-between gap-4 md:flex-nowrap">
+    <div className="w-full max-w-screen-xl px-4 py-8 mx-auto sm:px-6 lg:px-8 bg-slate-100 dark:bg-gray-900">
+      {/* Card 1: Header (Avatar, Name, Buttons) */}
+      <div className="p-6 mb-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
+        <div className="flex flex-wrap items-start justify-between gap-4 md:flex-nowrap">
             <div className="flex items-center space-x-4">
               {profile?.avatar_url ? (
                 <img
@@ -167,7 +166,7 @@ export default function Profile() {
                   className="object-cover w-20 h-20 rounded-full"
                 />
               ) : (
-                <div className="flex items-center justify-center w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-full">
+                <div className="flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full dark:bg-gray-700">
                   <User className="w-10 h-10 text-gray-400 dark:text-gray-500" />
                 </div>
               )}
@@ -186,133 +185,120 @@ export default function Profile() {
               </button>
               {/* <button
                 onClick={handleMyJobs}
-                className="px-4 py-2 text-gray-600 dark:text-gray-300 transition-colors border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="px-4 py-2 text-gray-600 transition-colors border border-gray-300 rounded-md dark:text-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 My Jobs
               </button> */}
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 text-gray-600 dark:text-gray-300 transition-colors border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="px-4 py-2 text-gray-600 transition-colors border border-gray-300 rounded-md dark:text-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 Logout
               </button>
             </div>
-          </div>
+        </div>
+      </div>
 
-          {/* Profile content sections */}
-          {/* <div className="mt-6 space-y-8">
-            <section>
-              <h2 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
-                About
-              </h2>
-              <p className="text-gray-600 dark:text-gray-300">
-                {profile?.bio || "No bio information provided"}
-              </p>
-            </section> */}
+      {/* Card 2: Personal Information */}
+      <div className="p-6 mb-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
+        <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
+          Personal Information
+        </h2>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <ProfileField label="Gender" value={profile?.gender} />
+          <ProfileField
+            label="Date of Birth"
+            value={profile?.date_of_birth}
+          />
+          <ProfileField
+            label="Phone Number"
+            value={profile?.phone_number}
+          />
+          <ProfileField
+            label="Education Level"
+            value={
+              profile?.education
+                ? EDUCATION_LABELS[profile.education]
+                : null
+            }
+          />
+          {/* <ProfileField label="ID Type" value={profile?.id_type} />
+          <ProfileField label="ID Number" value={profile?.id_number} /> */}
+          <ProfileField
+            label="Preferred Payment Method"
+            value={
+              profile?.payment_method
+                ? PAYMENT_METHOD_LABELS[profile.payment_method]
+                : "Not provided"
+            }
+          />
+          <ProfileField
+            label={getPaymentAccountDetailsLabelForDisplay(
+              profile?.payment_method
+            )}
+            value={profile?.payment_account_details}
+          />
+        </div>
+      </div>
 
-            {/* Personal Information */}
-            <section className="mt-6">
-              <h2 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
-                Personal Information
-              </h2>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                <ProfileField label="Gender" value={profile?.gender} />
-                <ProfileField
-                  label="Date of Birth"
-                  value={profile?.date_of_birth}
-                />
-                <ProfileField
-                  label="Phone Number"
-                  value={profile?.phone_number}
-                />
-                <ProfileField
-                  label="Education Level"
-                  value={
-                    profile?.education
-                      ? EDUCATION_LABELS[profile.education]
-                      : null
-                  }
-                />
-                {/* <ProfileField label="ID Type" value={profile?.id_type} />
-                <ProfileField label="ID Number" value={profile?.id_number} /> */}
-                <ProfileField
-                  label="Preferred Payment Method"
-                  value={
-                    profile?.payment_method
-                      ? PAYMENT_METHOD_LABELS[profile.payment_method]
-                      : "Not provided"
-                  }
-                />
-                <ProfileField
-                  label={getPaymentAccountDetailsLabelForDisplay(
-                    profile?.payment_method
-                  )}
-                  value={profile?.payment_account_details}
-                />
-              </div>
-            </section>
+      {/* Card 3: Address Information */}
+      <div className="p-6 mb-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
+        <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
+          Address Information
+        </h2>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <ProfileField label="Street Address" value={profile?.address} />
+          <ProfileField label="City" value={profile?.city} />
+          <ProfileField
+            label="State/Province/Region"
+            value={profile?.region}
+          />
+          <ProfileField
+            label="Postal/Zip Code"
+            value={profile?.postal_code}
+          />
+          <ProfileField label="Country" value={profile?.country} />
+        </div>
+      </div>
 
-            {/* Address Information */}
-            <section>
-              <h2 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
-                Address Information
-              </h2>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <ProfileField label="Street Address" value={profile?.address} />
-                <ProfileField label="City" value={profile?.city} />
-                <ProfileField
-                  label="State/Province/Region"
-                  value={profile?.region}
+      {/* Card 4: Documents */}
+      <div className="p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
+        <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
+          Documents
+        </h2>
+        <div>
+          <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+            Resume
+          </h3>
+          {profile?.resume_url ? (
+            <a
+              href={profile.resume_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:underline"
+            >
+              View Resume
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-4 h-4 ml-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                 />
-                <ProfileField
-                  label="Postal/Zip Code"
-                  value={profile?.postal_code}
-                />
-                <ProfileField label="Country" value={profile?.country} />
-              </div>
-            </section>
-
-            {/* Documents */}
-            <section>
-              <h2 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
-                Documents
-              </h2>
-              <div>
-                <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Resume
-                </h3>
-                {profile?.resume_url ? (
-                  <a
-                    href={profile.resume_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:underline"
-                  >
-                    View Resume
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-4 h-4 ml-1"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                      />
-                    </svg>
-                  </a>
-                ) : (
-                  <p className="text-gray-500 dark:text-gray-400">No resume uploaded</p>
-                )}
-              </div>
-            </section>
+              </svg>
+            </a>
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400">No resume uploaded</p>
+          )}
           </div>
         </div>
       </div>
-   
   );
 }
 

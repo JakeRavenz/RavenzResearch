@@ -1,6 +1,13 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Briefcase, Building2, Globe, ArrowRight } from "lucide-react";
+import {
+  Briefcase,
+  Building2,
+  Globe,
+  ArrowRight,
+  UserCircle,
+  CheckCircle,
+} from "lucide-react";
 import heroImage from "../assets/images.png";
 import reasonImage from "../assets/3718985.jpg";
 import startImage from "../assets/3624001.jpg";
@@ -11,12 +18,17 @@ import {
   CarouselContent,
   CarouselItem,
   type CarouselApi,
-} from "../components/ui/carousel"; 
+} from "../components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import reviewerImg1 from "../assets/airfocus-e-qQv7FBiPM-unsplash.jpg";
 import reviewerImg2 from "../assets/pooria-shahriari-9l4pbq7fTbY-unsplash.jpg";
 import reviewerImg3 from "../assets/corinne-kutz-eeqFjT6q_sQ-unsplash.jpg";
 import reviewerImg4 from "../assets/pooria-shahriari-YtmDrGPuCcU-unsplash.jpg";
+import ravenzLogo from "../assets/Ravenz Research logo.png";
+import airfocusImg from "../assets/airfocus-e-qQv7FBiPM-unsplash.jpg";
+import globexImg from "../assets/pooria-shahriari-9l4pbq7fTbY-unsplash.jpg";
+import acmeImg from "../assets/corinne-kutz-eeqFjT6q_sQ-unsplash.jpg";
+import { useInView } from "react-intersection-observer";
 
 interface FeatureCardProps {
   icon: React.ReactNode;
@@ -29,12 +41,18 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   title,
   description,
 }) => (
-  <div className="p-6 transition-all bg-white border border-gray-100 shadow-sm md:p-8 hover:shadow-md group">
-    <div className="inline-flex items-center justify-center p-3 bg-indigo-50">
+  <div className="p-8 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl group relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-blue-100 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
+    <div className="inline-flex items-center justify-center mb-4 transition-transform shadow w-14 h-14 rounded-xl bg-gradient-to-tr from-indigo-100 via-indigo-200 to-indigo-300 dark:from-indigo-900 dark:via-indigo-800 dark:to-indigo-700 group-hover:scale-105">
       {icon}
     </div>
-    <h3 className="mt-4 text-xl font-semibold text-gray-900">{title}</h3>
-    <p className="mt-2 text-gray-600">{description}</p>
+    <h3 className="mt-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+      {title}
+    </h3>
+    <p className="mt-3 text-base leading-relaxed text-gray-600 dark:text-gray-300">
+      {description}
+    </p>
+    {/* Decorative blurred gradient blob */}
+    <span className="absolute z-0 w-24 h-24 rounded-full -top-6 -right-6 bg-gradient-to-tr from-indigo-300 via-blue-200 to-purple-200 dark:from-indigo-400/10 dark:via-indigo-700/10 dark:to-blue-900/10 blur-2xl" />
   </div>
 );
 
@@ -226,7 +244,6 @@ export default function Home() {
   const [reviewCurrentSlide, setReviewCurrentSlide] = useState(0);
   const [reviewSlideCount, setReviewSlideCount] = useState(0);
 
-
   const isRavenzEmployee =
     user && user.email && user.email.endsWith("@ravenzresearch.com");
   const features = [
@@ -246,6 +263,54 @@ export default function Home() {
       description: "Choose your workplace and maintain work-life balance",
     },
   ];
+
+  // Stats animation logic
+  const [statsInViewRef, statsInView] = useInView({
+    triggerOnce: true,
+    threshold: 0.3,
+  });
+  const [jobsCount, setJobsCount] = useState(0);
+  const [companiesCount, setCompaniesCount] = useState(0);
+  const [seekersCount, setSeekersCount] = useState(0);
+  const [countriesCount, setCountriesCount] = useState(0);
+  useEffect(() => {
+    if (statsInView) {
+      let jobsTarget = 1200,
+        companiesTarget = 500,
+        seekersTarget = 50000,
+        countriesTarget = 40;
+      let duration = 1200,
+        steps = 30;
+      let jobsStep = Math.ceil(jobsTarget / steps);
+      let companiesStep = Math.ceil(companiesTarget / steps);
+      let seekersStep = Math.ceil(seekersTarget / steps);
+      let countriesStep = Math.ceil(countriesTarget / steps);
+      let i = 0;
+      const interval = setInterval(() => {
+        i++;
+        setJobsCount((prev) =>
+          prev < jobsTarget ? Math.min(jobsTarget, prev + jobsStep) : jobsTarget
+        );
+        setCompaniesCount((prev) =>
+          prev < companiesTarget
+            ? Math.min(companiesTarget, prev + companiesStep)
+            : companiesTarget
+        );
+        setSeekersCount((prev) =>
+          prev < seekersTarget
+            ? Math.min(seekersTarget, prev + seekersStep)
+            : seekersTarget
+        );
+        setCountriesCount((prev) =>
+          prev < countriesTarget
+            ? Math.min(countriesTarget, prev + countriesStep)
+            : countriesTarget
+        );
+        if (i >= steps) clearInterval(interval);
+      }, duration / steps);
+      return () => clearInterval(interval);
+    }
+  }, [statsInView]);
 
   useEffect(() => {
     if (!reviewApi) {
@@ -303,43 +368,121 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Stats Section - Sharp edges */}
-      <div className="py-4 mb-16 bg-white shadow-sm dark:bg-slate-800">
-        {" "}
-        <h2 className="mt-6 text-3xl font-bold text-center text-gray-700 dark:text-slate-100">
+      {/* Stats Section - Enhanced */}
+      <div className="relative py-12 mb-16 overflow-hidden shadow-lg rounded-2xl bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
+        {/* Decorative blurred gradient blob */}
+        <span className="absolute rounded-full pointer-events-none -top-10 -left-10 w-60 h-60 bg-gradient-to-tr from-indigo-200 via-blue-200 to-purple-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <span className="absolute rounded-full pointer-events-none -bottom-10 -right-10 w-60 h-60 bg-gradient-to-tr from-pink-200 via-indigo-100 to-blue-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <h2 className="relative z-10 mt-6 text-3xl font-bold text-center text-gray-700 dark:text-slate-100">
           Join our Global Community
         </h2>
-        <p className="max-w-2xl p-5 mx-auto mt-5 mb-5 text-lg text-gray-600 dark:text-slate-200">
-          Whether you’re a student, a stay-at-home parent, a professional, or a
-          retiree, our global community embraces everyone, regardless of their
-          background or abilities
+        <p className="relative z-10 max-w-2xl p-2 mx-auto mt-3 text-lg text-center text-gray-600 mb-7 dark:text-slate-200">
+          Be part of a vibrant, diverse network of remote professionals and
+          forward-thinking companies. Discover opportunities, connect, and grow
+          with us—wherever you are in the world.
         </p>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          <div className="p-4 text-center">
-            <div className="text-3xl font-bold text-indigo-600">1,200+</div>
-            <div className="font-serif text-lg font-extrabold text-gray-600 dark:text-slate-300 ">Remote Jobs</div>
+        {/* Trusted by logos */}
+        <div className="relative z-10 flex flex-wrap items-center justify-center gap-6 px-2 mb-8">
+          <img
+            src={typeof ravenzLogo === "string" ? ravenzLogo : ravenzLogo.src}
+            alt="Ravenz"
+            className="h-8 transition opacity-80 grayscale hover:grayscale-0"
+          />
+          <img
+            src={
+              typeof airfocusImg === "string" ? airfocusImg : airfocusImg.src
+            }
+            alt="Airfocus"
+            className="object-cover w-8 h-8 transition rounded-full opacity-80 grayscale hover:grayscale-0"
+          />
+          <img
+            src={typeof globexImg === "string" ? globexImg : globexImg.src}
+            alt="Globex"
+            className="object-cover w-8 h-8 transition rounded-full opacity-80 grayscale hover:grayscale-0"
+          />
+          <img
+            src={typeof acmeImg === "string" ? acmeImg : acmeImg.src}
+            alt="Acme"
+            className="object-cover w-8 h-8 transition rounded-full opacity-80 grayscale hover:grayscale-0"
+          />
+          <span className="ml-2 text-sm font-medium text-gray-400">
+            + hundreds more
+          </span>
+        </div>
+        {/* World map illustration (SVG or image) with animated glow */}
+        <div className="relative z-10 flex justify-center mb-8">
+          <div className="relative flex items-center justify-center">
+            {/* Animated pulse/glow */}
+            <span
+              className="absolute w-[90%] h-[90%] rounded-full bg-gradient-to-tr from-indigo-400/30 via-blue-400/20 to-purple-400/30 blur-2xl animate-pulse-glow"
+              style={{ animationDuration: "2.5s" }}
+            />
+            <img
+              src="https://raw.githubusercontent.com/danielgatis/remap/master/examples/world.svg"
+              alt="World Map"
+              className="relative z-10 w-full max-w-2xl border border-indigo-200 shadow-xl dark:border-slate-700 opacity-90 rounded-xl bg-white/30 dark:bg-slate-900/30 backdrop-blur"
+            />
           </div>
-          <div className="p-4 text-center">
-            <div className="text-3xl font-bold text-indigo-600">500+</div>
-            <div className="font-serif text-lg font-extrabold text-gray-600 dark:text-slate-300 ">Companies</div>
+        </div>
+        {/* Stats grid with glassmorphism cards, icons, and animated numbers */}
+        <div
+          ref={statsInViewRef}
+          className="relative z-10 grid grid-cols-2 gap-4 p-4 md:grid-cols-4"
+        >
+          <div className="flex flex-col items-center p-6 text-center border border-indigo-100 shadow-lg rounded-2xl bg-white/60 dark:bg-slate-800/60 backdrop-blur dark:border-slate-700">
+            <Briefcase className="w-8 h-8 mb-2 text-indigo-600 dark:text-indigo-300" />
+            <div className="text-3xl font-bold text-indigo-600">
+              {jobsCount.toLocaleString()}+
+            </div>
+            <div className="font-serif text-lg font-extrabold text-gray-600 dark:text-slate-300 ">
+              Remote Jobs
+            </div>
           </div>
-          <div className="p-4 text-center">
-            <div className="text-3xl font-bold text-indigo-600">50k+</div>
-            <div className="font-serif text-lg font-extrabold text-gray-600 dark:text-slate-300 ">Job Seekers</div>
+          <div className="flex flex-col items-center p-6 text-center border border-indigo-100 shadow-lg rounded-2xl bg-white/60 dark:bg-slate-800/60 backdrop-blur dark:border-slate-700">
+            <Building2 className="w-8 h-8 mb-2 text-indigo-600 dark:text-indigo-300" />
+            <div className="text-3xl font-bold text-indigo-600">
+              {companiesCount.toLocaleString()}+
+            </div>
+            <div className="font-serif text-lg font-extrabold text-gray-600 dark:text-slate-300 ">
+              Companies
+            </div>
           </div>
-          <div className="p-4 text-center">
-            <div className="text-3xl font-bold text-indigo-600">40+</div>
-            <div className="font-serif text-lg font-extrabold text-gray-600 dark:text-slate-300">Countries</div>
+          <div className="flex flex-col items-center p-6 text-center border border-indigo-100 shadow-lg rounded-2xl bg-white/60 dark:bg-slate-800/60 backdrop-blur dark:border-slate-700">
+            <UserCircle className="w-8 h-8 mb-2 text-indigo-600 dark:text-indigo-300" />
+            <div className="text-3xl font-bold text-indigo-600">
+              {seekersCount.toLocaleString()}+
+            </div>
+            <div className="font-serif text-lg font-extrabold text-gray-600 dark:text-slate-300 ">
+              Job Seekers
+            </div>
+          </div>
+          <div className="flex flex-col items-center p-6 text-center border border-indigo-100 shadow-lg rounded-2xl bg-white/60 dark:bg-slate-800/60 backdrop-blur dark:border-slate-700">
+            <Globe className="w-8 h-8 mb-2 text-indigo-600 dark:text-indigo-300" />
+            <div className="text-3xl font-bold text-indigo-600">
+              {countriesCount.toLocaleString()}+
+            </div>
+            <div className="font-serif text-lg font-extrabold text-gray-600 dark:text-slate-300">
+              Countries
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Jobs Carousel Section */}
-      <JobsCarousel />
+      {/* Featured Jobs Section - Styled like Join our Global Community */}
+      <div className="relative py-12 mb-16 overflow-hidden shadow-lg rounded-2xl bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900 ">
+        {/* Decorative blurred gradient blob */}
+        <span className="absolute rounded-full pointer-events-none -top-10 -left-10 w-60 h-60 bg-gradient-to-tr from-indigo-200 via-blue-200 to-purple-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <span className="absolute rounded-full pointer-events-none -bottom-10 -right-10 w-60 h-60 bg-gradient-to-tr from-pink-200 via-indigo-100 to-blue-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <div className="relative z-10">
+          <JobsCarousel />
+        </div>
+      </div>
 
-      {/* Features Section - Sharp edges */}
-      <div className="mb-16">
-        <div className="p-6">
+      {/* Why Choose Us Section - Styled like Join our Global Community */}
+      <div className="relative mb-16 overflow-hidden shadow-lg rounded-2xl bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
+        <span className="absolute rounded-full pointer-events-none -top-10 -left-10 w-60 h-60 bg-gradient-to-tr from-indigo-200 via-blue-200 to-purple-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <span className="absolute rounded-full pointer-events-none -bottom-10 -right-10 w-60 h-60 bg-gradient-to-tr from-pink-200 via-indigo-100 to-blue-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <div className="relative z-10 p-6">
           <img
             src={
               typeof reasonImage === "string" ? reasonImage : reasonImage.src
@@ -349,125 +492,210 @@ export default function Home() {
             className="object-cover w-full h-full rounded-lg "
           />
         </div>
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-slate-100">Why Choose Us</h2>
+        <div className="relative z-10 mb-12 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-slate-200 ">
+            Why Choose Us
+          </h2>
           <p className="max-w-2xl mx-auto mt-4 text-lg text-gray-600 dark:text-slate-100">
             We connect talented professionals with the best remote opportunities
             worldwide
           </p>
         </div>
-
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+        <div className="relative z-10 grid grid-cols-1 gap-8 p-4 pb-8 md:grid-cols-3">
           {features.map((feature, index) => (
             <FeatureCard key={index} {...feature} />
           ))}
         </div>
       </div>
 
-      {/* Review Section - Spotlight Carousel of reviewer cards */}
-      <div className="mb-16">
-        <h2 className="mb-8 text-3xl font-bold text-center text-gray-900 dark:text-white">
-          What Our Users Say
-        </h2>
-        <p className="max-w-2xl mx-auto mb-6 text-lg text-center text-gray-600 dark:text-slate-300">
-          Hear from our community of remote job seekers and employers about their
-          experiences with Ravenz.
-        </p>
-        {/* Carousel for reviews */}
-        
-        <Carousel
-          opts={{ align: "center", loop: true }}
-          setApi={setReviewApi}
-          plugins={[
-            Autoplay({
-              delay: 5000, // Autoplay delay in milliseconds (e.g., 5 seconds)
-              stopOnInteraction: true, // Stop autoplay on user interaction
-            }),
-          ]}
-          className="w-full max-w-3xl mx-auto"
-        >
-          <CarouselContent className="-ml-4"> {/* Increased negative margin */}
-            {[
-              {
-                name: "Alice Johnson",
-                image: reviewerImg1,
-                review:
-                  "Ravenz helped me land my dream remote job! The process was smooth and the opportunities are real.",
-              },
-              {
-                name: "Damian Lee",
-                image: reviewerImg2,
-                review:
-                  "I love the flexibility. The platform is easy to use and the support team is fantastic!",
-              },
-              {
-                name: "Carla Mendes",
-                image: reviewerImg3,
-                review:
-                  "A great place to find legitimate remote work. I recommend it to all my friends.",
-              },
-              {
-                name: "David Kim",
-                image: reviewerImg4,
-                review:
-                  "The variety of jobs is impressive. I found both part-time and full-time roles easily.",
-              },
-              {
-                name: "Juan Jahier",
-                image: reviewerImg4,
-                review:
-                  "The variety of jobs is impressive. I found both part-time and full-time roles easily.",
-              },
-            ].map((reviewer, idx) => (
-              <CarouselItem key={idx} className="pl-4 basis-full sm:basis-3/4 md:basis-1/2 lg:basis-2/5"> {/* Increased left padding */}
-                <div
-                  className={`relative flex flex-col items-center justify-end w-full max-w-md 
+      {/* Review Section - Styled like Join our Global Community */}
+      <div className="relative mb-16 overflow-hidden shadow-lg rounded-2xl bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
+        <span className="absolute rounded-full pointer-events-none -top-10 -left-10 w-60 h-60 bg-gradient-to-tr from-indigo-200 via-blue-200 to-purple-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <span className="absolute rounded-full pointer-events-none -bottom-10 -right-10 w-60 h-60 bg-gradient-to-tr from-pink-200 via-indigo-100 to-blue-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <div className="relative z-10 p-8">
+          <h2 className="mb-8 text-3xl font-bold text-center text-gray-900 dark:text-white">
+            What Our Users Say
+          </h2>
+          <p className="max-w-2xl mx-auto mb-6 text-lg text-center text-gray-600 dark:text-slate-300">
+            Hear from our community of remote job seekers and employers about
+            their experiences with Ravenz.
+          </p>
+          <Carousel
+            opts={{ align: "center", loop: true }}
+            setApi={setReviewApi}
+            plugins={[
+              Autoplay({
+                delay: 5000,
+                stopOnInteraction: true,
+              }),
+            ]}
+            className="w-full max-w-3xl mx-auto"
+          >
+            <CarouselContent className="-ml-4">
+              {" "}
+              {/* Increased negative margin */}
+              {[
+                {
+                  name: "Alice Johnson",
+                  image: reviewerImg1,
+                  review:
+                    "Ravenz helped me land my dream remote job! The process was smooth and the opportunities are real.",
+                },
+                {
+                  name: "Damian Lee",
+                  image: reviewerImg2,
+                  review:
+                    "I love the flexibility. The platform is easy to use and the support team is fantastic!",
+                },
+                {
+                  name: "Carla Mendes",
+                  image: reviewerImg3,
+                  review:
+                    "A great place to find legitimate remote work. I recommend it to all my friends.",
+                },
+                {
+                  name: "David Kim",
+                  image: reviewerImg4,
+                  review:
+                    "The variety of jobs is impressive. I found both part-time and full-time roles easily.",
+                },
+                {
+                  name: "Juan Jahier",
+                  image: reviewerImg4,
+                  review:
+                    "The variety of jobs is impressive. I found both part-time and full-time roles easily.",
+                },
+              ].map((reviewer, idx) => (
+                <CarouselItem
+                  key={idx}
+                  className="pl-4 basis-full sm:basis-3/4 md:basis-1/2 lg:basis-2/5"
+                >
+                  {" "}
+                  {/* Increased left padding */}
+                  <div
+                    className={`relative flex flex-col items-center justify-end w-full max-w-md 
                              transition-all duration-300 ease-in-out group bg-gray-900/80 shadow-xl overflow-hidden
                              rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl 
-                             ${reviewCurrentSlide === idx 
-                               ? 'min-h-[300px] h-[300px] sm:h-[340px] md:h-[380px] scale-100 opacity-100' 
-                               : 'min-h-[260px] h-[260px] sm:h-[300px] md:h-[340px] scale-90 opacity-70'
+                             ${
+                               reviewCurrentSlide === idx
+                                 ? "min-h-[300px] h-[300px] sm:h-[340px] md:h-[380px] scale-100 opacity-100"
+                                 : "min-h-[260px] h-[260px] sm:h-[300px] md:h-[340px] scale-90 opacity-70"
                              }`}
-                  style={{
-                    backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.2)), url(${reviewer.image})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                >
-                  <div className="absolute inset-0 transition-opacity group-hover:bg-black/40" />
-                  <div className="relative z-10 flex flex-col items-center justify-end w-full h-full p-8 text-center text-white">
-                    <div className="mb-4 text-xl font-bold drop-shadow-lg">{reviewer.name}</div>
-                    <div className="max-w-xs mx-auto text-base font-medium opacity-90 drop-shadow">
-                      “{reviewer.review}”
+                    style={{
+                      backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.2)), url(${reviewer.image})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                  >
+                    <div className="absolute inset-0 transition-opacity group-hover:bg-black/40" />
+                    <div className="relative z-10 flex flex-col items-center justify-end w-full h-full p-8 text-center text-white">
+                      <div className="mb-4 text-xl font-bold drop-shadow-lg">
+                        {reviewer.name}
+                      </div>
+                      <div className="max-w-xs mx-auto text-base font-medium opacity-90 drop-shadow">
+                        “{reviewer.review}”
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CarouselItem>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+          <div className="flex justify-center gap-2 mt-6">
+            {Array.from({ length: reviewSlideCount }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => reviewApi?.scrollTo(index)}
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ease-in-out
+                  ${
+                    reviewCurrentSlide === index
+                      ? "bg-indigo-600 p-1"
+                      : "bg-slate-100 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
+                  }`}
+                aria-label={`Go to review slide ${index + 1}`}
+              />
             ))}
-          </CarouselContent> 
-          {/* CarouselPrevious and CarouselNext are removed as per request */}
-        </Carousel>
-        {/* Pagination dots for review carousel */}
-        <div className="flex justify-center gap-2 mt-6">
-          {Array.from({ length: reviewSlideCount }).map((_, index) => (
-            <button
-              key={index}
-              onClick={() => reviewApi?.scrollTo(index)}
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ease-in-out
-                ${
-                  reviewCurrentSlide === index
-                    ? "bg-indigo-600 p-1"
-                    : "bg-slate-100 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
-                }`}
-              aria-label={`Go to review slide ${index + 1}`}
-            />
-          ))}
+          </div>
         </div>
       </div>
 
-      {/* CTA Section - Sharp edges */}
-      <div className="grid items-center p-8 mb-16 bg-gray-50 dark:bg-slate-900">
-        <div className=" md:flex md:flex-row-reverse md:items-center md:justify-between">
+      {/* How It Works Section - Styled like Join our Global Community */}
+      <div className="relative mb-16 overflow-hidden shadow-lg rounded-2xl bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
+        <span className="absolute rounded-full pointer-events-none -top-10 -left-10 w-60 h-60 bg-gradient-to-tr from-indigo-200 via-blue-200 to-purple-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <span className="absolute rounded-full pointer-events-none -bottom-10 -right-10 w-60 h-60 bg-gradient-to-tr from-pink-200 via-indigo-100 to-blue-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <div className="relative z-10 p-8">
+          <h2 className="mb-8 text-3xl font-bold text-center text-gray-900 dark:text-white">
+            How It Works
+          </h2>
+          <p className="max-w-2xl mx-auto mb-8 text-lg text-center text-gray-600 dark:text-slate-300">
+            Getting started is easy! Follow these simple steps to join our
+            community and land your next remote job. Whether you’re new to
+            remote work or a seasoned pro, we’ll guide you every step of the
+            way.
+          </p>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+            <div className="flex flex-col items-center p-6 transition-all bg-white shadow dark:bg-gray-800 rounded-xl hover:shadow-lg">
+              <span className="inline-flex items-center justify-center mb-4 text-2xl text-indigo-600 bg-indigo-100 rounded-full w-14 h-14 dark:bg-indigo-900 dark:text-indigo-300">
+                <ArrowRight className="w-8 h-8" />
+              </span>
+              <h4 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+                Sign Up
+              </h4>
+              <p className="text-sm text-center text-gray-600 dark:text-gray-300">
+                Create your free account in seconds to get started.
+              </p>
+            </div>
+            <div className="flex flex-col items-center p-6 transition-all bg-white shadow dark:bg-gray-800 rounded-xl hover:shadow-lg">
+              <span className="inline-flex items-center justify-center mb-4 text-2xl text-indigo-600 bg-indigo-100 rounded-full w-14 h-14 dark:bg-indigo-900 dark:text-indigo-300">
+                <UserCircle className="w-8 h-8" />
+              </span>
+              <h4 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+                Complete Profile
+              </h4>
+              <p className="text-sm text-center text-gray-600 dark:text-gray-300">
+                Fill in your details and upload your resume to stand out.
+              </p>
+            </div>
+            <div className="flex flex-col items-center p-6 transition-all bg-white shadow dark:bg-gray-800 rounded-xl hover:shadow-lg">
+              <span className="inline-flex items-center justify-center mb-4 text-2xl text-indigo-600 bg-indigo-100 rounded-full w-14 h-14 dark:bg-indigo-900 dark:text-indigo-300">
+                <Briefcase className="w-8 h-8" />
+              </span>
+              <h4 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+                Browse & Apply
+              </h4>
+              <p className="text-sm text-center text-gray-600 dark:text-gray-300">
+                Explore jobs and apply to positions that match your skills.
+              </p>
+            </div>
+            <div className="flex flex-col items-center p-6 transition-all bg-white shadow dark:bg-gray-800 rounded-xl hover:shadow-lg">
+              <span className="inline-flex items-center justify-center mb-4 text-2xl text-indigo-600 bg-indigo-100 rounded-full w-14 h-14 dark:bg-indigo-900 dark:text-indigo-300">
+                <CheckCircle className="w-8 h-8" />
+              </span>
+              <h4 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+                Get Hired
+              </h4>
+              <p className="text-sm text-center text-gray-600 dark:text-gray-300">
+                Land your dream remote job and start working from anywhere!
+              </p>
+            </div>
+          </div>
+          <div className="flex justify-center mt-8">
+            <Link
+              to="/auth"
+              className="inline-flex items-center px-8 py-3 text-lg font-semibold text-white transition-colors bg-indigo-600 rounded shadow hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400"
+            >
+              Get Started
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA Section - Styled like Join our Global Community */}
+      <div className="relative grid items-center p-8 mb-16 overflow-hidden shadow-lg rounded-2xl bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
+        <span className="absolute rounded-full pointer-events-none -top-10 -left-10 w-60 h-60 bg-gradient-to-tr from-indigo-200 via-blue-200 to-purple-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <span className="absolute rounded-full pointer-events-none -bottom-10 -right-10 w-60 h-60 bg-gradient-to-tr from-pink-200 via-indigo-100 to-blue-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <div className="relative z-10 md:flex md:flex-row-reverse md:items-center md:justify-between">
           <div className="p-6 md:w-1/2">
             <img
               src={typeof startImage === "string" ? startImage : startImage.src}
@@ -483,14 +711,24 @@ export default function Home() {
             <p className="mt-2 text-lg text-gray-600 dark:text-slate-300">
               Join thousands of professionals who found their dream remote jobs.
             </p>
-            <div className="mt-6">
-              <ActionButton to="/auth" variant="primary">
-                Get Started Now
-              </ActionButton>
-            </div>
           </div>
         </div>
+        <div className="relative z-10 w-1/3 mx-auto mt-6 rounded-full">
+          <ActionButton to="/auth" variant="primary">
+            Get Started Now
+          </ActionButton>
+        </div>
       </div>
+
+      {/* Tailwind animation for pulse-glow */}
+      {/* Add this to your global CSS if not present:
+      @keyframes pulse-glow {
+        0%,100%{opacity:.7;}
+        50%{opacity:1;filter:blur(32px);}
+      }
+      .animate-pulse-glow {
+        animation: pulse-glow 2.5s infinite;
+      } */}
     </div>
   );
 }

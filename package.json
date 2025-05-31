@@ -45,6 +45,7 @@
     "react-country-region-selector": "^4.0.2",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.1",
+    "react-intersection-observer": "^9.16.0",
     "react-phone-number-input": "^3.4.12",
     "react-router-dom": "^7.1.5",
     "react-select": "^5.10.1",

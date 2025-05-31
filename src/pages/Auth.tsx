@@ -63,7 +63,7 @@ export default function Auth() {
         setIsSignUp(false);
       } else {
         toast.success("Signed in successfully!");
-        navigate("/");
+        navigate("/dashboard");
       }
     } catch (error) {
       console.error("Authentication error:", error);

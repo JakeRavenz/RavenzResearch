@@ -58,11 +58,12 @@ export default function MyJobs() {
     }
 
     fetchApplications();
-  }, [navigate, toast]);
+  }, [navigate]);
+  const jobIds = React.useMemo(() => applications.map((app) => app.job_id), [applications]);
+
   useEffect(() => {
     async function fetchJobDetails() {
       try {
-        const jobIds = applications.map((app) => app.job_id); // Extract job IDs from applications
         const { data, error } = await supabase
           .from("jobs")
           .select(`id, company:companies(logo_url, name)`)
@@ -84,9 +85,7 @@ export default function MyJobs() {
       }
     }
     fetchJobDetails();
-  }, [
-    React.useMemo(() => applications.map((app) => app.job_id), [applications]),
-  ]);
+  }, [jobIds]);
   // Function to handle canceling an application
   const handleCancelApplication = async (applicationId: string) => {
     try {
@@ -119,10 +118,12 @@ export default function MyJobs() {
   if (loadingApplications || loadingJobDetails) {
     return (
       <div className="flex items-center justify-center min-h-screen p-4 mx-auto bg-gray-50 dark:bg-gray-900">
-        <div className="w-full max-w-md p-8 text-center bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+        <div className="w-full max-w-md p-8 text-center bg-white rounded-lg shadow-lg dark:bg-gray-800">
           <Briefcase className="w-16 h-16 mx-auto mt-6 mb-6 text-gray-400 dark:text-gray-500" />
-          <div className="w-8 h-8 mx-auto border-4 border-indigo-600 dark:border-indigo-400 rounded-full animate-spin border-t-transparent"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading job applications...</p>
+          <div className="w-8 h-8 mx-auto border-4 border-indigo-600 rounded-full dark:border-indigo-400 animate-spin border-t-transparent"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">
+            Loading job applications...
+          </p>
         </div>
       </div>
     );
@@ -144,83 +145,72 @@ export default function MyJobs() {
 
   return (
     <div className="container px-4 py-8 mx-auto bg-slate-100 dark:bg-gray-900">
-      <h1 className="mb-8 text-3xl font-bold text-gray-900 dark:text-white">My Jobs</h1>
-      <div className="overflow-hidden bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-        <div className="px-4 py-5 sm:px-6">
-          <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-white">
-            Applications
-          </h3>
-          <p className="max-w-2xl mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Here are the jobs you have applied for.
-          </p>
-        </div>
-        <div className="flex-col border-t border-gray-200 dark:border-gray-700 lg:flex-row lg:items-center lg:justify-center">
-          <dl className="divide-y divide-gray-200 dark:divide-gray-700">
-            {applications?.map((application) => (
-              <div
-                key={application.id}
-                className="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
-              >
-                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  <div className="flex items-center space-x-2">
-                    {jobDetails.map((job) => {
-                      if (job.id === application.job_id) {
-                        return (
-                          <div
-                            key={job.id}
-                            className="flex items-center space-x-2"
-                          >
-                            {job.company.logo_url ? (
-                              <img
-                                src={job.company.logo_url}
-                                alt={`${job.company.name} logo`}
-                                className="object-cover w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700"
-                              />
-                            ) : null}
-                            <span>{application.job_title}</span>
-                          </div>
-                        );
-                      }
-                      return null;
-                    })}
+      <h1 className="mb-8 text-3xl font-bold text-gray-900 dark:text-white">
+        My Jobs
+      </h1>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {applications?.map((application) => {
+          const job = jobDetails.find((job) => job.id === application.job_id);
+          return (
+            <div
+              key={application.id}
+              className="flex flex-col p-5 overflow-hidden transition-shadow bg-white border border-gray-100 shadow-md cursor-pointer dark:bg-gray-800 dark:border-gray-700 rounded-2xl hover:shadow-xl group"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                {job?.company.logo_url ? (
+                  <img
+                    src={job.company.logo_url}
+                    alt={`${job.company.name} logo`}
+                    className="object-cover w-10 h-10 bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-lg dark:bg-gray-700">
+                    <Briefcase className="w-5 h-5 text-gray-400" />
                   </div>
-                </dt>
-                <dd className="mt-1 text-sm text-gray-900 dark:text-white sm:col-span-2 sm:mt-0 ">
-                  <div className="flex items-center space-x-2">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${
-                        application.status === "accepted"
-                          ? "bg-green-100 text-green-800 dark:bg-green-700_bg_opacity_50 dark:text-green-300"
-                          : application.status === "rejected"
-                          ? "bg-red-100 text-red-800 dark:bg-red-700_bg_opacity_50 dark:text-red-300"
-                          : "bg-yellow-100 text-yellow-800 dark:bg-yellow-700_bg_opacity_50 dark:text-yellow-300"
-                      }`}
-                    >
-                      {application.status}
-                    </span>
-                    <button
-                      onClick={() => handleCancelApplication(application.id)}
-                      className={`text-red-600 hover:text-red-900 ${
-                        cancelling === application.id 
-                          ? "opacity-50 cursor-not-allowed"
-                          : ""
-                      }`}
-                      disabled={cancelling === application.id}
-                    >
-                      {cancelling === application.id
-                        ? "Cancelling..."
-                        : "Cancel Application"}
-                    </button>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="text-base font-semibold text-gray-900 truncate dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                    {application.job_title}
                   </div>
-                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                    Applied on{" "}
-                    {new Date(application.created_at).toLocaleDateString()}
-                  </p>
-                </dd>
+                  <div className="text-xs text-gray-500 truncate dark:text-gray-400">
+                    {job?.company.name || "Unknown Company"}
+                  </div>
+                </div>
               </div>
-            ))}
-          </dl>
-        </div>
+              <div className="flex flex-wrap gap-2 mb-2">
+                <span
+                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    application.status === "accepted"
+                      ? "bg-green-100 text-green-800 dark:bg-green-700/30 dark:text-green-300"
+                      : application.status === "rejected"
+                      ? "bg-red-100 text-red-800 dark:bg-red-700/30 dark:text-red-300"
+                      : "bg-yellow-100 text-yellow-800 dark:bg-yellow-700/30 dark:text-yellow-300"
+                  }`}
+                >
+                  {application.status}
+                </span>
+              </div>
+              <div className="flex-1" />
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Applied on{" "}
+                  {new Date(application.created_at).toLocaleDateString()}
+                </p>
+                <button
+                  onClick={() => handleCancelApplication(application.id)}
+                  className={`text-red-600 hover:text-red-900 text-xs font-semibold ${
+                    cancelling === application.id
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
+                  disabled={cancelling === application.id}
+                >
+                  {cancelling === application.id ? "Cancelling..." : "Cancel"}
+                </button>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

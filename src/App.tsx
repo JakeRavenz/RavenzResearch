@@ -20,6 +20,7 @@ import Policies from "./pages/Policies";
 import TermsOfService from "./pages/TermsOfService";
 import MyJobs from "./pages/myJobs";
 import WhatsAppWidget from "./components/WhatsAppWidget";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
       <Routes>
         {/* Routes without Layout */}
         <Route path="/jobs/:id" element={<JobDetails />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/company-bio" element={<CompanyForm />} />
         <Route path="/post-job" element={<PostJobForm />} />
         <Route path="/update-profile" element={<UpdateProfile />} />
