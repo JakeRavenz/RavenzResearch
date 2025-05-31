@@ -715,7 +715,7 @@ export default function Home() {
             </p>
           </div>
         </div>
-        <div className="relative z-10 w-1/3 mx-auto mt-6 rounded-full">
+        <div className="relative z-10 flex justify-center w-full mt-6">
           <ActionButton to="/auth" variant="primary">
             Get Started Now
           </ActionButton>

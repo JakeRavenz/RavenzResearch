@@ -623,7 +623,8 @@ export default function ProfileForm() {
 
       // Update profile data
       const profileData = {
-        id: user.id,
+        id: user.id, // Always a UUID
+        email: user.email, // Always a string
         first_name: formData.firstName,
         middle_name: formData.middleName,
         surname: formData.surname,
@@ -689,6 +690,12 @@ export default function ProfileForm() {
     } catch (err: any) {
       console.error("Profile update error:", err);
       setError(err.message || "Error updating profile. Please try again.");
+      // Notify user of error
+      if (typeof window !== "undefined" && err.message) {
+        alert("Error saving profile: " + err.message);
+      } else if (typeof window !== "undefined") {
+        alert("Error saving profile. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

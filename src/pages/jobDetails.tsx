@@ -426,16 +426,20 @@ export default function JobDetails() {
 
                     <div className="flex flex-wrap text-gray-600 dark:text-gray-400 gap-y-2 gap-x-6">
                       <div className="flex items-center">
-                        <MapPin className="w-5 h-5 mr-2 text-gray-500 dark:text-gray-400" />
-                        <span>
+                        <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium text-white bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 dark:from-yellow-700 dark:via-yellow-800 dark:to-yellow-900 rounded-full mr-2">
+                          <Briefcase className="w-4 h-4 mr-1 text-white" />
+                          {job.remote_level}
+                        </span>
+                        <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium text-white bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 dark:from-purple-700 dark:via-purple-800 dark:to-purple-900 rounded-full mr-2">
+                          <Briefcase className="w-4 h-4 mr-1 text-white" />
+                          {job.type}
+                        </span>
+                        <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium text-white bg-gradient-to-r from-green-400 via-blue-500 to-indigo-600 rounded-full">
+                          <MapPin className="w-4 h-4 mr-1 text-white" />
                           {job.remote_level === "fully_remote"
                             ? "Remote"
                             : job.location}
                         </span>
-                      </div>
-                      <div className="flex items-center">
-                        <Briefcase className="w-5 h-5 mr-2 text-gray-500 dark:text-gray-400" />
-                        <span>{job.type}</span>
                       </div>
                       {/* <div className="flex items-center">
                         <Clock className="w-5 h-5 mr-2 text-gray-500" />
@@ -452,13 +456,13 @@ export default function JobDetails() {
                     <button
                       onClick={handleApplyNow}
                       disabled={applyDisabled || isSubmitting}
-                      className="w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
+                      className="flex-shrink-0 w-full px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-blue-600 shadow-xl rounded-xl hover:scale-105 hover:shadow-2xl hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
                     >
                       {isSubmitting
                         ? "Applying..."
                         : applyDisabled
                         ? "Applied"
-                        : "Apply Now"}
+                        : "Apply for this position"}
                     </button>
                   </div>
                 </div>

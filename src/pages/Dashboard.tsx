@@ -86,16 +86,24 @@ const Dashboard: React.FC = () => {
     const fetchApplicationsAndAnalytics = async () => {
       const { data, error } = await supabase
         .from("applications")
-        .select("id, job_id, job_title, status, created_at")
+        .select(`
+          id,
+          job_title,
+          status,
+          created_at,
+          jobs (
+            company:companies (name)
+          )
+        `)
         .eq("user_id", user ? user.id : null)
         .order("created_at", { ascending: false });
 
       if (!error && data) {
         if (isMounted) {
-          const formattedApplications = data.map((app: any) => ({
+          const formattedApplications = data.map((app: any) => ({ // app will have a 'jobs' property
             id: app.id,
             job_title: app.job_title,
-            company_name: "N/A", // Placeholder, fetch job details if needed
+            company_name: app.jobs?.company?.name || "Company N/A", // Extract company name
             status: app.status,
             applied_at: app.created_at,
           }));

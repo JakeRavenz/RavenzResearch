@@ -179,8 +179,46 @@ export default function Jobs() {
     </div>
   );
 
+  // TruncatedDescription component (copied from jobDetails for consistency)
+  function TruncatedDescription({
+    description,
+    jobId,
+    companyName,
+    jobTitle,
+  }: {
+    description: string;
+    jobId: string;
+    companyName: string;
+    jobTitle: string;
+  }) {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const maxLength = 100; // Match jobDetails truncation
+
+    const showTruncate = description.length > maxLength && !isExpanded;
+
+    return (
+      <div className="mt-1 text-gray-600 dark:text-gray-400">
+        {isExpanded || description.length <= maxLength
+          ? description
+          : `${description.slice(0, maxLength)}...`}
+        {showTruncate && (
+          <Link
+            to={`/jobs/${jobId}`}
+           className="flex-1 px-3 py-1.5 text-xs font-semibold text-indigo-600 transition-colors bg-indigo-100 rounded-md shadow-sm hover:bg-indigo-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 dark:bg-indigo-900 dark:text-indigo-300 dark:hover:bg-indigo-800 text-center"
+            onClick={(e) => e.stopPropagation()}
+            aria-label={`Learn more about ${jobTitle} at ${companyName}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Learn More
+          </Link>
+        )}
+      </div>
+    );
+  }
+
   return (
-    <div className="container px-4 py-8 mx-auto bg-slate-100 dark:bg-gray-900">
+    <div className="container px-4 py-8 mx-auto bg-slate-300 dark:bg-slate-900">
       <div className="relative p-8 mb-8 overflow-hidden shadow-lg rounded-2xl bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
         <span className="absolute rounded-full pointer-events-none -top-10 -left-10 w-60 h-60 bg-gradient-to-tr from-indigo-200 via-blue-200 to-purple-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
         <span className="absolute rounded-full pointer-events-none -bottom-10 -right-10 w-60 h-60 bg-gradient-to-tr from-pink-200 via-indigo-100 to-blue-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
@@ -341,7 +379,7 @@ export default function Jobs() {
                 {filteredJobs.map((job) => (
                   <div
                     key={job.id}
-                    className="flex flex-col overflow-hidden transition-shadow bg-white border border-gray-100 shadow-md cursor-pointer dark:bg-gray-800 dark:border-gray-700 rounded-2xl hover:shadow-xl group"
+                    className="flex flex-col overflow-hidden transition-shadow bg-white border border-gray-100 shadow-md cursor-pointer dark:bg-gray-800 dark:border-gray-700 rounded-2xl group hover:shadow-2xl hover:border-indigo-400 dark:hover:border-indigo-400 hover:scale-[1.03] hover:-translate-y-1 duration-300"
                     onClick={() => navigate(`/jobs/${job.id}`)}
                   >
                     <div className="flex items-center gap-3 p-4 border-b border-gray-50 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
@@ -352,8 +390,8 @@ export default function Jobs() {
                           className="object-cover w-12 h-12 bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700"
                         />
                       ) : (
-                        <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-lg dark:bg-gray-700">
-                          <Briefcase className="w-6 h-6 text-gray-400" />
+                        <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-indigo-50 dark:bg-indigo-900">
+                          <Briefcase className="w-6 h-6 text-indigo-400" />
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
@@ -365,27 +403,32 @@ export default function Jobs() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-col flex-1 gap-2 p-4">
+                    <div className="flex flex-col flex-1 gap-2 p-6">
                       <div className="flex flex-wrap gap-2 mb-2">
-                        <span className="px-2 py-0.5 text-xs font-medium text-yellow-800 bg-yellow-100 dark:text-yellow-300 dark:bg-yellow-700/30 rounded-full">
+                        <span className="px-2 py-0.5 text-xs font-medium text-white bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 dark:from-yellow-700 dark:via-yellow-800 dark:to-yellow-900 rounded-full">
                           {job.remote_level}
                         </span>
-                        <span className="px-2 py-0.5 text-xs font-medium text-purple-800 bg-purple-100 dark:text-purple-300 dark:bg-purple-700/30 rounded-full">
+                        <span className="px-2 py-0.5 text-xs font-medium text-white bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 dark:from-purple-700 dark:via-purple-800 dark:to-purple-900 rounded-full">
                           {job.type}
                         </span>
                         {(new Date().getTime() -
                           new Date(job.created_at).getTime()) /
                           (1000 * 60 * 60 * 24) <
                           7 && (
-                          <span className="px-2 py-0.5 text-xs font-medium text-gray-800 bg-gray-100 dark:text-gray-300 dark:bg-gray-700 rounded-full">
+                          <span className="px-2 py-0.5 text-xs font-medium text-white bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 dark:from-pink-700 dark:via-pink-800 dark:to-pink-900 rounded-full animate-pulse">
                             New
                           </span>
                         )}
                       </div>
-                      <div className="mb-2 text-sm text-gray-700 dark:text-gray-300 line-clamp-3">
-                        {job.description}
+                      <div className="mb-2 text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
+                        <TruncatedDescription
+                          description={job.description}
+                          jobId={job.id}
+                          companyName={job.company.name}
+                          jobTitle={job.title}
+                        />
                       </div>
-                      <div className="flex items-center justify-between mt-auto">
+                      <div className="flex items-center justify-between mt-auto mb-2">
                         <div className="text-base font-semibold text-gray-900 dark:text-white">
                           {job.salary_max ? `${job.salary_max} USD` : ""}
                           <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
@@ -396,6 +439,17 @@ export default function Jobs() {
                           <MapPin className="w-4 h-4 mr-1 text-gray-400" />
                           <span>{job.location}</span>
                         </div>
+                      </div>
+                      <div className="flex gap-2 mt-2">
+                        
+                        <Link
+                          to={`/jobs/${job.id}`}
+                          className="flex-1 px-3 py-1.5 text-xs font-semibold text-white transition-colors bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400 text-center"
+                          onClick={(e) => e.stopPropagation()}
+                          aria-label={`Apply for ${job.title} at ${job.company.name}`}
+                        >
+                          Apply
+                        </Link>
                       </div>
                     </div>
                   </div>
