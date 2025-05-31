@@ -91,17 +91,6 @@ export default function Navbar() {
                   <span>Jobs</span>
                 </Link>
               ) : null}
-              {user ? (
-                <Link
-                  to="/myJobs"
-                  className={`flex items-center space-x-2 font-['Inter'] ${getLinkClasses(
-                    "/myJobs"
-                  )}`}
-                >
-                  <BriefcaseIcon className="w-5 h-5" />
-                  <span>My Jobs</span>
-                </Link>
-              ) : null}
               <Link
                 to="/aboutUs"
                 className={`flex items-center space-x-2 font-['Inter'] ${getLinkClasses(
@@ -144,6 +133,17 @@ export default function Navbar() {
                   sign in
                 </Link>
               )}
+              {user ? (
+                <Link
+                  to="/dashboard"
+                  className={`flex items-center space-x-2 font-['Inter'] ${getLinkClasses(
+                    "/dashboard"
+                  )}`}
+                >
+                  <UserIcon className="w-5 h-5" />
+                  <span>Dashboard</span>
+                </Link>
+              ) : null}
             </div>
             {/* Theme toggle remains outside for accessibility */}
             <button
@@ -212,19 +212,6 @@ export default function Navbar() {
               </Link>
             ) : null}
 
-            {user ? (
-              <Link
-                to="/myJobs"
-                className={`flex items-center space-x-2 font-['Inter'] ${getLinkClasses(
-                  "/myJobs"
-                )}`}
-                onClick={closeSidebar}
-              >
-                <BriefcaseIcon className="w-5 h-5" />
-                <span>My Jobs</span>
-              </Link>
-            ) : null}
-
             <Link
               to="/aboutUs"
               className={`flex items-center space-x-2 font-['Inter'] ${getLinkClasses(
@@ -278,6 +265,18 @@ export default function Navbar() {
                 Sign In
               </Link>
             )}
+            {user ? (
+              <Link
+                to="/dashboard"
+                className={`flex items-center space-x-2 font-['Inter'] ${getLinkClasses(
+                  "/dashboard"
+                )}`}
+                onClick={closeSidebar}
+              >
+                <UserIcon className="w-5 h-5" />
+                <span>Dashboard</span>
+              </Link>
+            ) : null}
           </div>
         </div>
       </div>

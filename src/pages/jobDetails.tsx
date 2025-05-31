@@ -26,7 +26,9 @@ function Modal({ message, onClose }: { message: string; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-xl dark:bg-gray-800">
-        <p className="text-center text-gray-800 dark:text-gray-100">{message}</p>
+        <p className="text-center text-gray-800 dark:text-gray-100">
+          {message}
+        </p>
         <div className="flex justify-center mt-6">
           <button
             onClick={() => {
@@ -254,7 +256,7 @@ export default function JobDetails() {
         return;
       }
 
-        // Send jobapplication success email
+      // Send jobapplication success email
       try {
         // console.log("Preparing to send application email notification");
         const email = user.email;
@@ -317,7 +319,9 @@ export default function JobDetails() {
         <div className="w-full max-w-md p-8 text-center bg-white rounded-lg shadow-lg dark:bg-gray-800">
           <Briefcase className="w-16 h-16 mx-auto mt-6 mb-6 text-gray-400 dark:text-gray-500" />
           <div className="w-8 h-8 mx-auto border-4 border-indigo-600 rounded-full dark:border-indigo-400 animate-spin border-t-transparent"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading job details...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">
+            Loading job details...
+          </p>
         </div>
       </div>
     );
@@ -346,215 +350,223 @@ export default function JobDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {showModal && (
-        <Modal
-          message={modalMessage}
-          onClose={() => {
-            setShowModal(false);
-            switch (modalMessage) {
-              case "Please login to apply for this position":
-                navigate("/auth");
-                break;
-              case "This job posting no longer exists or is not open for applications":
-              case "Application failed":
-              case "Application failed: ":
-              case "Unable to submit application":
-                navigate("/jobs");
-                break;
-              case "Please complete your profile before applying":
-                navigate("/profile");
-                break;
-                case "You've already applied to this position":
-                case "✅ Application submitted successfully!":
-                navigate("/myJobs");
-                break;
-            }
-          }}
-        />
-      )}
+    <div className="container px-4 py-8 mx-auto bg-slate-100 dark:bg-gray-900">
+      <div className="relative p-8 mb-8 overflow-hidden shadow-lg rounded-2xl bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
+        <span className="absolute rounded-full pointer-events-none -top-10 -left-10 w-60 h-60 bg-gradient-to-tr from-indigo-200 via-blue-200 to-purple-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <span className="absolute rounded-full pointer-events-none -bottom-10 -right-10 w-60 h-60 bg-gradient-to-tr from-pink-200 via-indigo-100 to-blue-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <div className="relative z-10">
+          {showModal && (
+            <Modal
+              message={modalMessage}
+              onClose={() => {
+                setShowModal(false);
+                switch (modalMessage) {
+                  case "Please login to apply for this position":
+                    navigate("/auth");
+                    break;
+                  case "This job posting no longer exists or is not open for applications":
+                  case "Application failed":
+                  case "Application failed: ":
+                  case "Unable to submit application":
+                    navigate("/jobs");
+                    break;
+                  case "Please complete your profile before applying":
+                    navigate("/profile");
+                    break;
+                  case "You've already applied to this position":
+                  case "✅ Application submitted successfully!":
+                    navigate("/myJobs");
+                    break;
+                }
+              }}
+            />
+          )}
 
-      {/* Header with Back Button */}
-      <div className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
-        <div className="max-w-6xl px-4 py-4 mx-auto sm:px-6 lg:px-8">
-          <button
-            onClick={() => navigate("/jobs")}
-            className="flex items-center font-medium text-gray-600 transition-colors dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            <span>Back to Jobs</span>
-          </button>
-        </div>
-      </div>
-
-      <div className="max-w-6xl px-4 py-6 mx-auto sm:px-6 lg:px-8 sm:py-10">
-        <div className="overflow-hidden bg-white shadow-md dark:bg-gray-800 rounded-xl">
-          {/* Job Header */}
-          <div className="p-6 border-b sm:p-8">
-            <div className="flex flex-col gap-6 md:flex-row md:items-start">
-              {/* Company Logo */}
-              <div className="flex-shrink-0">
-                {job.company.logo_url ? (
-                  <img
-                    src={job.company.logo_url}
-                    alt={`${job.company.name} logo`}
-                    className="object-cover w-20 h-20 rounded-lg shadow-sm"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center w-20 h-20 bg-gray-100 rounded-lg shadow-sm dark:bg-gray-700">
-                    <Building className="w-10 h-10 text-gray-400 dark:text-gray-500" />
-                  </div>
-                )}
-              </div>
-
-              {/* Job Info */}
-              <div className="flex-grow">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">
-                  {job.title}
-                </h1>
-                <div className="mt-1 mb-4 text-lg text-gray-700 dark:text-gray-300 sm:text-xl">
-                  {job.company.name}
-                </div>
-
-                <div className="flex flex-wrap text-gray-600 dark:text-gray-400 gap-y-2 gap-x-6">
-                  <div className="flex items-center">
-                    <MapPin className="w-5 h-5 mr-2 text-gray-500 dark:text-gray-400" />
-                    <span>
-                      {job.remote_level === "fully_remote"
-                        ? "Remote"
-                        : job.location}
-                    </span>
-                  </div>
-                  <div className="flex items-center">
-                    <Briefcase className="w-5 h-5 mr-2 text-gray-500 dark:text-gray-400" />
-                    <span>{job.type}</span>
-                  </div>
-                  {/* <div className="flex items-center">
-                    <Clock className="w-5 h-5 mr-2 text-gray-500" />
-                    <span>Posted {formatTimeAgo(job.created_at)}</span>
-                  </div> */}
-                  <div className="flex items-center">
-                    <span>${job.salary_max} per hour</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Apply Button - Desktop */}
-              <div className="flex-shrink-0 hidden ml-auto md:block">
-                <button
-                  onClick={handleApplyNow}
-                  disabled={applyDisabled || isSubmitting}
-                  className="w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
-                >
-                  {isSubmitting
-                    ? "Applying..."
-                    : applyDisabled
-                    ? "Applied"
-                    : "Apply Now"}
-                </button>
-              </div>
-            </div>
-
-            {/* Apply Button - Mobile */}
-            <div className="mt-6 md:hidden">
+          {/* Header with Back Button */}
+          <div className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+            <div className="max-w-6xl px-4 py-4 mx-auto sm:px-6 lg:px-8">
               <button
-                onClick={handleApplyNow}
-                disabled={applyDisabled || isSubmitting}
-                className="w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => navigate("/jobs")}
+                className="flex items-center font-medium text-gray-600 transition-colors dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
               >
-                {isSubmitting
-                  ? "Applying..."
-                  : applyDisabled
-                  ? "Applied"
-                  : "Apply Now"}
+                <ArrowLeft className="w-5 h-5 mr-2" />
+                <span>Back to Jobs</span>
               </button>
             </div>
           </div>
 
-          {/* Job Details */}
-          <div className="p-6 sm:p-8">
-            <div className="space-y-10">
-              {/* About the Role */}
-              <section>
-                <h2 className="flex items-center mb-4 text-xl font-semibold text-gray-900 dark:text-white">
-                  <span className="mr-2">About the Role</span>
-                  <span className="flex-grow ml-3 border-t border-gray-200 dark:border-gray-700"></span>
-                </h2>
-                <div className="leading-relaxed prose text-gray-700 dark:text-gray-300 max-w-none">
-                  <TruncatedDescription description={job.description} />
-                </div>
-              </section>
-
-              {/* Requirements */}
-              <section>
-                <h2 className="flex items-center mb-4 text-xl font-semibold text-gray-900 dark:text-white">
-                  <span className="mr-2">Requirements</span>
-                  <span className="flex-grow ml-3 border-t border-gray-200 dark:border-gray-700"></span>
-                </h2>
-                <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-                  {job.requirements && job.requirements.length > 0 ? (
-                    job.requirements.map((req, index) => (
-                      <li key={index} className="flex items-start">
-                        <span className="flex-shrink-0 inline-block w-2 h-2 mt-2 mr-3 bg-blue-600 rounded-full dark:bg-blue-400"></span>
-                        <span>{req}</span>
-                      </li>
-                    ))
-                  ) : (
-                    <li className="flex items-start">
-                      <span className="flex-shrink-0 inline-block w-2 h-2 mt-2 mr-3 bg-blue-600 rounded-full dark:bg-blue-400"></span>
-                      <span>No specific requirements listed.</span>
-                    </li>
-                  )}
-                </ul>
-              </section>
-              {/* What We Offer */}
-              <section>
-                <h2 className="flex items-center mb-4 text-xl font-semibold text-gray-900 dark:text-white">
-                  <span className="mr-2">What We Offer</span>
-                  <span className="flex-grow ml-3 border-t border-gray-200"></span>
-                </h2>
-                <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-                  {job.what_we_offer && job.what_we_offer.length > 0 ? (
-                    job.what_we_offer.map((benefit, index) => (
-                      <li key={index} className="flex items-start">
-                        <span className="flex-shrink-0 inline-block w-2 h-2 mt-2 mr-3 bg-green-500 rounded-full"></span>
-                        <span>{benefit}</span>
-                      </li>
-                    ))
-                  ) : (
-                    <li className="flex items-start">
-                      <span className="flex-shrink-0 inline-block w-2 h-2 mt-2 mr-3 bg-green-500 rounded-full"></span>
-                      <span className="text-gray-700 dark:text-gray-300">No benefits information provided.</span>
-                    </li>
-                  )}
-                </ul>
-              </section>
-            </div>
-
-            {/* Apply Section */}
-            <div className="pt-8 mt-10 border-t border-gray-200 dark:border-gray-700">
-              <div className="p-6 rounded-lg bg-blue-50 dark:bg-blue-900_bg_opacity_25 sm:p-8">
-                <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-900">
-                      Ready to join {job.company.name}?
-                    </h2>
-                    <p className="text-gray-700 dark:text-gray-700">
-                      Submit your application today and take the next step in
-                      your career.
-                    </p>
+          <div className="max-w-6xl px-4 py-6 mx-auto sm:px-6 lg:px-8 sm:py-10">
+            <div className="overflow-hidden bg-white shadow-md dark:bg-gray-800 rounded-xl">
+              {/* Job Header */}
+              <div className="p-6 border-b sm:p-8">
+                <div className="flex flex-col gap-6 md:flex-row md:items-start">
+                  {/* Company Logo */}
+                  <div className="flex-shrink-0">
+                    {job.company.logo_url ? (
+                      <img
+                        src={job.company.logo_url}
+                        alt={`${job.company.name} logo`}
+                        className="object-cover w-20 h-20 rounded-lg shadow-sm"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center w-20 h-20 bg-gray-100 rounded-lg shadow-sm dark:bg-gray-700">
+                        <Building className="w-10 h-10 text-gray-400 dark:text-gray-500" />
+                      </div>
+                    )}
                   </div>
+
+                  {/* Job Info */}
+                  <div className="flex-grow">
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">
+                      {job.title}
+                    </h1>
+                    <div className="mt-1 mb-4 text-lg text-gray-700 dark:text-gray-300 sm:text-xl">
+                      {job.company.name}
+                    </div>
+
+                    <div className="flex flex-wrap text-gray-600 dark:text-gray-400 gap-y-2 gap-x-6">
+                      <div className="flex items-center">
+                        <MapPin className="w-5 h-5 mr-2 text-gray-500 dark:text-gray-400" />
+                        <span>
+                          {job.remote_level === "fully_remote"
+                            ? "Remote"
+                            : job.location}
+                        </span>
+                      </div>
+                      <div className="flex items-center">
+                        <Briefcase className="w-5 h-5 mr-2 text-gray-500 dark:text-gray-400" />
+                        <span>{job.type}</span>
+                      </div>
+                      {/* <div className="flex items-center">
+                        <Clock className="w-5 h-5 mr-2 text-gray-500" />
+                        <span>Posted {formatTimeAgo(job.created_at)}</span>
+                      </div> */}
+                      <div className="flex items-center">
+                        <span>${job.salary_max} per hour</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Apply Button - Desktop */}
+                  <div className="flex-shrink-0 hidden ml-auto md:block">
+                    <button
+                      onClick={handleApplyNow}
+                      disabled={applyDisabled || isSubmitting}
+                      className="w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
+                    >
+                      {isSubmitting
+                        ? "Applying..."
+                        : applyDisabled
+                        ? "Applied"
+                        : "Apply Now"}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Apply Button - Mobile */}
+                <div className="mt-6 md:hidden">
                   <button
                     onClick={handleApplyNow}
                     disabled={applyDisabled || isSubmitting}
-                    className="flex-shrink-0 w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
+                    className="w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting
                       ? "Applying..."
                       : applyDisabled
                       ? "Applied"
-                      : "Apply for this position"}
+                      : "Apply Now"}
                   </button>
+                </div>
+              </div>
+
+              {/* Job Details */}
+              <div className="p-6 sm:p-8">
+                <div className="space-y-10">
+                  {/* About the Role */}
+                  <section>
+                    <h2 className="flex items-center mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+                      <span className="mr-2">About the Role</span>
+                      <span className="flex-grow ml-3 border-t border-gray-200 dark:border-gray-700"></span>
+                    </h2>
+                    <div className="leading-relaxed prose text-gray-700 dark:text-gray-300 max-w-none">
+                      <TruncatedDescription description={job.description} />
+                    </div>
+                  </section>
+
+                  {/* Requirements */}
+                  <section>
+                    <h2 className="flex items-center mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+                      <span className="mr-2">Requirements</span>
+                      <span className="flex-grow ml-3 border-t border-gray-200 dark:border-gray-700"></span>
+                    </h2>
+                    <ul className="space-y-2 text-gray-700 dark:text-gray-300">
+                      {job.requirements && job.requirements.length > 0 ? (
+                        job.requirements.map((req, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="flex-shrink-0 inline-block w-2 h-2 mt-2 mr-3 bg-blue-600 rounded-full dark:bg-blue-400"></span>
+                            <span>{req}</span>
+                          </li>
+                        ))
+                      ) : (
+                        <li className="flex items-start">
+                          <span className="flex-shrink-0 inline-block w-2 h-2 mt-2 mr-3 bg-blue-600 rounded-full dark:bg-blue-400"></span>
+                          <span>No specific requirements listed.</span>
+                        </li>
+                      )}
+                    </ul>
+                  </section>
+                  {/* What We Offer */}
+                  <section>
+                    <h2 className="flex items-center mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+                      <span className="mr-2">What We Offer</span>
+                      <span className="flex-grow ml-3 border-t border-gray-200"></span>
+                    </h2>
+                    <ul className="space-y-2 text-gray-700 dark:text-gray-300">
+                      {job.what_we_offer && job.what_we_offer.length > 0 ? (
+                        job.what_we_offer.map((benefit, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="flex-shrink-0 inline-block w-2 h-2 mt-2 mr-3 bg-green-500 rounded-full"></span>
+                            <span>{benefit}</span>
+                          </li>
+                        ))
+                      ) : (
+                        <li className="flex items-start">
+                          <span className="flex-shrink-0 inline-block w-2 h-2 mt-2 mr-3 bg-green-500 rounded-full"></span>
+                          <span className="text-gray-700 dark:text-gray-300">
+                            No benefits information provided.
+                          </span>
+                        </li>
+                      )}
+                    </ul>
+                  </section>
+                </div>
+
+                {/* Apply Section */}
+                <div className="pt-8 mt-10 border-t border-gray-200 dark:border-gray-700">
+                  <div className="p-6 bg-opacity-25 rounded-lg bg-blue-50 dark:bg-slate-900 sm:p-8">
+                    <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-300">
+                          Ready to join {job.company.name}?
+                        </h2>
+                        <p className="text-gray-700 dark:text-gray-400">
+                          Submit your application today and take the next step
+                          in your career.
+                        </p>
+                      </div>
+                      <button
+                        onClick={handleApplyNow}
+                        disabled={applyDisabled || isSubmitting}
+                        className="flex-shrink-0 w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
+                      >
+                        {isSubmitting
+                          ? "Applying..."
+                          : applyDisabled
+                          ? "Applied"
+                          : "Apply for this position"}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

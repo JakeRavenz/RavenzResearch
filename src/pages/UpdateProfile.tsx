@@ -33,6 +33,8 @@ interface ProfileFormData {
   gender: string;
   payment_method: string;
   paymentAccountDetails: string;
+  idType?: string;
+  idNumber?: string;
 }
 
 interface FileUrls {
@@ -160,7 +162,9 @@ const RadioGroupInput: React.FC<RadioGroupInputProps> = ({
             required={required}
             className="w-4 h-4 text-blue-600 bg-white border-gray-300 dark:border-gray-600 focus:ring-blue-500 dark:bg-gray-700"
           />
-          <span className="flex items-center gap-1 ml-2 text-sm text-gray-700 dark:text-gray-300">{option.label}</span>
+          <span className="flex items-center gap-1 ml-2 text-sm text-gray-700 dark:text-gray-300">
+            {option.label}
+          </span>
         </label>
       ))}
     </div>
@@ -268,7 +272,9 @@ const FileUpload: React.FC<FileUploadProps> = ({
     />
     {currentUrl && (
       <div className="max-w-full mt-1 text-sm text-gray-500 truncate dark:text-gray-400">
-        <span className="font-medium text-gray-700 dark:text-gray-300">Current file:</span>{" "}
+        <span className="font-medium text-gray-700 dark:text-gray-300">
+          Current file:
+        </span>{" "}
         {currentUrl.split("/").pop()}
       </div>
     )}
@@ -298,7 +304,9 @@ const SuccessMessage: React.FC<SuccessMessageProps> = ({
 
   return (
     <div className="p-6 text-center bg-white rounded-lg shadow dark:bg-gray-800">
-      <h2 className="mb-4 text-2xl font-bold text-green-600 dark:text-green-400">✓ Success!</h2>
+      <h2 className="mb-4 text-2xl font-bold text-green-600 dark:text-green-400">
+        ✓ Success!
+      </h2>
       <p className="mb-4 text-gray-600 dark:text-gray-300">{message}</p>
       <div className="flex items-center justify-center space-x-2">
         <div className="w-8 h-8 border-4 border-blue-200 rounded-full dark:border-blue-700 animate-spin border-t-transparent dark:border-t-transparent"></div>
@@ -357,6 +365,8 @@ export default function ProfileForm() {
     gender: "prefer not to say",
     payment_method: "add payment method",
     paymentAccountDetails: "",
+    idType: "",
+    idNumber: "",
   });
 
   const [fileUrls, setFileUrls] = useState<FileUrls>({
@@ -389,7 +399,7 @@ export default function ProfileForm() {
   }, [success, countdown, redirectUrl, navigate]);
 
   const validatePaymentAccountDetails = (method: string, value: string) => {
-   if (!method || !value) return null; // Only validate if both are provided
+    if (!method || !value) return null; // Only validate if both are provided
     switch (method) {
       case "paypal":
       case "payoneer":
@@ -506,6 +516,8 @@ export default function ProfileForm() {
           gender: data.gender || "prefer not to say",
           payment_method: data.payment_method || "",
           paymentAccountDetails: data.payment_account_details || "",
+          idType: data.id_type || "",
+          idNumber: data.id_number || "",
         });
 
         setFileUrls({
@@ -567,7 +579,7 @@ export default function ProfileForm() {
     e.preventDefault();
     setLoading(true);
     setError("");
- // const digitsOnly = formData.phoneNumber.replace(/\D/g, "");
+    // const digitsOnly = formData.phoneNumber.replace(/\D/g, "");
     // if (digitsOnly.length < 7) {
     //   setError("Phone number must be at least 7 digits.");
     //   setLoading(false);
@@ -609,6 +621,8 @@ export default function ProfileForm() {
         gender: formData.gender,
         payment_method: formData.payment_method,
         payment_account_details: formData.paymentAccountDetails,
+        id_type: formData.idType,
+        id_number: formData.idNumber,
         updated_at: new Date(),
         resume_url: fileUrls.resumeUrl,
       };
@@ -722,251 +736,327 @@ export default function ProfileForm() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-100 dark:bg-gray-900">
-      <div className="w-full bg-white border-b border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
-        <div className="w-full">
-          <Navbar /> {/* Ensure Navbar is styled for dark mode */}
-        </div>
-      </div>
+    <div className="container px-4 py-8 mx-auto bg-slate-100 dark:bg-gray-900">
+      <div className="relative p-8 mb-8 overflow-hidden shadow-lg rounded-2xl bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
+        <span className="absolute rounded-full pointer-events-none -top-10 -left-10 w-60 h-60 bg-gradient-to-tr from-indigo-200 via-blue-200 to-purple-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <span className="absolute rounded-full pointer-events-none -bottom-10 -right-10 w-60 h-60 bg-gradient-to-tr from-pink-200 via-indigo-100 to-blue-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <div className="relative z-10">
+          {success ? (
+            <div className="max-w-3xl mx-auto">
+              <SuccessMessage
+                message={successMessage}
+                onEdit={() => setSuccess(false)}
+                redirectUrl={redirectUrl}
+                countdown={countdown}
+              />
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
+              <h1 className="pb-2 mb-8 text-3xl font-bold text-center text-gray-800 dark:text-white">
+                Profile Information
+              </h1>
 
-      <div className="container px-4 py-8 mx-auto">
-        {success ? (
-          <div className="max-w-3xl mx-auto">
-            <SuccessMessage
-              message={successMessage}
-              onEdit={() => setSuccess(false)}
-              redirectUrl={redirectUrl}
-              countdown={countdown}
-            />
-          </div>
-        ) : (
-          <form
-            onSubmit={handleSubmit}
-            className="max-w-3xl mx-auto"
-          >
-            <h1 className="pb-2 mb-8 text-3xl font-bold text-center text-gray-800 dark:text-white">
-              Profile Information
-            </h1>
-
-            {error && !success && ( // Only show main error if not in success state
-              <div className="p-4 mb-6 text-red-700 bg-red-100 border border-red-300 rounded-md dark:text-red-300 dark:border-red-600 dark:bg-red-900_bg_opacity_25">
-                {error}
-              </div>
-            )}
-
-            <div className="space-y-8">
-              {/* Personal Information */}
-              <div className="p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600 hover:shadow-2xl">
-                <h2 className="pb-2 mb-6 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
-                  Personal Information
-                </h2>
-                {error && <div className="p-3 mb-4 text-sm text-red-600 bg-red-100 rounded-md dark:bg-red-900_bg_opacity_30 dark:text-red-300">{error}</div>}
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                  <FormInput
-                    label="First Name"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="John"
-                  />
-
-                  <FormInput
-                    label="Middle Name"
-                    name="middleName"
-                    value={formData.middleName}
-                    onChange={handleInputChange}
-                    placeholder="Optional"
-                  />
-
-                  <FormInput
-                    label="Surname"
-                    name="surname"
-                    value={formData.surname}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Doe"
-                  />
-                  <FormSelect
-                    label="Select Gender"
-                    name="gender"
-                    value={formData.gender}
-                    options={genderOptions}
-                    onChange={handleGenderChange}
-                    required
-                  />
-
-                  <FormInput
-                    label="Date of Birth"
-                    type="date"
-                    name="dateOfBirth"
-                    value={formData.dateOfBirth}
-                    onChange={handleInputChange}
-                    required
-                    min={minDate} // Pass the calculated min date
-                    max={maxDate} // Pass the max date (end of 2007)
-                  />
-
-                  <div>
-                    <PhoneInputField
-                      label="Phone Number"
-                      value={formData.phoneNumber}
-                      onChange={handlePhoneChange}
-                      // required
-                    />
+              {error &&
+                !success && ( // Only show main error if not in success state
+                  <div className="p-4 mb-6 text-red-700 bg-red-100 border border-red-300 rounded-md dark:text-red-300 dark:border-red-600 dark:bg-red-900_bg_opacity_25">
+                    {error}
                   </div>
+                )}
 
-                  <FormSelect
-                    label="Education Level"
-                    name="education"
-                    value={formData.education}
-                    options={educationOptions}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              </div>
-              {/* Address Information */}
-              <div className="p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600 hover:shadow-2xl">
-                <h2 className="pb-2 mb-6 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
-                  Address Information
-                </h2>
-                {/* Error display specific to this card can be added here if needed */}
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                  <FormInput
-                    label="Street Address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Street address, apartment, unit, etc."
-                  />
-
-                  <FormInput
-                    label="City"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="City name"
-                  />
-
-                  <FormInput
-                    label="State/Province/Region"
-                    name="region"
-                    value={formData.region}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="State, province, or region"
-                  />
-
-                  <FormInput
-                    label="Postal/Zip Code"
-                    name="postalCode"
-                    value={formData.postalCode}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Postal or zip code"
-                  />
-
-                  <CountrySelect
-                    label="Country"
-                    value={formData.country}
-                    onChange={handleCountryChange}
-                    required
-                  />
-                </div>
-              </div>
-              {/* Payment Information Card */}
-              <div className="p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600 hover:shadow-2xl">
-                <h2 className="pb-2 mb-6 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
-                  Payment Information
-                </h2>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                  <RadioGroupInput
-                    label="Preferred Payment Method"
-                    name="payment_method"
-                    value={formData.payment_method}
-                    options={paymentMethodOptions}
-                    onChange={handleInputChange}
-                  />
-                  {formData.payment_method && formData.payment_method !== "add payment method" && (
-                    <div>
-                      <FormInput
-                        label={getPaymentAccountDetailsLabel(
-                          formData.payment_method
-                        )}
-                        name="paymentAccountDetails"
-                        value={formData.paymentAccountDetails}
-                        onChange={handleInputChange}
-                        placeholder={getPaymentAccountDetailsPlaceholder(
-                          formData.payment_method
-                        )}
-                      />
-                      {paymentAccountError && (
-                        <p className="mt-1 text-sm text-red-500">
-                          {paymentAccountError}
-                        </p>
-                      )}
+              <div className="space-y-8">
+                {/* Personal Information */}
+                <div className="p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600 hover:shadow-2xl">
+                  <h2 className="pb-2 mb-6 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
+                    Personal Information
+                  </h2>
+                  {error && (
+                    <div className="p-3 mb-4 text-sm text-red-600 bg-red-100 rounded-md dark:bg-red-900_bg_opacity_30 dark:text-red-300">
+                      {error}
                     </div>
                   )}
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <FormInput
+                      label="First Name"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                      required
+                      placeholder="John"
+                    />
+
+                    <FormInput
+                      label="Middle Name"
+                      name="middleName"
+                      value={formData.middleName}
+                      onChange={handleInputChange}
+                      placeholder="Optional"
+                    />
+
+                    <FormInput
+                      label="Surname"
+                      name="surname"
+                      value={formData.surname}
+                      onChange={handleInputChange}
+                      required
+                      placeholder="Doe"
+                    />
+                    <FormSelect
+                      label="Select Gender"
+                      name="gender"
+                      value={formData.gender}
+                      options={genderOptions}
+                      onChange={handleGenderChange}
+                      required
+                    />
+
+                    <FormInput
+                      label="Date of Birth"
+                      type="date"
+                      name="dateOfBirth"
+                      value={formData.dateOfBirth}
+                      onChange={handleInputChange}
+                      required
+                      min={minDate} // Pass the calculated min date
+                      max={maxDate} // Pass the max date (end of 2007)
+                    />
+
+                    <div>
+                      <PhoneInputField
+                        label="Phone Number"
+                        value={formData.phoneNumber}
+                        onChange={handlePhoneChange}
+                        // required
+                      />
+                    </div>
+
+                    <FormSelect
+                      label="Education Level"
+                      name="education"
+                      value={formData.education}
+                      options={educationOptions}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                </div>
+                {/* Address Information */}
+                <div className="p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600 hover:shadow-2xl">
+                  <h2 className="pb-2 mb-6 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
+                    Address Information
+                  </h2>
+                  {/* Error display specific to this card can be added here if needed */}
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <FormInput
+                      label="Street Address"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleInputChange}
+                      required
+                      placeholder="Street address, apartment, unit, etc."
+                    />
+
+                    <FormInput
+                      label="City"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      required
+                      placeholder="City name"
+                    />
+
+                    <FormInput
+                      label="State/Province/Region"
+                      name="region"
+                      value={formData.region}
+                      onChange={handleInputChange}
+                      required
+                      placeholder="State, province, or region"
+                    />
+
+                    <FormInput
+                      label="Postal/Zip Code"
+                      name="postalCode"
+                      value={formData.postalCode}
+                      onChange={handleInputChange}
+                      required
+                      placeholder="Postal or zip code"
+                    />
+
+                    <CountrySelect
+                      label="Country"
+                      value={formData.country}
+                      onChange={handleCountryChange}
+                      required
+                    />
+                  </div>
+                </div>
+                {/* Payment Information Card */}
+                <div className="p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600 hover:shadow-2xl">
+                  <h2 className="pb-2 mb-6 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
+                    Payment Information
+                  </h2>
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <RadioGroupInput
+                      label="Preferred Payment Method"
+                      name="payment_method"
+                      value={formData.payment_method}
+                      options={paymentMethodOptions}
+                      onChange={handleInputChange}
+                    />
+                    {formData.payment_method &&
+                      formData.payment_method !== "add payment method" && (
+                        <div>
+                          <FormInput
+                            label={getPaymentAccountDetailsLabel(
+                              formData.payment_method
+                            )}
+                            name="paymentAccountDetails"
+                            value={formData.paymentAccountDetails}
+                            onChange={handleInputChange}
+                            placeholder={getPaymentAccountDetailsPlaceholder(
+                              formData.payment_method
+                            )}
+                          />
+                          {paymentAccountError && (
+                            <p className="mt-1 text-sm text-red-500">
+                              {paymentAccountError}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                  </div>
+                </div>
+
+                {/* Document Uploads */}
+                <div className="p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600 hover:shadow-2xl">
+                  <h2 className="pb-2 mb-6 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
+                    Documents
+                  </h2>
+                  <div className="grid grid-cols-1 gap-6">
+                    <FileUpload
+                      label="Resume"
+                      accept=".pdf,.doc,.docx"
+                      // required={!fileUrls.resumeUrl}
+                      currentUrl={fileUrls.resumeUrl}
+                      onChange={(e) =>
+                        handleFileInputChange(e, "resumes", "resumeUrl")
+                      }
+                    />
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                      {fileUrls.resumeUrl
+                        ? "(Uploading a new file will replace the current one)."
+                        : " Accepted formats: PDF, DOC, or DOCX."}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Government ID & Compliance Section */}
+                <div className="p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600 hover:shadow-2xl">
+                  <h2 className="pb-2 mb-6 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
+                    Government ID & Compliance
+                  </h2>
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    {/* Government ID Section */}
+                    <div>
+                      <FormInput
+                        label="Government ID Type"
+                        name="idType"
+                        value={formData.idType || ""}
+                        onChange={handleInputChange}
+                        required
+                        placeholder="e.g. Passport, National ID, Driver's License"
+                      />
+                      <FormInput
+                        label="Government ID Number"
+                        name="idNumber"
+                        value={formData.idNumber || ""}
+                        onChange={handleInputChange}
+                        required
+                        placeholder="Enter your ID number"
+                      />
+                      {/* Approval status display (optional, for now just show submitted if filled) */}
+                      {formData.idType && formData.idNumber && (
+                        <div className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
+                          Submitted
+                        </div>
+                      )}
+                    </div>
+                    {/* Compliance Check Section */}
+                    <div>
+                      <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Compliance Check
+                      </h3>
+                      <button
+                        type="button"
+                        disabled={!(formData.idType && formData.idNumber)}
+                        className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
+                          formData.idType && formData.idNumber
+                            ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        }`}
+                      >
+                        Start Compliance Check
+                      </button>
+                      <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                        Submit and get your government ID approved to enable
+                        compliance check.
+                      </p>
+                    </div>
+                    {/* Take Exam Section */}
+                    <div>
+                      <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Take Exam
+                      </h3>
+                      <button
+                        type="button"
+                        disabled={!(formData.idType && formData.idNumber)}
+                        className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
+                          formData.idType && formData.idNumber
+                            ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        }`}
+                      >
+                        Start Exam
+                      </button>
+                      <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                        Complete compliance check to unlock the exam.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Document Uploads */}
-              <div className="p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600 hover:shadow-2xl">
-                <h2 className="pb-2 mb-6 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
-                  Documents
-                </h2>
-                <div className="grid grid-cols-1 gap-6">
-                  <FileUpload
-                    label="Resume"
-                    accept=".pdf,.doc,.docx"
-                    // required={!fileUrls.resumeUrl}
-                    currentUrl={fileUrls.resumeUrl}
-                    onChange={(e) =>
-                      handleFileInputChange(e, "resumes", "resumeUrl")
-                    }
-                  />
-                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    {fileUrls.resumeUrl
-                      ? "(Uploading a new file will replace the current one)."
-                      : " Accepted formats: PDF, DOC, or DOCX."}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-6 mt-8 border-t border-gray-200 dark:border-gray-700">
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex items-center justify-center float-right w-full px-8 py-2 text-white transition-colors bg-blue-600 rounded-md select-none md:w-auto hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 disabled:bg-blue-300 dark:disabled:bg-blue-800"
-              >
-                {loading ? (
-                  <>
-                    <svg
-                      className="w-5 h-5 mr-2 text-white animate-spin"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        className="opacity-75"
+              <div className="pt-6 mt-8 border-t border-gray-200 dark:border-gray-700">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex items-center justify-center float-right w-full px-8 py-2 text-white transition-colors bg-blue-600 rounded-md select-none md:w-auto hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 disabled:bg-blue-300 dark:disabled:bg-blue-800"
+                >
+                  {loading ? (
+                    <>
+                      <svg
+                        className="w-5 h-5 mr-2 text-white animate-spin"
+                        viewBox="0 0 24 24"
                         fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Updating...
-                  </>
-                ) : (
-                  "Save Profile"
-                )}
-              </button>
-              <div className="clear-both"></div>
-            </div>
-          </form>
-        )}
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Updating...
+                    </>
+                  ) : (
+                    "Save Profile"
+                  )}
+                </button>
+                <div className="clear-both"></div>
+              </div>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );

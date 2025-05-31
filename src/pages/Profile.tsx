@@ -144,7 +144,9 @@ export default function Profile() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen py-12 bg-slate-100 dark:bg-gray-900">
         <div className="w-8 h-8 border-4 border-indigo-600 rounded-full dark:border-indigo-400 animate-spin border-t-transparent"></div>
-        <p className="mt-4 text-gray-600 dark:text-gray-400">Loading profile...</p>
+        <p className="mt-4 text-gray-600 dark:text-gray-400">
+          Loading profile...
+        </p>
       </div>
     );
   }
@@ -154,19 +156,22 @@ export default function Profile() {
     .join(" ");
 
   return (
-    <div className="w-full max-w-screen-xl px-4 py-8 mx-auto sm:px-6 lg:px-8 bg-slate-100 dark:bg-gray-900">
-      {/* Card 1: Header (Avatar, Name, Buttons) */}
-      <div className="p-6 mb-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
-        <div className="flex flex-wrap items-start justify-between gap-4 md:flex-nowrap">
+    <div className="relative w-full p-8 mb-8 overflow-hidden shadow-lg rounded-2xl bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
+      <span className="absolute rounded-full pointer-events-none -top-10 -left-10 w-60 h-60 bg-gradient-to-tr from-indigo-200 via-blue-200 to-purple-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+      <span className="absolute rounded-full pointer-events-none -bottom-10 -right-10 w-60 h-60 bg-gradient-to-tr from-pink-200 via-indigo-100 to-blue-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+      <div className="relative z-10 flex flex-col gap-8">
+        {/* Card 1: Header (Avatar, Name, Buttons) */}
+        <div className="flex flex-col gap-4 p-6 border shadow-lg bg-white/70 dark:bg-slate-800/70 rounded-2xl border-white/40 dark:border-slate-700 backdrop-blur-md">
+          <div className="flex flex-wrap items-start justify-between gap-4 md:flex-nowrap">
             <div className="flex items-center space-x-4">
               {profile?.avatar_url ? (
                 <img
                   src={profile.avatar_url}
                   alt={fullName}
-                  className="object-cover w-20 h-20 rounded-full"
+                  className="object-cover w-20 h-20 border-4 border-indigo-200 rounded-full shadow-md dark:border-indigo-700"
                 />
               ) : (
-                <div className="flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full dark:bg-gray-700">
+                <div className="flex items-center justify-center w-20 h-20 bg-gray-100 border-4 border-indigo-100 rounded-full shadow-md dark:bg-gray-700 dark:border-indigo-800">
                   <User className="w-10 h-10 text-gray-400 dark:text-gray-500" />
                 </div>
               )}
@@ -179,126 +184,190 @@ export default function Profile() {
             <div className="flex space-x-3">
               <button
                 onClick={handleUpdateProfile}
-                className="px-4 py-2 text-white transition-colors bg-indigo-600 rounded-md hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                className="px-4 py-2 text-white transition-colors bg-indigo-600 rounded-md shadow hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
               >
                 Update Profile
               </button>
-              {/* <button
-                onClick={handleMyJobs}
-                className="px-4 py-2 text-gray-600 transition-colors border border-gray-300 rounded-md dark:text-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                My Jobs
-              </button> */}
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 text-gray-600 transition-colors border border-gray-300 rounded-md dark:text-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="px-4 py-2 text-gray-600 transition-colors border border-gray-300 rounded-md shadow dark:text-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 Logout
               </button>
             </div>
-        </div>
-      </div>
-
-      {/* Card 2: Personal Information */}
-      <div className="p-6 mb-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
-        <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
-          Personal Information
-        </h2>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <ProfileField label="Gender" value={profile?.gender} />
-          <ProfileField
-            label="Date of Birth"
-            value={profile?.date_of_birth}
-          />
-          <ProfileField
-            label="Phone Number"
-            value={profile?.phone_number}
-          />
-          <ProfileField
-            label="Education Level"
-            value={
-              profile?.education
-                ? EDUCATION_LABELS[profile.education]
-                : null
-            }
-          />
-          {/* <ProfileField label="ID Type" value={profile?.id_type} />
-          <ProfileField label="ID Number" value={profile?.id_number} /> */}
-          <ProfileField
-            label="Preferred Payment Method"
-            value={
-              profile?.payment_method
-                ? PAYMENT_METHOD_LABELS[profile.payment_method]
-                : "Not provided"
-            }
-          />
-          <ProfileField
-            label={getPaymentAccountDetailsLabelForDisplay(
-              profile?.payment_method
-            )}
-            value={profile?.payment_account_details}
-          />
-        </div>
-      </div>
-
-      {/* Card 3: Address Information */}
-      <div className="p-6 mb-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
-        <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
-          Address Information
-        </h2>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <ProfileField label="Street Address" value={profile?.address} />
-          <ProfileField label="City" value={profile?.city} />
-          <ProfileField
-            label="State/Province/Region"
-            value={profile?.region}
-          />
-          <ProfileField
-            label="Postal/Zip Code"
-            value={profile?.postal_code}
-          />
-          <ProfileField label="Country" value={profile?.country} />
-        </div>
-      </div>
-
-      {/* Card 4: Documents */}
-      <div className="p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
-        <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
-          Documents
-        </h2>
-        <div>
-          <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-            Resume
-          </h3>
-          {profile?.resume_url ? (
-            <a
-              href={profile.resume_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:underline"
-            >
-              View Resume
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-4 h-4 ml-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                />
-              </svg>
-            </a>
-          ) : (
-            <p className="text-gray-500 dark:text-gray-400">No resume uploaded</p>
-          )}
           </div>
         </div>
+
+        {/* Card 2: Personal Information */}
+        <section className="flex flex-col gap-4 p-6 border shadow-lg bg-white/70 dark:bg-slate-800/70 rounded-2xl border-white/40 dark:border-slate-700 backdrop-blur-md">
+          <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
+            Personal Information
+          </h2>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <ProfileField label="Gender" value={profile?.gender} />
+            <ProfileField
+              label="Date of Birth"
+              value={profile?.date_of_birth}
+            />
+            <ProfileField label="Phone Number" value={profile?.phone_number} />
+            <ProfileField
+              label="Education Level"
+              value={
+                profile?.education ? EDUCATION_LABELS[profile.education] : null
+              }
+            />
+            <ProfileField
+              label="Preferred Payment Method"
+              value={
+                profile?.payment_method
+                  ? PAYMENT_METHOD_LABELS[profile.payment_method]
+                  : "Not provided"
+              }
+            />
+            <ProfileField
+              label={getPaymentAccountDetailsLabelForDisplay(
+                profile?.payment_method
+              )}
+              value={profile?.payment_account_details}
+            />
+          </div>
+        </section>
+
+        {/* Card 3: Address Information */}
+        <section className="flex flex-col gap-4 p-6 border shadow-lg bg-white/70 dark:bg-slate-800/70 rounded-2xl border-white/40 dark:border-slate-700 backdrop-blur-md">
+          <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
+            Address Information
+          </h2>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <ProfileField label="Street Address" value={profile?.address} />
+            <ProfileField label="City" value={profile?.city} />
+            <ProfileField
+              label="State/Province/Region"
+              value={profile?.region}
+            />
+            <ProfileField
+              label="Postal/Zip Code"
+              value={profile?.postal_code}
+            />
+            <ProfileField label="Country" value={profile?.country} />
+          </div>
+        </section>
+
+        {/* Card 4: Documents */}
+        <section className="flex flex-col gap-4 p-6 border shadow-lg bg-white/70 dark:bg-slate-800/70 rounded-2xl border-white/40 dark:border-slate-700 backdrop-blur-md">
+          <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
+            Documents
+          </h2>
+          <div>
+            <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+              Resume
+            </h3>
+            {profile?.resume_url ? (
+              <a
+                href={profile.resume_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:underline"
+              >
+                View Resume
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-4 h-4 ml-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+              </a>
+            ) : (
+              <p className="text-gray-500 dark:text-gray-400">
+                No resume uploaded
+              </p>
+            )}
+          </div>
+        </section>
+
+        {/* Card 5: Government ID & Compliance */}
+        <section className="flex flex-col gap-4 p-6 border shadow-lg bg-white/70 dark:bg-slate-800/70 rounded-2xl border-white/40 dark:border-slate-700 backdrop-blur-md">
+          <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
+            Government ID & Compliance
+          </h2>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {/* Government ID Section */}
+            <div>
+              <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                Government ID
+              </h3>
+              {profile?.id_type && profile?.id_number ? (
+                <div className="text-gray-600 dark:text-gray-400">
+                  <div>
+                    <span className="font-semibold">Type:</span>{" "}
+                    {profile.id_type}
+                  </div>
+                  <div>
+                    <span className="font-semibold">Number:</span>{" "}
+                    {profile.id_number}
+                  </div>
+                  {/* You may want to show approval status here if available */}
+                  <div className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
+                    Submitted
+                  </div>
+                </div>
+              ) : (
+                <div className="text-gray-500 dark:text-gray-400">
+                  No government ID submitted
+                </div>
+              )}
+            </div>
+            {/* Compliance Check Section */}
+            <div>
+              <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                Compliance Check
+              </h3>
+              <button
+                disabled={!(profile?.id_type && profile?.id_number)}
+                className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
+                  profile?.id_type && profile?.id_number
+                    ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                Start Compliance Check
+              </button>
+              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                Submit and get your government ID approved to enable compliance
+                check.
+              </p>
+            </div>
+            {/* Take Exam Section */}
+            <div>
+              <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                Take Exam
+              </h3>
+              <button
+                disabled={!(profile?.id_type && profile?.id_number)}
+                className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
+                  profile?.id_type && profile?.id_number
+                    ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                Start Exam
+              </button>
+              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                Complete compliance check to unlock the exam.
+              </p>
+            </div>
+          </div>
+        </section>
       </div>
+    </div>
   );
 }
 
@@ -309,7 +378,11 @@ interface ProfileFieldProps {
 }
 const ProfileField: React.FC<ProfileFieldProps> = ({ label, value }) => (
   <div>
-    <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">{label}</h3>
-    <p className="text-gray-600 dark:text-gray-400">{value || "Not provided"}</p>
+    <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+      {label}
+    </h3>
+    <p className="text-gray-600 dark:text-gray-400">
+      {value || "Not provided"}
+    </p>
   </div>
 );

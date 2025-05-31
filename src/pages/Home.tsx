@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import heroImage from "../assets/images.png";
 import reasonImage from "../assets/3718985.jpg";
+import worldMap from "../assets/world.svg";
 import startImage from "../assets/3624001.jpg";
 import useAuth from "../hooks/useAuth";
 import { supabase } from "../lib/supabase";
@@ -418,9 +419,10 @@ export default function Home() {
               style={{ animationDuration: "2.5s" }}
             />
             <img
-              src="https://raw.githubusercontent.com/danielgatis/remap/master/examples/world.svg"
+              src={worldMap}
               alt="World Map"
-              className="relative z-10 w-full max-w-2xl border border-indigo-200 shadow-xl dark:border-slate-700 opacity-90 rounded-xl bg-white/30 dark:bg-slate-900/30 backdrop-blur"
+              loading="lazy"
+              className="relative z-10 w-full max-w-2xl transition-all duration-700 border border-indigo-200 shadow-xl dark:border-slate-700 opacity-90 rounded-xl bg-white/30 dark:bg-slate-900/30 backdrop-blur animate-fade-in-right hover:scale-105 hover:shadow-2xl"
             />
           </div>
         </div>
@@ -610,7 +612,7 @@ export default function Home() {
                   ${
                     reviewCurrentSlide === index
                       ? "bg-indigo-600 p-1"
-                      : "bg-slate-100 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
+                      : "bg-slate-400 dark:bg-gray-600 hover:bg-gray-500 dark:hover:bg-gray-400"
                   }`}
                 aria-label={`Go to review slide ${index + 1}`}
               />
@@ -717,6 +719,20 @@ export default function Home() {
           <ActionButton to="/auth" variant="primary">
             Get Started Now
           </ActionButton>
+        </div>
+      </div>
+
+      {/* Remote Work Insights / Career Tips Section */}
+      <div className="relative mb-16 overflow-hidden shadow-lg rounded-2xl bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
+        <span className="absolute rounded-full pointer-events-none -top-10 -left-10 w-60 h-60 bg-gradient-to-tr from-indigo-200 via-blue-200 to-purple-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <span className="absolute rounded-full pointer-events-none -bottom-10 -right-10 w-60 h-60 bg-gradient-to-tr from-pink-200 via-indigo-100 to-blue-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
+        <div className="relative z-10 flex flex-col items-center justify-center p-8">
+          <h2 className="mb-4 text-3xl font-bold text-center text-gray-900 dark:text-white">
+            Remote Work Insights
+          </h2>
+          <p className="mb-6 text-lg text-center text-gray-600 dark:text-slate-300">
+            Daily motivation and career tips to inspire your remote journey.
+          </p>
         </div>
       </div>
 
