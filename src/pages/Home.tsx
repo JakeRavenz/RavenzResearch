@@ -137,12 +137,12 @@ function JobsCarousel() {
       <h2 className="mb-6 text-3xl font-bold text-center text-gray-900 dark:text-white">
         Featured Jobs
       </h2>
-      <p className="mb-4 text-lg text-center text-gray-600 dark:text-slate-300 ">
+      <p className="px-4 mb-4 text-center text-gray-600 text-md md:text-lg dark:text-slate-300">
         Discover exciting remote job opportunities tailored for you. Explore a
         range of flexible job opportunities ranging from easy online tasks to
         full-time work in our clients’ offices.
       </p>
-      <p className="mb-6 text-lg text-center text-gray-600 dark:text-slate-300">
+      <p className="px-4 mb-6 text-center text-gray-600 text-md md:text-lg dark:text-slate-300">
         Whether you’re looking for a side gig or a full-time career, we have
         options for you.
       </p>
@@ -220,7 +220,7 @@ function JobsCarousel() {
               ${
                 currentSlide === index
                   ? "bg-indigo-600 p-1"
-                  : "bg-slate-100 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
+                  : "bg-slate-400 dark:bg-gray-600 hover:bg-gray-500 dark:hover:bg-gray-500"
               }`}
             aria-label={`Go to slide ${index + 1}`}
           />
@@ -377,7 +377,7 @@ export default function Home() {
         <h2 className="relative z-10 mt-6 text-3xl font-bold text-center text-gray-700 dark:text-slate-100">
           Join our Global Community
         </h2>
-        <p className="relative z-10 max-w-2xl p-2 mx-auto mt-3 text-lg text-center text-gray-600 mb-7 dark:text-slate-200">
+        <p className="relative z-10 max-w-2xl p-2 mx-auto mt-3 text-center text-gray-600 text-md md:text-lg mb-7 dark:text-slate-200 text-pretty md:text-balanced">
           Be part of a vibrant, diverse network of remote professionals and
           forward-thinking companies. Discover opportunities, connect, and grow
           with us—wherever you are in the world.
@@ -451,10 +451,10 @@ export default function Home() {
           </div>
           <div className="flex flex-col items-center p-6 text-center border border-indigo-100 shadow-lg rounded-2xl bg-white/60 dark:bg-slate-800/60 backdrop-blur dark:border-slate-700">
             <UserCircle className="w-8 h-8 mb-2 text-indigo-600 dark:text-indigo-300" />
-            <div className="text-3xl font-bold text-indigo-600">
+            <div className="px-4 text-3xl font-bold text-indigo-600">
               {seekersCount.toLocaleString()}+
             </div>
-            <div className="font-serif text-lg font-extrabold text-gray-600 dark:text-slate-300 ">
+            <div className="font-serif text-lg font-extrabold text-gray-600 dark:text-slate-300">
               Job Seekers
             </div>
           </div>
@@ -498,7 +498,7 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-gray-900 dark:text-slate-200 ">
             Why Choose Us
           </h2>
-          <p className="max-w-2xl mx-auto mt-4 text-lg text-gray-600 dark:text-slate-100">
+          <p className="max-w-2xl px-4 mx-auto mt-4 text-gray-600 text-md md:text-lg dark:text-slate-100">
             We connect talented professionals with the best remote opportunities
             worldwide
           </p>
@@ -518,7 +518,7 @@ export default function Home() {
           <h2 className="mb-8 text-3xl font-bold text-center text-gray-900 dark:text-white">
             What Our Users Say
           </h2>
-          <p className="max-w-2xl mx-auto mb-6 text-lg text-center text-gray-600 dark:text-slate-300">
+          <p className="max-w-2xl mx-auto mb-6 text-center text-gray-600 md:text-lg dark:text-slate-300 text-md">
             Hear from our community of remote job seekers and employers about
             their experiences with Ravenz.
           </p>
@@ -629,7 +629,7 @@ export default function Home() {
           <h2 className="mb-8 text-3xl font-bold text-center text-gray-900 dark:text-white">
             How It Works
           </h2>
-          <p className="max-w-2xl mx-auto mb-8 text-lg text-center text-gray-600 dark:text-slate-300">
+          <p className="max-w-2xl mx-auto mb-8 text-center text-gray-600 text-md md:text-lg dark:text-slate-300">
             Getting started is easy! Follow these simple steps to join our
             community and land your next remote job. Whether you’re new to
             remote work or a seasoned pro, we’ll guide you every step of the
@@ -710,7 +710,7 @@ export default function Home() {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-100">
               Ready to start your remote journey?
             </h2>
-            <p className="mt-2 text-lg text-gray-600 dark:text-slate-300">
+            <p className="mt-2 text-gray-600 md:text-lg dark:text-slate-300 text-md">
               Join thousands of professionals who found their dream remote jobs.
             </p>
           </div>

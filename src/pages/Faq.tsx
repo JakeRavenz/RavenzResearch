@@ -71,7 +71,7 @@ export default function Faq() {
   };
 
   return (
-    <div className="container w-full px-4 py-8 mx-auto bg-slate-100 dark:bg-gray-900">
+    <div className="container w-full px-4 py-8 mx-auto bg-gradient-to-br from-indigo-50 via-blue-100 to-purple-100 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
       <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
         Frequently Asked Questions
       </h1>
@@ -84,10 +84,10 @@ export default function Faq() {
         {faqData.map((item, idx) => (
           <div
             key={item.question}
-            className={`relative overflow-hidden transition-all duration-300 p-0 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-lg backdrop-blur-md bg-gradient-to-br from-indigo-50 via-white to-blue-100 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900 group hover:scale-[1.02] hover:shadow-2xl`}
+            className={`relative overflow-hidden transition-all duration-300 p-0 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-lg backdrop-blur-md bg-white/60 dark:bg-slate-800/60 group hover:scale-[1.03] hover:shadow-2xl hover:border-indigo-300 dark:hover:border-indigo-500 hover:bg-white/80 dark:hover:bg-slate-700/80`}
           >
             <button
-              className="flex items-center justify-between w-full p-6 text-left transition-colors duration-200 bg-transparent focus:outline-none hover:bg-indigo-50/40 dark:hover:bg-indigo-900/30 rounded-2xl"
+              className="flex items-center justify-between w-full p-6 text-left transition-colors duration-200 bg-transparent focus:outline-none hover:bg-indigo-50/60 dark:hover:bg-indigo-900/40 rounded-2xl group"
               onClick={() => toggleAccordion(idx)}
               aria-expanded={openIndex === idx}
             >
@@ -109,8 +109,6 @@ export default function Faq() {
                 {item.answer}
               </div>
             )}
-            {/* Decorative blurred gradient blob */}
-            <span className="absolute z-0 w-24 h-24 rounded-full pointer-events-none -top-6 -right-6 bg-gradient-to-tr from-indigo-300 via-blue-200 to-purple-200 dark:from-indigo-400/10 dark:via-indigo-700/10 dark:to-blue-900/10 blur-2xl" />
           </div>
         ))}
       </div>
