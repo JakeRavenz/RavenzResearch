@@ -61,6 +61,7 @@ const getPaymentAccountDetailsLabelForDisplay = (method?: string): string => {
   }
 };
 
+// Extend Profile type to include new fields from Supabase
 interface Profile {
   id: string;
   first_name: string;
@@ -84,6 +85,10 @@ interface Profile {
   gender: string; // Add gender field
   payment_method: string;
   payment_account_details?: string;
+  gov_id_link?: string;
+  gov_id_verified?: boolean;
+  compliance_link?: string;
+  exam_link?: string;
 }
 
 export default function Profile() {
@@ -304,24 +309,26 @@ export default function Profile() {
               <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Government ID
               </h3>
-              {profile?.id_type && profile?.id_number ? (
-                <div className="text-gray-600 dark:text-gray-400">
-                  <div>
-                    <span className="font-semibold">Type:</span>{" "}
-                    {profile.id_type}
-                  </div>
-                  <div>
-                    <span className="font-semibold">Number:</span>{" "}
-                    {profile.id_number}
-                  </div>
-                  {/* You may want to show approval status here if available */}
-                  <div className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
-                    Submitted
-                  </div>
-                </div>
-              ) : (
-                <div className="text-gray-500 dark:text-gray-400">
-                  No government ID submitted
+              <button
+                type="button"
+                disabled={!profile?.gov_id_link}
+                onClick={() =>
+                  profile?.gov_id_link &&
+                  window.open(profile.gov_id_link, "_blank")
+                }
+                className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
+                  profile?.gov_id_link
+                    ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                {profile?.gov_id_link
+                  ? "Submit/View Government ID"
+                  : "Government ID Unavailable"}
+              </button>
+              {profile?.gov_id_verified && (
+                <div className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
+                  Verified
                 </div>
               )}
             </div>
@@ -330,39 +337,48 @@ export default function Profile() {
               <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Compliance Check
               </h3>
-              <button
-                disabled={!(profile?.id_type && profile?.id_number)}
-                className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
-                  profile?.id_type && profile?.id_number
-                    ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
-              >
-                Start Compliance Check
-              </button>
-              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                Submit and get your government ID approved to enable compliance
-                check.
-              </p>
+              {profile?.gov_id_verified && profile?.compliance_link ? (
+                <button
+                  type="button"
+                  onClick={() => window.open(profile.compliance_link, "_blank")}
+                  className="w-full px-4 py-2 rounded-md shadow font-semibold bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                >
+                  Start Compliance Check
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  className="w-full px-4 py-2 rounded-md shadow font-semibold bg-gray-300 text-gray-500 cursor-not-allowed"
+                >
+                  Compliance Check Unavailable
+                </button>
+              )}
             </div>
             {/* Take Exam Section */}
             <div>
               <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Take Exam
               </h3>
-              <button
-                disabled={!(profile?.id_type && profile?.id_number)}
-                className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
-                  profile?.id_type && profile?.id_number
-                    ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
-              >
-                Start Exam
-              </button>
-              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                Complete compliance check to unlock the exam.
-              </p>
+              {profile?.gov_id_verified &&
+              profile?.compliance_link &&
+              profile?.exam_link ? (
+                <button
+                  type="button"
+                  onClick={() => window.open(profile.exam_link, "_blank")}
+                  className="w-full px-4 py-2 rounded-md shadow font-semibold bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                >
+                  Start Exam
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  className="w-full px-4 py-2 rounded-md shadow font-semibold bg-gray-300 text-gray-500 cursor-not-allowed"
+                >
+                  Exam Unavailable
+                </button>
+              )}
             </div>
           </div>
         </section>

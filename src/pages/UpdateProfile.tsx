@@ -35,6 +35,11 @@ interface ProfileFormData {
   paymentAccountDetails: string;
   idType?: string;
   idNumber?: string;
+  govIdLink?: string;
+  govIdVerified?: boolean;
+  complianceLink?: string;
+  complianceCompleted?: boolean; // <-- add this
+  examLink?: string;
 }
 
 interface FileUrls {
@@ -350,7 +355,9 @@ export default function ProfileForm() {
     null
   );
 
-  const [formData, setFormData] = useState<ProfileFormData>({
+  const [formData, setFormData] = useState<
+    ProfileFormData & { complianceCompleted?: boolean }
+  >({
     firstName: "",
     middleName: "",
     surname: "",
@@ -367,6 +374,11 @@ export default function ProfileForm() {
     paymentAccountDetails: "",
     idType: "",
     idNumber: "",
+    govIdLink: "",
+    govIdVerified: false,
+    complianceLink: "",
+    complianceCompleted: false, // <-- add this
+    examLink: "",
   });
 
   const [fileUrls, setFileUrls] = useState<FileUrls>({
@@ -518,6 +530,11 @@ export default function ProfileForm() {
           paymentAccountDetails: data.payment_account_details || "",
           idType: data.id_type || "",
           idNumber: data.id_number || "",
+          govIdLink: data.gov_id_link || "",
+          govIdVerified: data.gov_id_verified || false,
+          complianceLink: data.compliance_link || "",
+          complianceCompleted: data.compliance_completed || false, // <-- fetch from Supabase if present
+          examLink: data.exam_link || "",
         });
 
         setFileUrls({
@@ -621,10 +638,9 @@ export default function ProfileForm() {
         gender: formData.gender,
         payment_method: formData.payment_method,
         payment_account_details: formData.paymentAccountDetails,
-        id_type: formData.idType,
-        id_number: formData.idNumber,
         updated_at: new Date(),
         resume_url: fileUrls.resumeUrl,
+        // Do NOT include id_type or id_number
       };
 
       const { error: submitError } = await supabase
@@ -958,26 +974,29 @@ export default function ProfileForm() {
                   <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     {/* Government ID Section */}
                     <div>
-                      <FormInput
-                        label="Government ID Type"
-                        name="idType"
-                        value={formData.idType || ""}
-                        onChange={handleInputChange}
-                        required
-                        placeholder="e.g. Passport, National ID, Driver's License"
-                      />
-                      <FormInput
-                        label="Government ID Number"
-                        name="idNumber"
-                        value={formData.idNumber || ""}
-                        onChange={handleInputChange}
-                        required
-                        placeholder="Enter your ID number"
-                      />
-                      {/* Approval status display (optional, for now just show submitted if filled) */}
-                      {formData.idType && formData.idNumber && (
+                      <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Government ID
+                      </h3>
+                      <button
+                        type="button"
+                        disabled={!formData.govIdLink}
+                        onClick={() =>
+                          formData.govIdLink &&
+                          window.open(formData.govIdLink, "_blank")
+                        }
+                        className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
+                          formData.govIdLink
+                            ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        }`}
+                      >
+                        {formData.govIdLink
+                          ? "Submit/View Government ID"
+                          : "Government ID Unavailable"}
+                      </button>
+                      {formData.govIdVerified && (
                         <div className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
-                          Submitted
+                          Verified
                         </div>
                       )}
                     </div>
@@ -986,41 +1005,52 @@ export default function ProfileForm() {
                       <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                         Compliance Check
                       </h3>
-                      <button
-                        type="button"
-                        disabled={!(formData.idType && formData.idNumber)}
-                        className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
-                          formData.idType && formData.idNumber
-                            ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                        }`}
-                      >
-                        Start Compliance Check
-                      </button>
-                      <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                        Submit and get your government ID approved to enable
-                        compliance check.
-                      </p>
+                      {formData.govIdVerified && formData.complianceLink ? (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            window.open(formData.complianceLink, "_blank")
+                          }
+                          className="w-full px-4 py-2 font-semibold text-white bg-indigo-600 rounded-md shadow hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                        >
+                          Start Compliance Check
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          disabled
+                          className="w-full px-4 py-2 font-semibold text-gray-500 bg-gray-300 rounded-md shadow cursor-not-allowed"
+                        >
+                          Compliance Check Unavailable
+                        </button>
+                      )}
                     </div>
                     {/* Take Exam Section */}
                     <div>
                       <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                         Take Exam
                       </h3>
-                      <button
-                        type="button"
-                        disabled={!(formData.idType && formData.idNumber)}
-                        className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
-                          formData.idType && formData.idNumber
-                            ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                        }`}
-                      >
-                        Start Exam
-                      </button>
-                      <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                        Complete compliance check to unlock the exam.
-                      </p>
+                      {formData.govIdVerified &&
+                      formData.complianceCompleted &&
+                      formData.examLink ? (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            window.open(formData.examLink, "_blank")
+                          }
+                          className="w-full px-4 py-2 font-semibold text-white bg-indigo-600 rounded-md shadow hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                        >
+                          Start Exam
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          disabled
+                          className="w-full px-4 py-2 font-semibold text-gray-500 bg-gray-300 rounded-md shadow cursor-not-allowed"
+                        >
+                          Exam Unavailable
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
