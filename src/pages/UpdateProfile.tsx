@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import type { JSX } from "react";
 import { supabase } from "../lib/supabase";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { CountryDropdown } from "react-country-region-selector";
+import { toast } from "react-hot-toast";
 
 import { PayPalIcon, AirTMIcon, PayoneerIcon } from "../assets/icons";
 
@@ -354,6 +355,8 @@ export default function ProfileForm() {
   const [paymentAccountError, setPaymentAccountError] = useState<string | null>(
     null
   );
+  const [complianceFailNotified, setComplianceFailNotified] = useState(false);
+  const complianceFailToastShown = useRef(false);
 
   const [formData, setFormData] = useState<
     ProfileFormData & { complianceCompleted?: boolean }
@@ -533,7 +536,7 @@ export default function ProfileForm() {
           govIdLink: data.gov_id_link || "",
           govIdVerified: data.gov_id_verified || false,
           complianceLink: data.compliance_link || "",
-          complianceCompleted: data.compliance_completed || false, // <-- fetch from Supabase if present
+          complianceCompleted: data.compliance_verified || false, // <-- fetch from Supabase if present
           examLink: data.exam_link || "",
         });
 
@@ -757,6 +760,21 @@ export default function ProfileForm() {
         return "Enter account details (e.g., bank info, other ID)";
     }
   };
+
+  // useEffect(() => {
+  //   if (
+  //     formData.complianceLink &&
+  //     formData.complianceCompleted === false &&
+  //     !complianceFailToastShown.current
+  //   ) {
+  //     toast.error(
+  //       "Compliance verification failed. Please review your submission or contact support.",
+  //       { id: "compliance-fail" }
+  //     );
+  //     complianceFailToastShown.current = true;
+  //     setComplianceFailNotified(true);
+  //   }
+  // }, [formData]);
 
   return (
     <div className="container px-4 py-8 mx-auto bg-slate-100 dark:bg-gray-900">
@@ -995,8 +1013,8 @@ export default function ProfileForm() {
                 </div>
 
                 {/* Government ID & Compliance Section */}
-                <div className="p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600 hover:shadow-2xl">
-                  <h2 className="pb-2 mb-6 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
+                <section className="flex flex-col gap-4 p-6 border shadow-lg bg-white/70 dark:bg-slate-800/70 rounded-2xl border-white/40 dark:border-slate-700 backdrop-blur-md">
+                  <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
                     Government ID & Compliance
                   </h2>
                   <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -1014,7 +1032,7 @@ export default function ProfileForm() {
                         }
                         className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
                           formData.govIdLink
-                            ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                            ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-
                             : "bg-gray-300 text-gray-500 cursor-not-allowed"
                         }`}
                       >
@@ -1023,24 +1041,22 @@ export default function ProfileForm() {
                           : "Government ID Unavailable"}
                       </button>
                       {/* Verification status badges/messages */}
-                      {formData.govIdLink &&
-                        formData.govIdVerified === false && (
-                          <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
-                            Verification Failed
-                          </span>
-                        )}
                       {formData.govIdLink && formData.govIdVerified == null && (
                         <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
                           Not Verified – Please proceed with verification or
                           contact support if unsure.
                         </span>
                       )}
-                      {formData.govIdLink &&
-                        formData.govIdVerified === true && (
-                          <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
-                            Verified
-                          </span>
-                        )}
+                      {formData.govIdLink && formData.govIdVerified === false && (
+                        <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
+                          Verification Failed
+                        </span>
+                      )}
+                      {formData.govIdLink && formData.govIdVerified === true && (
+                        <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
+                          Verified
+                        </span>
+                      )}
                     </div>
                     {/* Compliance Check Section */}
                     <div>
@@ -1049,39 +1065,57 @@ export default function ProfileForm() {
                       </h3>
                       <button
                         type="button"
-                        disabled={!formData.complianceLink}
-                        onClick={() =>
-                          formData.complianceLink &&
-                          window.open(formData.complianceLink, "_blank")
+                        disabled={
+                          !formData.govIdLink ||
+                          formData.govIdVerified !== true ||
+                          !formData.complianceLink
                         }
+                        onClick={() => {
+                          let url = formData.complianceLink;
+                          if (url && !/^https?:\/\//i.test(url)) {
+                            url = "https://" + url;
+                          }
+                          if (url && formData.govIdVerified === true)
+                            window.open(url, "_blank");
+                        }}
                         className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
-                          formData.complianceLink
-                            ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          !formData.govIdLink ||
+                          formData.govIdVerified !== true ||
+                          !formData.complianceLink
+                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            : "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
                         }`}
                       >
-                        {formData.complianceLink
+                        {!formData.govIdLink || formData.govIdVerified !== true
+                          ? "Compliance Unavailable (ID Not Verified)"
+                          : formData.complianceLink
                           ? "Start Compliance Check"
                           : "Compliance Check Unavailable"}
                       </button>
-                      {/* Compliance status badges/messages */}
-                      {formData.complianceLink &&
-                        formData.complianceCompleted === false && (
-                          <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
-                            Compliance Failed
-                          </span>
-                        )}
-                      {formData.complianceLink &&
+                      {/* Verification status badges/messages */}
+                      {formData.govIdLink &&
+                        formData.complianceLink &&
+                        formData.govIdVerified === true &&
                         formData.complianceCompleted == null && (
                           <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
-                            Not Completed – Please proceed with compliance or
+                            Not Verified – Please proceed with verification or
                             contact support if unsure.
                           </span>
                         )}
-                      {formData.complianceLink &&
+                      {formData.govIdLink &&
+                        formData.complianceLink &&
+                        formData.govIdVerified === true &&
+                        formData.complianceCompleted === false && (
+                          <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
+                            Verification Failed
+                          </span>
+                        )}
+                      {formData.govIdLink &&
+                        formData.complianceLink &&
+                        formData.govIdVerified === true &&
                         formData.complianceCompleted === true && (
                           <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
-                            Completed
+                            Verified
                           </span>
                         )}
                     </div>
@@ -1091,7 +1125,7 @@ export default function ProfileForm() {
                         Take Exam
                       </h3>
                       {formData.govIdVerified &&
-                      formData.complianceCompleted &&
+                      formData.complianceCompleted === true &&
                       formData.examLink ? (
                         <button
                           type="button"
@@ -1113,7 +1147,7 @@ export default function ProfileForm() {
                       )}
                     </div>
                   </div>
-                </div>
+                </section>
               </div>
 
               <div className="pt-6 mt-8 border-t border-gray-200 dark:border-gray-700">

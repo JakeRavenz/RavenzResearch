@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { User } from "lucide-react";
@@ -88,7 +88,7 @@ interface Profile {
   gov_id_link?: string;
   gov_id_verified?: boolean;
   compliance_link?: string;
-  compliance_completed?: boolean;
+  compliance_verified?: boolean;
   exam_link?: string;
 }
 
@@ -96,6 +96,8 @@ export default function Profile() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [complianceFailNotified, setComplianceFailNotified] = useState(false);
+  const complianceFailToastShown = useRef(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -127,6 +129,21 @@ export default function Profile() {
 
     fetchProfile();
   }, [navigate]);
+
+  // useEffect(() => {
+  //   if (
+  //     profile?.compliance_link &&
+  //     profile?.compliance_verified === false &&
+  //     !complianceFailToastShown.current
+  //   ) {
+  //     toast.error(
+  //       "Compliance verification failed. Please review your submission or contact support.",
+  //       { id: "compliance-fail" }
+  //     );
+  //     complianceFailToastShown.current = true;
+  //     setComplianceFailNotified(true);
+  //   }
+  // }, [profile]);
 
   const handleLogout = async () => {
     try {
@@ -352,39 +369,57 @@ export default function Profile() {
               </h3>
               <button
                 type="button"
-                disabled={!profile?.compliance_link}
-                onClick={() =>
-                  profile?.compliance_link &&
-                  window.open(profile.compliance_link, "_blank")
+                disabled={
+                  !profile?.gov_id_link ||
+                  profile?.gov_id_verified !== true ||
+                  !profile?.compliance_link
                 }
+                onClick={() => {
+                  let url = profile?.compliance_link;
+                  if (url && !/^https?:\/\//i.test(url)) {
+                    url = "https://" + url;
+                  }
+                  if (url && profile?.gov_id_verified === true)
+                    window.open(url, "_blank");
+                }}
                 className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
-                  profile?.compliance_link
-                    ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  !profile?.gov_id_link ||
+                  profile?.gov_id_verified !== true ||
+                  !profile?.compliance_link
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
                 }`}
               >
-                {profile?.compliance_link
+                {!profile?.gov_id_link || profile?.gov_id_verified !== true
+                  ? "Compliance Unavailable (ID Not Verified)"
+                  : profile?.compliance_link
                   ? "Start Compliance Check"
                   : "Compliance Check Unavailable"}
               </button>
-              {/* Compliance status badges/messages */}
-              {profile?.compliance_link &&
-                profile?.compliance_completed === false && (
+              {/* Verification status badges/messages */}
+              {profile?.gov_id_link &&
+                profile?.compliance_link &&
+                profile?.gov_id_verified === true &&
+                profile?.compliance_verified === false && (
                   <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
-                    Compliance Failed
+                    Verification Failed
                   </span>
                 )}
-              {profile?.compliance_link &&
-                profile?.compliance_completed == null && (
+              {profile?.gov_id_link &&
+                profile?.compliance_link &&
+                profile?.gov_id_verified === true &&
+                profile?.compliance_verified == null && (
                   <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
-                    Not Completed – Please proceed with compliance or contact
+                    Not Verified – Please proceed with verification or contact
                     support if unsure.
                   </span>
                 )}
-              {profile?.compliance_link &&
-                profile?.compliance_completed === true && (
+              {profile?.gov_id_link &&
+                profile?.compliance_link &&
+                profile?.gov_id_verified === true &&
+                profile?.compliance_verified === true && (
                   <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
-                    Completed
+                    Verified
                   </span>
                 )}
             </div>
@@ -394,7 +429,7 @@ export default function Profile() {
                 Take Exam
               </h3>
               {profile?.gov_id_verified &&
-              profile?.compliance_link &&
+              profile?.compliance_verified === true &&
               profile?.exam_link ? (
                 <button
                   type="button"
