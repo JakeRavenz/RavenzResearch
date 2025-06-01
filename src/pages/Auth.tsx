@@ -148,7 +148,7 @@ export default function Auth() {
   }
 
   return (
-    <div className="flex flex-col justify-center min-h-screen bg-slate-100 dark:bg-slate-900">
+    <div className="flex flex-col justify-center min-h-screen bg-slate-300 dark:bg-slate-900">
       <div className="container max-w-4xl px-2 mx-auto">
         <div className="relative p-2 md:p-4 lg:p-6 mb-8 overflow-hidden shadow-2xl rounded-2xl bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900 flex items-center justify-center min-h-[60vh]">
           <span className="absolute rounded-full pointer-events-none -top-16 -left-16 w-60 h-60 bg-gradient-to-tr from-indigo-200 via-blue-200 to-purple-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />

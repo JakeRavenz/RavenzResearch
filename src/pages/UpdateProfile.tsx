@@ -760,6 +760,27 @@ export default function ProfileForm() {
 
   return (
     <div className="container px-4 py-8 mx-auto bg-slate-100 dark:bg-gray-900">
+      {/* Go Back Button */}
+      <button
+        type="button"
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium text-indigo-600 bg-white border border-indigo-200 rounded-md shadow hover:bg-indigo-50 dark:bg-gray-800 dark:text-indigo-300 dark:border-indigo-700 dark:hover:bg-gray-900"
+      >
+        <svg
+          className="w-4 h-4 mr-1"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+        Go Back
+      </button>
       <div className="relative p-8 mb-8 overflow-hidden shadow-lg rounded-2xl bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
         <span className="absolute rounded-full pointer-events-none -top-10 -left-10 w-60 h-60 bg-gradient-to-tr from-indigo-200 via-blue-200 to-purple-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
         <span className="absolute rounded-full pointer-events-none -bottom-10 -right-10 w-60 h-60 bg-gradient-to-tr from-pink-200 via-indigo-100 to-blue-200 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 blur-3xl opacity-60" />
@@ -1001,36 +1022,68 @@ export default function ProfileForm() {
                           ? "Submit/View Government ID"
                           : "Government ID Unavailable"}
                       </button>
-                      {formData.govIdVerified && (
-                        <div className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
-                          Verified
-                        </div>
+                      {/* Verification status badges/messages */}
+                      {formData.govIdLink &&
+                        formData.govIdVerified === false && (
+                          <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
+                            Verification Failed
+                          </span>
+                        )}
+                      {formData.govIdLink && formData.govIdVerified == null && (
+                        <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
+                          Not Verified – Please proceed with verification or
+                          contact support if unsure.
+                        </span>
                       )}
+                      {formData.govIdLink &&
+                        formData.govIdVerified === true && (
+                          <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
+                            Verified
+                          </span>
+                        )}
                     </div>
                     {/* Compliance Check Section */}
                     <div>
                       <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                         Compliance Check
                       </h3>
-                      {formData.govIdVerified && formData.complianceLink ? (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            window.open(formData.complianceLink, "_blank")
-                          }
-                          className="w-full px-4 py-2 font-semibold text-white bg-indigo-600 rounded-md shadow hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                        >
-                          Start Compliance Check
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          disabled
-                          className="w-full px-4 py-2 font-semibold text-gray-500 bg-gray-300 rounded-md shadow cursor-not-allowed"
-                        >
-                          Compliance Check Unavailable
-                        </button>
-                      )}
+                      <button
+                        type="button"
+                        disabled={!formData.complianceLink}
+                        onClick={() =>
+                          formData.complianceLink &&
+                          window.open(formData.complianceLink, "_blank")
+                        }
+                        className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
+                          formData.complianceLink
+                            ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        }`}
+                      >
+                        {formData.complianceLink
+                          ? "Start Compliance Check"
+                          : "Compliance Check Unavailable"}
+                      </button>
+                      {/* Compliance status badges/messages */}
+                      {formData.complianceLink &&
+                        formData.complianceCompleted === false && (
+                          <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
+                            Compliance Failed
+                          </span>
+                        )}
+                      {formData.complianceLink &&
+                        formData.complianceCompleted == null && (
+                          <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
+                            Not Completed – Please proceed with compliance or
+                            contact support if unsure.
+                          </span>
+                        )}
+                      {formData.complianceLink &&
+                        formData.complianceCompleted === true && (
+                          <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
+                            Completed
+                          </span>
+                        )}
                     </div>
                     {/* Take Exam Section */}
                     <div>

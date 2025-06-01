@@ -88,6 +88,7 @@ interface Profile {
   gov_id_link?: string;
   gov_id_verified?: boolean;
   compliance_link?: string;
+  compliance_completed?: boolean;
   exam_link?: string;
 }
 
@@ -326,10 +327,22 @@ export default function Profile() {
                   ? "Submit/View Government ID"
                   : "Government ID Unavailable"}
               </button>
-              {profile?.gov_id_verified && (
-                <div className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
+              {/* Verification status badges/messages */}
+              {profile?.gov_id_link && profile?.gov_id_verified === false && (
+                <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
+                  Verification Failed
+                </span>
+              )}
+              {profile?.gov_id_link && profile?.gov_id_verified == null && (
+                <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
+                  Not Verified – Please proceed with verification or contact
+                  support if unsure.
+                </span>
+              )}
+              {profile?.gov_id_link && profile?.gov_id_verified === true && (
+                <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
                   Verified
-                </div>
+                </span>
               )}
             </div>
             {/* Compliance Check Section */}
@@ -337,23 +350,43 @@ export default function Profile() {
               <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Compliance Check
               </h3>
-              {profile?.gov_id_verified && profile?.compliance_link ? (
-                <button
-                  type="button"
-                  onClick={() => window.open(profile.compliance_link, "_blank")}
-                  className="w-full px-4 py-2 rounded-md shadow font-semibold bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                >
-                  Start Compliance Check
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  disabled
-                  className="w-full px-4 py-2 rounded-md shadow font-semibold bg-gray-300 text-gray-500 cursor-not-allowed"
-                >
-                  Compliance Check Unavailable
-                </button>
-              )}
+              <button
+                type="button"
+                disabled={!profile?.compliance_link}
+                onClick={() =>
+                  profile?.compliance_link &&
+                  window.open(profile.compliance_link, "_blank")
+                }
+                className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
+                  profile?.compliance_link
+                    ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                {profile?.compliance_link
+                  ? "Start Compliance Check"
+                  : "Compliance Check Unavailable"}
+              </button>
+              {/* Compliance status badges/messages */}
+              {profile?.compliance_link &&
+                profile?.compliance_completed === false && (
+                  <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
+                    Compliance Failed
+                  </span>
+                )}
+              {profile?.compliance_link &&
+                profile?.compliance_completed == null && (
+                  <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
+                    Not Completed – Please proceed with compliance or contact
+                    support if unsure.
+                  </span>
+                )}
+              {profile?.compliance_link &&
+                profile?.compliance_completed === true && (
+                  <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
+                    Completed
+                  </span>
+                )}
             </div>
             {/* Take Exam Section */}
             <div>
@@ -366,7 +399,7 @@ export default function Profile() {
                 <button
                   type="button"
                   onClick={() => window.open(profile.exam_link, "_blank")}
-                  className="w-full px-4 py-2 rounded-md shadow font-semibold bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                  className="w-full px-4 py-2 font-semibold text-white bg-indigo-600 rounded-md shadow hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
                 >
                   Start Exam
                 </button>
@@ -374,7 +407,7 @@ export default function Profile() {
                 <button
                   type="button"
                   disabled
-                  className="w-full px-4 py-2 rounded-md shadow font-semibold bg-gray-300 text-gray-500 cursor-not-allowed"
+                  className="w-full px-4 py-2 font-semibold text-gray-500 bg-gray-300 rounded-md shadow cursor-not-allowed"
                 >
                   Exam Unavailable
                 </button>
