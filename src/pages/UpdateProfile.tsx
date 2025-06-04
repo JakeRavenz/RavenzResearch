@@ -1032,7 +1032,7 @@ export default function ProfileForm() {
                         }
                         className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
                           formData.govIdLink
-                            ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-
+                            ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
                             : "bg-gray-300 text-gray-500 cursor-not-allowed"
                         }`}
                       >
@@ -1047,16 +1047,18 @@ export default function ProfileForm() {
                           contact support if unsure.
                         </span>
                       )}
-                      {formData.govIdLink && formData.govIdVerified === false && (
-                        <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
-                          Verification Failed
-                        </span>
-                      )}
-                      {formData.govIdLink && formData.govIdVerified === true && (
-                        <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
-                          Verified
-                        </span>
-                      )}
+                      {formData.govIdLink &&
+                        formData.govIdVerified === false && (
+                          <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
+                            Verification Failed
+                          </span>
+                        )}
+                      {formData.govIdLink &&
+                        formData.govIdVerified === true && (
+                          <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
+                            Verified
+                          </span>
+                        )}
                     </div>
                     {/* Compliance Check Section */}
                     <div>
