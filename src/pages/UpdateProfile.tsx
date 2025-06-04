@@ -1012,17 +1012,13 @@ export default function ProfileForm() {
                   </div>
                 </div>
 
-                {/* Government ID & Compliance Section */}
-                <section className="flex flex-col gap-4 p-6 border shadow-lg bg-white/70 dark:bg-slate-800/70 rounded-2xl border-white/40 dark:border-slate-700 backdrop-blur-md">
+                {/* Government ID Section */}
+                <section className="flex flex-col gap-4 p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600 hover:shadow-2xl">
                   <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
-                    Government ID & Compliance
+                    Government ID
                   </h2>
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    {/* Government ID Section */}
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-1"> {/* Changed to md:grid-cols-1 for single column layout */}
                     <div>
-                      <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Government ID
-                      </h3>
                       <button
                         type="button"
                         disabled={!formData.govIdLink}
@@ -1060,7 +1056,15 @@ export default function ProfileForm() {
                           </span>
                         )}
                     </div>
-                    {/* Compliance Check Section */}
+                  </div>
+                </section>
+
+                {/* Compliance Section */}
+                <section className="flex flex-col gap-4 p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600 hover:shadow-2xl">
+                  <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
+                    Compliance Check
+                  </h2>
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-1"> {/* Adjusted to single column */}
                     <div>
                       <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                         Compliance Check
@@ -1121,11 +1125,19 @@ export default function ProfileForm() {
                           </span>
                         )}
                     </div>
-                    {/* Take Exam Section */}
+                  </div> {/* Closes the gridsectionmpliance & Exam */}
+                </section> {/* Closes the Compliance & Exam section */}
+
+                {/* Exam Section */}
+                <section className="flex flex-col gap-4 p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600 hover:shadow-2xl">
+                  <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
+                    Take Exam
+                  </h2>
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-1">
                     <div>
-                      <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Take Exam
-                      </h3>
+                      {/* <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Exam Status
+                      </h3> */}
                       {formData.govIdVerified &&
                       formData.complianceCompleted === true &&
                       formData.examLink ? (
@@ -1144,7 +1156,7 @@ export default function ProfileForm() {
                           disabled
                           className="w-full px-4 py-2 font-semibold text-gray-500 bg-gray-300 rounded-md shadow cursor-not-allowed"
                         >
-                          Exam Unavailable
+                          Exam Unavailable (Complete ID & Compliance Verification First)
                         </button>
                       )}
                     </div>
