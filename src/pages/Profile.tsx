@@ -159,9 +159,6 @@ export default function Profile() {
   const handleUpdateProfile = () => {
     navigate("/update-profile");
   };
-  // const handleMyJobs = () => {
-  //   navigate("/myJobs");
-  // };
 
   if (loading) {
     return (

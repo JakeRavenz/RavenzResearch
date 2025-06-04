@@ -38,7 +38,7 @@ interface ProfileFormData {
   idNumber?: string;
   govIdLink?: string;
   govIdVerified?: boolean;
-  complianceLink?: string;
+  complianceLink?: string | null;
   complianceCompleted?: boolean; // <-- add this
   examLink?: string;
 }
@@ -536,7 +536,7 @@ export default function ProfileForm() {
           govIdLink: data.gov_id_link || "",
           govIdVerified: data.gov_id_verified || false,
           complianceLink: data.compliance_link || "",
-          complianceCompleted: data.compliance_verified || false, // <-- fetch from Supabase if present
+          complianceCompleted: data.compliance_verified, // <-- fetch from Supabase if present
           examLink: data.exam_link || "",
         });
 
@@ -1098,7 +1098,7 @@ export default function ProfileForm() {
                       {formData.govIdLink &&
                         formData.complianceLink &&
                         formData.govIdVerified === true &&
-                        formData.complianceCompleted == null && (
+                        formData.complianceCompleted === null && (
                           <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
                             Not Verified – Please proceed with verification or
                             contact support if unsure.
