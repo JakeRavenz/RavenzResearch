@@ -5,6 +5,7 @@ import { User } from "lucide-react";
 import toast from "react-hot-toast";
 import "react-phone-number-input/style.css";
 import { PayPalIcon, AirTMIcon, PayoneerIcon } from "../assets/icons";
+import { useTranslation } from "react-i18next";
 
 type EducationLevel =
   | "high_school"
@@ -93,6 +94,7 @@ interface Profile {
 }
 
 export default function Profile() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -313,139 +315,143 @@ export default function Profile() {
           </div>
         </section>
 
-        {/* Card 5: Government ID & Compliance */}
-        <section className="flex flex-col gap-4 p-6 border shadow-lg bg-white/70 dark:bg-slate-800/70 rounded-2xl border-white/40 dark:border-slate-700 backdrop-blur-md">
+        {/* Government ID Section */}
+        <section className="p-6 mb-6 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600">
           <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
-            Government ID & Compliance
+            {t("government_id")}
           </h2>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {/* Government ID Section */}
-            <div>
-              <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                Government ID
-              </h3>
-              <button
-                type="button"
-                disabled={!profile?.gov_id_link}
-                onClick={() =>
-                  profile?.gov_id_link &&
-                  window.open(profile.gov_id_link, "_blank")
-                }
-                className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
-                  profile?.gov_id_link
-                    ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
-              >
-                {profile?.gov_id_link
-                  ? "Submit/View Government ID"
-                  : "Government ID Unavailable"}
-              </button>
-              {/* Verification status badges/messages */}
-              {profile?.gov_id_link && profile?.gov_id_verified === false && (
-                <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
-                  Verification Failed
-                </span>
-              )}
-              {profile?.gov_id_link && profile?.gov_id_verified == null && (
-                <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
-                  Not Verified – Please proceed with verification or contact
-                  support if unsure.
-                </span>
-              )}
-              {profile?.gov_id_link && profile?.gov_id_verified === true && (
-                <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
-                  Verified
-                </span>
-              )}
-            </div>
-            {/* Compliance Check Section */}
-            <div>
-              <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                Compliance Check
-              </h3>
-              <button
-                type="button"
-                disabled={
-                  !profile?.gov_id_link ||
-                  profile?.gov_id_verified !== true ||
-                  !profile?.compliance_link
-                }
-                onClick={() => {
-                  let url = profile?.compliance_link;
-                  if (url && !/^https?:\/\//i.test(url)) {
-                    url = "https://" + url;
-                  }
-                  if (url && profile?.gov_id_verified === true)
-                    window.open(url, "_blank");
-                }}
-                className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
-                  !profile?.gov_id_link ||
-                  profile?.gov_id_verified !== true ||
-                  !profile?.compliance_link
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                }`}
-              >
-                {!profile?.gov_id_link || profile?.gov_id_verified !== true
-                  ? "Compliance Unavailable (ID Not Verified)"
-                  : profile?.compliance_link
-                  ? "Start Compliance Check"
-                  : "Compliance Check Unavailable"}
-              </button>
-              {/* Verification status badges/messages */}
-              {profile?.gov_id_link &&
-                profile?.compliance_link &&
-                profile?.gov_id_verified === true &&
-                profile?.compliance_verified === false && (
-                  <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
-                    Verification Failed
-                  </span>
-                )}
-              {profile?.gov_id_link &&
-                profile?.compliance_link &&
-                profile?.gov_id_verified === true &&
-                profile?.compliance_verified == null && (
-                  <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
-                    Not Verified – Please proceed with verification or contact
-                    support if unsure.
-                  </span>
-                )}
-              {profile?.gov_id_link &&
-                profile?.compliance_link &&
-                profile?.gov_id_verified === true &&
-                profile?.compliance_verified === true && (
-                  <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
-                    Verified
-                  </span>
-                )}
-            </div>
-            {/* Take Exam Section */}
-            <div>
-              <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                Take Exam
-              </h3>
-              {profile?.gov_id_verified &&
-              profile?.compliance_verified === true &&
-              profile?.exam_link ? (
-                <button
-                  type="button"
-                  onClick={() => window.open(profile.exam_link, "_blank")}
-                  className="w-full px-4 py-2 font-semibold text-white bg-indigo-600 rounded-md shadow hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                >
-                  Start Exam
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  disabled
-                  className="w-full px-4 py-2 font-semibold text-gray-500 bg-gray-300 rounded-md shadow cursor-not-allowed"
-                >
-                  Exam Unavailable
-                </button>
-              )}
-            </div>
-          </div>
+          <button
+            type="button"
+            disabled={!profile || !profile.gov_id_link}
+            onClick={() =>
+              profile &&
+              profile.gov_id_link &&
+              window.open(profile.gov_id_link, "_blank")
+            }
+            className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
+              profile && profile.gov_id_link
+                ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
+          >
+            {profile && profile.gov_id_link
+              ? t("submit_view_gov_id")
+              : t("gov_id_unavailable")}
+          </button>
+          {/* Verification status badges/messages */}
+          {profile &&
+            profile.gov_id_link &&
+            profile.gov_id_verified == null && (
+              <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
+                {t("not_verified")}
+              </span>
+            )}
+          {profile &&
+            profile.gov_id_link &&
+            profile.gov_id_verified === false && (
+              <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
+                {t("verification_failed")}
+              </span>
+            )}
+          {profile &&
+            profile.gov_id_link &&
+            profile.gov_id_verified === true && (
+              <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
+                {t("verified")}
+              </span>
+            )}
+        </section>
+
+        {/* Compliance Check Section */}
+        <section className="p-6 mb-6 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600">
+          <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
+            {t("compliance_check")}
+          </h2>
+          <button
+            type="button"
+            disabled={
+              !profile ||
+              !profile.gov_id_link ||
+              profile.gov_id_verified !== true ||
+              !profile.compliance_link
+            }
+            onClick={() => {
+              if (!profile) return;
+              let url = profile.compliance_link;
+              if (url && !/^https?:\/\//i.test(url)) {
+                url = "https://" + url;
+              }
+              if (url && profile.gov_id_verified === true)
+                window.open(url, "_blank");
+            }}
+            className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
+              !profile?.gov_id_link ||
+              profile.gov_id_verified !== true ||
+              !profile.compliance_link
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+            }`}
+          >
+            {!profile?.gov_id_link || profile.gov_id_verified !== true
+              ? t("compliance_unavailable")
+              : profile.compliance_link
+              ? t("start_compliance_check")
+              : t("compliance_check_unavailable")}
+          </button>
+          {/* Verification status badges/messages */}
+          {profile &&
+            profile.gov_id_link &&
+            profile.compliance_link &&
+            profile.gov_id_verified === true &&
+            profile.compliance_verified == null && (
+              <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
+                {t("not_verified")}
+              </span>
+            )}
+          {profile &&
+            profile.gov_id_link &&
+            profile.compliance_link &&
+            profile.gov_id_verified === true &&
+            profile.compliance_verified === false && (
+              <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
+                {t("verification_failed")}
+              </span>
+            )}
+          {profile &&
+            profile.gov_id_link &&
+            profile.compliance_link &&
+            profile.gov_id_verified === true &&
+            profile.compliance_verified === true && (
+              <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
+                {t("verified")}
+              </span>
+            )}
+        </section>
+
+        {/* Take Exam Section */}
+        <section className="p-6 mb-6 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600">
+          <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
+            {t("take_exam")}
+          </h2>
+          {profile?.gov_id_verified &&
+          profile.compliance_verified === true &&
+          profile.exam_link ? (
+            <button
+              type="button"
+              onClick={() => window.open(profile.exam_link, "_blank")}
+              className="w-full px-4 py-2 font-semibold text-white bg-indigo-600 rounded-md shadow hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+            >
+              {t("start_exam")}
+            </button>
+          ) : (
+            <button
+              type="button"
+              disabled
+              className="w-full px-4 py-2 font-semibold text-gray-500 bg-gray-300 rounded-md shadow cursor-not-allowed"
+            >
+              {t("exam_unavailable")}
+            </button>
+          )}
         </section>
       </div>
     </div>

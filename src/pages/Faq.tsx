@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const faqData = [
   {
@@ -64,6 +65,7 @@ const faqData = [
 ];
 
 export default function Faq() {
+  const { t } = useTranslation();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleAccordion = (idx: number) => {
@@ -73,12 +75,10 @@ export default function Faq() {
   return (
     <div className="container w-full px-4 py-8 mx-auto bg-gradient-to-br from-indigo-50 via-blue-100 to-purple-100 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
       <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
-        Frequently Asked Questions
+        {t("faq")}
       </h1>
       <p className="max-w-2xl mx-auto mb-8 text-lg text-center text-gray-700 dark:text-gray-300">
-        Find answers to the most common questions about using Ravenz Research,
-        our platform features, job application process, and more. If you have a
-        question that isn't covered here, feel free to contact our support team.
+        {t("faq_description")}
       </p>
       <div className="space-y-6">
         {faqData.map((item, idx) => (

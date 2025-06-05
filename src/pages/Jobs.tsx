@@ -9,6 +9,7 @@ import {
   Search,
 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface Job {
   id: string;
@@ -27,6 +28,7 @@ interface Job {
 }
 
 export default function Jobs() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
@@ -204,13 +206,13 @@ export default function Jobs() {
         {showTruncate && (
           <Link
             to={`/jobs/${jobId}`}
-           className="flex-1 px-3 py-1.5 text-xs font-semibold text-indigo-600 transition-colors bg-indigo-100 rounded-md shadow-sm hover:bg-indigo-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 dark:bg-indigo-900 dark:text-indigo-300 dark:hover:bg-indigo-800 text-center"
+            className="flex-1 px-3 py-1.5 text-xs font-semibold text-indigo-600 transition-colors bg-indigo-100 rounded-md shadow-sm hover:bg-indigo-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 dark:bg-indigo-900 dark:text-indigo-300 dark:hover:bg-indigo-800 text-center"
             onClick={(e) => e.stopPropagation()}
-            aria-label={`Learn more about ${jobTitle} at ${companyName}`}
+            aria-label={t("jobs_page.learn_more", { jobTitle, companyName })}
             target="_blank"
             rel="noopener noreferrer"
           >
-            Learn More
+            {t("jobs_page.learn_more")}
           </Link>
         )}
       </div>
@@ -232,10 +234,10 @@ export default function Jobs() {
             >
               <Briefcase className="w-8 h-8 mb-2 text-indigo-600 dark:text-indigo-400" />
               <h3 className="mb-1 text-lg font-bold text-gray-900 dark:text-white">
-                Applied Jobs
+                {t("jobs_page.applied_jobs")}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                View jobs you have applied for
+                {t("jobs_page.applied_jobs_desc")}
               </p>
             </div>
             {/* Active Jobs Card */}
@@ -245,10 +247,10 @@ export default function Jobs() {
             >
               <Briefcase className="w-8 h-8 mb-2 text-green-600 dark:text-green-400" />
               <h3 className="mb-1 text-lg font-bold text-gray-900 dark:text-white">
-                Active Jobs
+                {t("jobs_page.active_jobs")}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                See jobs you are currently working on
+                {t("jobs_page.active_jobs_desc")}
               </p>
             </div>
             {/* Completed Jobs Card */}
@@ -258,24 +260,24 @@ export default function Jobs() {
             >
               <Briefcase className="w-8 h-8 mb-2 text-blue-600 dark:text-blue-400" />
               <h3 className="mb-1 text-lg font-bold text-gray-900 dark:text-white">
-                Completed Jobs
+                {t("jobs_page.completed_jobs")}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                Review jobs you have finished
+                {t("jobs_page.completed_jobs_desc")}
               </p>
             </div>
           </div>
 
           {/* Available Jobs Section */}
           <h2 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
-            Available Jobs
+            {t("jobs_page.available_jobs")}
           </h2>
           <div className="flex flex-col items-start justify-between gap-4 px-5 mb-6 md:flex-row md:items-center">
             <div className="relative flex-grow">
               <Search className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
               <input
                 type="text"
-                placeholder="Search jobs..."
+                placeholder={t("jobs_page.search_placeholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full py-2 pl-10 pr-4 text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
@@ -286,7 +288,7 @@ export default function Jobs() {
               className="flex items-center justify-center px-4 py-2 transition-colors bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
             >
               <Filter className="w-4 h-4 mr-2" />
-              Filters
+              {t("jobs_page.filters")}
             </button>
           </div>
 
@@ -294,35 +296,37 @@ export default function Jobs() {
             <div className="grid grid-cols-1 gap-4 p-4 mx-1 mb-6 bg-white rounded-lg shadow-sm dark:bg-gray-800 sm:grid-cols-2 md:grid-cols-4">
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Job Type
+                  {t("jobs_page.job_type")}
                 </label>
                 <select className="w-full p-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
-                  <option value="">All Types</option>
-                  <option value="full_time">Full Time</option>
-                  <option value="part_time">Part Time</option>
-                  <option value="contract">Contract</option>
+                  <option value="">{t("jobs_page.all_types")}</option>
+                  <option value="full_time">{t("jobs_page.full_time")}</option>
+                  <option value="part_time">{t("jobs_page.part_time")}</option>
+                  <option value="contract">{t("jobs_page.contract")}</option>
                 </select>
               </div>
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Location
+                  {t("jobs_page.location")}
                 </label>
                 <select className="w-full p-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
-                  <option value="">All Locations</option>
-                  <option value="remote">Remote</option>
-                  <option value="us">United States</option>
-                  <option value="europe">Europe</option>
+                  <option value="">{t("jobs_page.all_locations")}</option>
+                  <option value="remote">{t("jobs_page.remote")}</option>
+                  <option value="us">{t("jobs_page.us")}</option>
+                  <option value="europe">{t("jobs_page.europe")}</option>
                 </select>
               </div>
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Remote Level
+                  {t("jobs_page.remote_level")}
                 </label>
                 <select className="w-full p-2 text-gray-900 bg-white border border-gray-300 rounded-lg dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
-                  <option value="">Any</option>
-                  <option value="fully_remote">Fully Remote</option>
-                  <option value="hybrid">Hybrid</option>
-                  <option value="onsite">On-site</option>
+                  <option value="">{t("jobs_page.any")}</option>
+                  <option value="fully_remote">
+                    {t("jobs_page.fully_remote")}
+                  </option>
+                  <option value="hybrid">{t("jobs_page.hybrid")}</option>
+                  <option value="onsite">{t("jobs_page.onsite")}</option>
                 </select>
               </div>
               {/* Add another filter option if needed to make it 4 columns */}
@@ -332,14 +336,14 @@ export default function Jobs() {
           <div className="flex items-center justify-between px-5 mb-6">
             <div className="text-gray-600 dark:text-gray-400">
               {loading && jobs.length === 0
-                ? "Loading jobs..."
-                : `${filteredJobs.length} jobs found`}
+                ? t("jobs_page.loading_jobs")
+                : t("jobs_page.jobs_found", { count: filteredJobs.length })}
             </div>
             <Link
               to="/jobs"
               className="flex items-center font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 group"
             >
-              View all jobs
+              {t("jobs_page.view_all_jobs")}
               <span className="ml-1 transition-transform transform group-hover:translate-x-1">
                 →
               </span>
@@ -358,19 +362,19 @@ export default function Jobs() {
               <div className="py-16 text-center bg-white rounded-lg shadow-sm dark:bg-gray-800">
                 <Briefcase className="w-16 h-16 mx-auto text-gray-400" />
                 <h3 className="mt-6 text-xl font-medium text-gray-900 dark:text-white">
-                  No jobs found
+                  {t("jobs_page.no_jobs_found")}
                 </h3>
                 <p className="max-w-md mx-auto mt-2 text-gray-600 dark:text-gray-400">
                   {searchTerm
-                    ? "Try adjusting your search criteria or check back later for new opportunities."
-                    : "We don't have any open positions right now. Please check back soon for new opportunities."}
+                    ? t("jobs_page.try_adjusting")
+                    : t("jobs_page.no_open_positions")}
                 </p>
                 {searchTerm && (
                   <button
                     onClick={() => setSearchTerm("")}
                     className="px-4 py-2 mt-4 text-white transition-colors bg-blue-600 rounded-lg dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600"
                   >
-                    Clear search
+                    {t("jobs_page.clear_search")}
                   </button>
                 )}
               </div>
@@ -406,17 +410,20 @@ export default function Jobs() {
                     <div className="flex flex-col flex-1 gap-2 p-6">
                       <div className="flex flex-wrap gap-2 mb-2">
                         <span className="px-2 py-0.5 text-xs font-medium text-white bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 dark:from-yellow-700 dark:via-yellow-800 dark:to-yellow-900 rounded-full">
-                          {job.remote_level}
+                          {t(`jobs_page.${job.remote_level?.replace(/ /g, "_").toLowerCase()}`, job.remote_level)}
                         </span>
                         <span className="px-2 py-0.5 text-xs font-medium text-white bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 dark:from-purple-700 dark:via-purple-800 dark:to-purple-900 rounded-full">
-                          {job.type}
+                          {t(
+                            `jobs_page.${job.type?.replace(/ /g, "_").toLowerCase()}`,
+                            job.type
+                          )}
                         </span>
                         {(new Date().getTime() -
                           new Date(job.created_at).getTime()) /
                           (1000 * 60 * 60 * 24) <
                           7 && (
                           <span className="px-2 py-0.5 text-xs font-medium text-white bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 dark:from-pink-700 dark:via-pink-800 dark:to-pink-900 rounded-full animate-pulse">
-                            New
+                            {t("jobs_page.new")}
                           </span>
                         )}
                       </div>
@@ -432,7 +439,7 @@ export default function Jobs() {
                         <div className="text-base font-semibold text-gray-900 dark:text-white">
                           {job.salary_max ? `${job.salary_max} USD` : ""}
                           <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
-                            {job.salary_max ? "per hour" : ""}
+                            {job.salary_max ? t("jobs_page.per_hour") : ""}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
@@ -441,14 +448,16 @@ export default function Jobs() {
                         </div>
                       </div>
                       <div className="flex gap-2 mt-2">
-                        
                         <Link
                           to={`/jobs/${job.id}`}
                           className="flex-1 px-3 py-1.5 text-xs font-semibold text-white transition-colors bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400 text-center"
                           onClick={(e) => e.stopPropagation()}
-                          aria-label={`Apply for ${job.title} at ${job.company.name}`}
+                          aria-label={t("jobs_page.apply", {
+                            jobTitle: job.title,
+                            companyName: job.company.name,
+                          })}
                         >
-                          Apply
+                          {t("jobs_page.apply")}
                         </Link>
                       </div>
                     </div>
@@ -466,7 +475,9 @@ export default function Jobs() {
                 onClick={loadMoreJobs}
                 disabled={loading}
               >
-                {loading ? "Loading..." : "Load more jobs"}
+                {loading
+                  ? t("jobs_page.loading")
+                  : t("jobs_page.load_more_jobs")}
               </button>
             </div>
           )}

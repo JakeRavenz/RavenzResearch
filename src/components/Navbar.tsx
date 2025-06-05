@@ -16,6 +16,7 @@ import { useTheme } from "../contexts/ThemeContext";
 import useAuth from "../hooks/useAuth"; // Ensure this path is correct
 import { Sun, Moon, LogIn, UserPlus, UserCircle, LogOut } from "lucide-react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 export default function Navbar() {
   const [user, setUser] = useState<User | null>(null);
@@ -23,6 +24,7 @@ export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const currentPath = location.pathname;
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -88,7 +90,7 @@ export default function Navbar() {
                   )}`}
                 >
                   <BriefcaseIcon className="w-5 h-5" />
-                  <span>Jobs</span>
+                  <span> {t("jobs")} </span>
                 </Link>
               ) : null}
               <Link
@@ -98,7 +100,7 @@ export default function Navbar() {
                 )}`}
               >
                 <InformationCircleIcon className="w-5 h-5" />
-                <span>About Us</span>
+                <span> {t("about_us")} </span>
               </Link>
               <Link
                 to="/faq"
@@ -107,7 +109,7 @@ export default function Navbar() {
                 )}`}
               >
                 <QuestionMarkCircleIcon className="w-5 h-5" />
-                <span>FAQ</span>
+                <span> {t("faq")} </span>
               </Link>
               <Link
                 to="/contact"
@@ -116,7 +118,7 @@ export default function Navbar() {
                 )}`}
               >
                 <EnvelopeIcon className="w-5 h-5" />
-                <span>Contact Us</span>
+                <span> {t("contact_us")} </span>
               </Link>
               {user ? (
                 <Link
@@ -126,11 +128,11 @@ export default function Navbar() {
                   )}`}
                 >
                   <UserIcon className="w-5 h-5" />
-                  <span>Profile</span>
+                  <span> {t("profile")} </span>
                 </Link>
               ) : (
                 <Link to="/auth" className={`${getLinkClasses("/auth", true)}`}>
-                  sign in
+                  {t("sign_in")}
                 </Link>
               )}
               {user ? (
@@ -141,10 +143,20 @@ export default function Navbar() {
                   )}`}
                 >
                   <UserIcon className="w-5 h-5" />
-                  <span>Dashboard</span>
+                  <span> {t("dashboard")} </span>
                 </Link>
               ) : null}
             </div>
+            {/* Language Switcher */}
+            <select
+              value={i18n.language}
+              onChange={(e) => i18n.changeLanguage(e.target.value)}
+              className="px-2 py-1 ml-4 text-gray-700 bg-white border border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus:outline-none"
+              aria-label="Select language"
+            >
+              <option value="en">English</option>
+              <option value="es">Español</option>
+            </select>
             {/* Theme toggle remains outside for accessibility */}
             <button
               onClick={toggleTheme}
@@ -208,7 +220,7 @@ export default function Navbar() {
                 onClick={closeSidebar}
               >
                 <BriefcaseIcon className="w-5 h-5" />
-                <span>Jobs</span>
+                <span> {t("jobs")} </span>
               </Link>
             ) : null}
 
@@ -220,7 +232,7 @@ export default function Navbar() {
               onClick={closeSidebar}
             >
               <InformationCircleIcon className="w-5 h-5" />
-              <span>About Us</span>
+              <span> {t("about_us")} </span>
             </Link>
 
             <Link
@@ -231,7 +243,7 @@ export default function Navbar() {
               onClick={closeSidebar}
             >
               <QuestionMarkCircleIcon className="w-5 h-5" />
-              <span>FAQ</span>
+              <span> {t("faq")} </span>
             </Link>
 
             <Link
@@ -242,7 +254,7 @@ export default function Navbar() {
               onClick={closeSidebar}
             >
               <EnvelopeIcon className="w-5 h-5" />
-              <span>Contact Us</span>
+              <span> {t("contact_us")} </span>
             </Link>
 
             {user ? (
@@ -254,7 +266,7 @@ export default function Navbar() {
                 onClick={closeSidebar}
               >
                 <UserIcon className="w-5 h-5" />
-                <span>Profile</span>
+                <span> {t("profile")} </span>
               </Link>
             ) : (
               <Link
@@ -262,7 +274,7 @@ export default function Navbar() {
                 className={`${getLinkClasses("/auth", true)} text-center`}
                 onClick={closeSidebar}
               >
-                Sign In
+                {t("sign_in")}
               </Link>
             )}
             {user ? (
@@ -274,9 +286,19 @@ export default function Navbar() {
                 onClick={closeSidebar}
               >
                 <UserIcon className="w-5 h-5" />
-                <span>Dashboard</span>
+                <span> {t("dashboard")} </span>
               </Link>
             ) : null}
+            {/* Language Switcher for mobile */}
+            <select
+              value={i18n.language}
+              onChange={(e) => i18n.changeLanguage(e.target.value)}
+              className="px-2 py-1 mt-4 text-gray-700 bg-white border border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus:outline-none"
+              aria-label="Select language"
+            >
+              <option value="en">English</option>
+              <option value="es">Español</option>
+            </select>
           </div>
         </div>
       </div>

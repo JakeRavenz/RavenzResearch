@@ -1013,154 +1013,132 @@ export default function ProfileForm() {
                 </div>
 
                 {/* Government ID Section */}
-                <section className="flex flex-col gap-4 p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600 hover:shadow-2xl">
+                <section className="p-6 mb-6 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600">
                   <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
                     Government ID
                   </h2>
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-1"> {/* Changed to md:grid-cols-1 for single column layout */}
-                    <div>
-                      <button
-                        type="button"
-                        disabled={!formData.govIdLink}
-                        onClick={() =>
-                          formData.govIdLink &&
-                          window.open(formData.govIdLink, "_blank")
-                        }
-                        className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
-                          formData.govIdLink
-                            ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                        }`}
-                      >
-                        {formData.govIdLink
-                          ? "Submit/View Government ID"
-                          : "Government ID Unavailable"}
-                      </button>
-                      {/* Verification status badges/messages */}
-                      {formData.govIdLink && formData.govIdVerified == null && (
-                        <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
-                          Not Verified – Please proceed with verification or
-                          contact support if unsure.
-                        </span>
-                      )}
-                      {formData.govIdLink &&
-                        formData.govIdVerified === false && (
-                          <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
-                            Verification Failed
-                          </span>
-                        )}
-                      {formData.govIdLink &&
-                        formData.govIdVerified === true && (
-                          <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
-                            Verified
-                          </span>
-                        )}
-                    </div>
-                  </div>
+                  <button
+                    type="button"
+                    disabled={!formData.govIdLink}
+                    onClick={() =>
+                      formData.govIdLink &&
+                      window.open(formData.govIdLink, "_blank")
+                    }
+                    className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
+                      formData.govIdLink
+                        ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    }`}
+                  >
+                    {formData.govIdLink
+                      ? "Submit/View Government ID"
+                      : "Government ID Unavailable"}
+                  </button>
+                  {/* Verification status badges/messages */}
+                  {formData.govIdLink && formData.govIdVerified == null && (
+                    <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
+                      Not Verified – Please proceed with verification or contact
+                      support if unsure.
+                    </span>
+                  )}
+                  {formData.govIdLink && formData.govIdVerified === false && (
+                    <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
+                      Verification Failed
+                    </span>
+                  )}
+                  {formData.govIdLink && formData.govIdVerified === true && (
+                    <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
+                      Verified
+                    </span>
+                  )}
                 </section>
 
-                {/* Compliance Section */}
-                <section className="flex flex-col gap-4 p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600 hover:shadow-2xl">
+                {/* Compliance Check Section */}
+                <section className="p-6 mb-6 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600">
                   <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
                     Compliance Check
                   </h2>
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-1"> {/* Adjusted to single column */}
-                    <div>
-                      <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Compliance Check
-                      </h3>
-                      <button
-                        type="button"
-                        disabled={
-                          !formData.govIdLink ||
-                          formData.govIdVerified !== true ||
-                          !formData.complianceLink
-                        }
-                        onClick={() => {
-                          let url = formData.complianceLink;
-                          if (url && !/^https?:\/\//i.test(url)) {
-                            url = "https://" + url;
-                          }
-                          if (url && formData.govIdVerified === true)
-                            window.open(url, "_blank");
-                        }}
-                        className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
-                          !formData.govIdLink ||
-                          formData.govIdVerified !== true ||
-                          !formData.complianceLink
-                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                            : "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                        }`}
-                      >
-                        {!formData.govIdLink || formData.govIdVerified !== true
-                          ? "Compliance Unavailable (ID Not Verified)"
-                          : formData.complianceLink
-                          ? "Start Compliance Check"
-                          : "Compliance Check Unavailable"}
-                      </button>
-                      {/* Verification status badges/messages */}
-                      {formData.govIdLink &&
-                        formData.complianceLink &&
-                        formData.govIdVerified === true &&
-                        formData.complianceCompleted === null && (
-                          <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
-                            Not Verified – Please proceed with verification or
-                            contact support if unsure.
-                          </span>
-                        )}
-                      {formData.govIdLink &&
-                        formData.complianceLink &&
-                        formData.govIdVerified === true &&
-                        formData.complianceCompleted === false && (
-                          <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
-                            Verification Failed
-                          </span>
-                        )}
-                      {formData.govIdLink &&
-                        formData.complianceLink &&
-                        formData.govIdVerified === true &&
-                        formData.complianceCompleted === true && (
-                          <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
-                            Verified
-                          </span>
-                        )}
-                    </div>
-                  </div> {/* Closes the gridsectionmpliance & Exam */}
-                </section> {/* Closes the Compliance & Exam section */}
+                  <button
+                    type="button"
+                    disabled={
+                      !formData.govIdLink ||
+                      formData.govIdVerified !== true ||
+                      !formData.complianceLink
+                    }
+                    onClick={() => {
+                      let url = formData.complianceLink;
+                      if (url && !/^https?:\/\//i.test(url)) {
+                        url = "https://" + url;
+                      }
+                      if (url && formData.govIdVerified === true)
+                        window.open(url, "_blank");
+                    }}
+                    className={`w-full px-4 py-2 rounded-md shadow font-semibold transition-colors ${
+                      !formData.govIdLink ||
+                      formData.govIdVerified !== true ||
+                      !formData.complianceLink
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                    }`}
+                  >
+                    {!formData.govIdLink || formData.govIdVerified !== true
+                      ? "Compliance Unavailable (ID Not Verified)"
+                      : formData.complianceLink
+                      ? "Start Compliance Check"
+                      : "Compliance Check Unavailable"}
+                  </button>
+                  {/* Verification status badges/messages */}
+                  {formData.govIdLink &&
+                    formData.complianceLink &&
+                    formData.govIdVerified === true &&
+                    formData.complianceCompleted == null && (
+                      <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
+                        Not Verified – Please proceed with verification or
+                        contact support if unsure.
+                      </span>
+                    )}
+                  {formData.govIdLink &&
+                    formData.complianceLink &&
+                    formData.govIdVerified === true &&
+                    formData.complianceCompleted === false && (
+                      <span className="inline-block px-3 py-1 mt-2 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
+                        Verification Failed
+                      </span>
+                    )}
+                  {formData.govIdLink &&
+                    formData.complianceLink &&
+                    formData.govIdVerified === true &&
+                    formData.complianceCompleted === true && (
+                      <span className="inline-block px-3 py-1 mt-2 text-xs text-green-700 bg-green-100 rounded-full">
+                        Verified
+                      </span>
+                    )}
+                </section>
 
-                {/* Exam Section */}
-                <section className="flex flex-col gap-4 p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600 hover:shadow-2xl">
+                {/* Take Exam Section */}
+                <section className="p-6 mb-6 bg-white border border-gray-200 shadow-lg rounded-2xl dark:bg-gray-800 dark:border-gray-600">
                   <h2 className="pb-2 mb-4 text-xl font-semibold text-gray-900 border-b dark:text-white dark:border-gray-700">
                     Take Exam
                   </h2>
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-1">
-                    <div>
-                      {/* <h3 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Exam Status
-                      </h3> */}
-                      {formData.govIdVerified &&
-                      formData.complianceCompleted === true &&
-                      formData.examLink ? (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            window.open(formData.examLink, "_blank")
-                          }
-                          className="w-full px-4 py-2 font-semibold text-white bg-indigo-600 rounded-md shadow hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                        >
-                          Start Exam
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          disabled
-                          className="w-full px-4 py-2 font-semibold text-gray-500 bg-gray-300 rounded-md shadow cursor-not-allowed"
-                        >
-                          Exam Unavailable (Complete ID & Compliance Verification First)
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                  {formData.govIdVerified &&
+                  formData.complianceCompleted === true &&
+                  formData.examLink ? (
+                    <button
+                      type="button"
+                      onClick={() => window.open(formData.examLink, "_blank")}
+                      className="w-full px-4 py-2 font-semibold text-white bg-indigo-600 rounded-md shadow hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                    >
+                      Start Exam
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled
+                      className="w-full px-4 py-2 font-semibold text-gray-500 bg-gray-300 rounded-md shadow cursor-not-allowed"
+                    >
+                      Exam Unavailable
+                    </button>
+                  )}
                 </section>
               </div>
 
