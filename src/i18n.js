@@ -18,7 +18,7 @@ i18n
       loadPath: "/locales/{{lng}}/{{ns}}.json",
     },
     // you can whitelist supported languages here if needed
-    // supportedLngs: ['en', 'es', 'fr'],
+    supportedLngs: ['en', 'es', 'de', 'zh-TW', 'pt-BR', 'tr'],
   });
 
 export default i18n;

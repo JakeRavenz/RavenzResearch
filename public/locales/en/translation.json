@@ -1,3 +1,5 @@
+ 
+
 {
   "welcome": "Welcome",
   "profile": "Profile",
@@ -137,5 +139,6 @@
     "loading": "Loading..."
   },
   "faq": "FAQ",
-  "sign_in": "Sign In"
+  "sign_in": "Sign In", 
+  "faq_description":"Checkout frequently asked questions for easy self help"
 }
