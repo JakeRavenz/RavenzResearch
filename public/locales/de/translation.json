@@ -1,133 +1,133 @@
 {
-  "Welcome to React": "",
+  "Welcome to React": "Willkommen bei React",
   "navigation": {
-    "home": "",
-    "aboutUs": "",
-    "companies": "",
-    "jobs": "",
-    "careers": "",
-    "contact": "",
-    "faq": "",
-    "dashboard": "",
-    "myJobs": "",
-    "profile": "",
-    "updateProfile": "",
-    "postJobs": "",
-    "createCompanies": "",
-    "login": "",
-    "signup": "",
-    "logout": ""
+    "home": "Startseite",
+    "aboutUs": "Über uns",
+    "companies": "Unternehmen",
+    "jobs": "Jobs",
+    "careers": "Karriere",
+    "contact": "Kontakt",
+    "faq": "FAQ",
+    "dashboard": "Dashboard",
+    "myJobs": "Meine Jobs",
+    "profile": "Profil",
+    "updateProfile": "Profil aktualisieren",
+    "postJobs": "Jobs veröffentlichen",
+    "createCompanies": "Unternehmen erstellen",
+    "login": "Anmelden",
+    "signup": "Registrieren",
+    "logout": "Abmelden"
   },
   "landing_page": {
-    "title": "",
-    "subtitle": "",
-    "search_placeholder": "",
-    "featured_jobs": "",
-    "latest_companies": "",
-    "find_job_button": ""
+    "title": "Finde deinen Traumjob",
+    "subtitle": "Durchsuche Tausende von Angeboten weltweit",
+    "search_placeholder": "Stellenbezeichnung, Unternehmen oder Ort eingeben...",
+    "featured_jobs": "Empfohlene Jobs",
+    "latest_companies": "Neueste Unternehmen",
+    "find_job_button": "Job finden"
   },
   "job_card": {
-    "salary": "",
-    "apply_button": "",
-    "view_details_button": ""
+    "salary": "Gehalt",
+    "apply_button": "Jetzt bewerben",
+    "view_details_button": "Details ansehen"
   },
   "job_details": {
-    "title": "",
-    "description": "",
-    "responsibilities": "",
-    "requirements": "",
-    "apply_now_button": ""
+    "title": "Stellentitel",
+    "description": "Beschreibung",
+    "responsibilities": "Verantwortlichkeiten",
+    "requirements": "Anforderungen",
+    "apply_now_button": "Jetzt bewerben"
   },
   "companies_page": {
-    "title": "",
-    "description": ""
+    "title": "Unternehmen",
+    "description": "Entdecke Unternehmen, die aktiv einstellen"
   },
   "company_details": {
-    "about": "",
-    "location": "",
-    "website": "",
-    "open_jobs": ""
+    "about": "Über",
+    "location": "Standort",
+    "website": "Webseite",
+    "open_jobs": "Offene Stellen"
   },
   "about_us_page": {
-    "title": "",
-    "section1_title": "",
-    "section1_content": "",
-    "section2_title": "",
-    "section2_content": ""
+    "title": "Über uns",
+    "section1_title": "Unsere Mission",
+    "section1_content": "Wir verbinden Talente mit Möglichkeiten.",
+    "section2_title": "Unser Team",
+    "section2_content": "Ein engagiertes Team von Fachleuten."
   },
   "contact_page": {
-    "title": "",
-    "description": "",
-    "name_label": "",
-    "email_label": "",
-    "message_label": "",
-    "send_button": ""
+    "title": "Kontakt",
+    "description": "Nimm Kontakt mit uns auf",
+    "name_label": "Name",
+    "email_label": "E-Mail",
+    "message_label": "Nachricht",
+    "send_button": "Senden"
   },
   "faq_page": {
-    "title": "",
-    "description": ""
+    "title": "Häufig gestellte Fragen",
+    "description": "Antworten auf häufig gestellte Fragen"
   },
   "dashboard_page": {
-    "title": "",
-    "welcome_message": ""
+    "title": "Dashboard",
+    "welcome_message": "Willkommen zurück!"
   },
   "profile_page": {
-    "title": "",
-    "name_label": "",
-    "email_label": "",
-    "bio_label": "",
-    "update_button": ""
+    "title": "Profil",
+    "name_label": "Name",
+    "email_label": "E-Mail",
+    "bio_label": "Biografie",
+    "update_button": "Aktualisieren"
   },
   "auth_page": {
-    "login_title": "",
-    "signup_title": "",
-    "email_label": "",
-    "password_label": "",
-    "login_button": "",
-    "signup_button": "",
-    "forgot_password": "",
-    "or_login_with_google": "",
-    "or_signup_with_google": "",
-    "already_have_account": "",
-    "dont_have_account": ""
+    "login_title": "Anmeldung",
+    "signup_title": "Registrierung",
+    "email_label": "E-Mail",
+    "password_label": "Passwort",
+    "login_button": "Anmelden",
+    "signup_button": "Registrieren",
+    "forgot_password": "Passwort vergessen?",
+    "or_login_with_google": "Oder mit Google anmelden",
+    "or_signup_with_google": "Oder mit Google registrieren",
+    "already_have_account": "Du hast bereits ein Konto?",
+    "dont_have_account": "Du hast noch kein Konto?"
   },
   "create_company_page": {
-    "title": "",
-    "name_label": "",
-    "description_label": "",
-    "location_label": "",
-    "website_label": "",
-    "create_button": ""
+    "title": "Unternehmen erstellen",
+    "name_label": "Name des Unternehmens",
+    "description_label": "Beschreibung",
+    "location_label": "Standort",
+    "website_label": "Webseite",
+    "create_button": "Erstellen"
   },
   "post_job_page": {
-    "title": "",
-    "job_title_label": "",
-    "description_label": "",
-    "requirements_label": "",
-    "responsibilities_label": "",
-    "salary_label": "",
-    "post_button": ""
+    "title": "Job veröffentlichen",
+    "job_title_label": "Stellentitel",
+    "description_label": "Beschreibung",
+    "requirements_label": "Anforderungen",
+    "responsibilities_label": "Verantwortlichkeiten",
+    "salary_label": "Gehalt",
+    "post_button": "Veröffentlichen"
   },
   "my_jobs_page": {
-    "title": "",
-    "no_jobs_message": ""
+    "title": "Meine Jobs",
+    "no_jobs_message": "Du hast keine veröffentlichten Jobs"
   },
   "update_profile_page": {
-    "title": ""
+    "title": "Profil aktualisieren"
   },
   "footer": {
-    "quick_links": "",
-    "contact_us": "",
-    "follow_us": "",
-    "all_rights_reserved": ""
+    "quick_links": "Schnellzugriffe",
+    "contact_us": "Kontaktiere uns",
+    "follow_us": "Folge uns",
+    "all_rights_reserved": "Alle Rechte vorbehalten"
   },
   "terms_of_service_page": {
-    "title": ""
+    "title": "Nutzungsbedingungen"
   },
   "policies_page": {
-    "title": ""
+    "title": "Richtlinien"
   },
   "careers_page": {
-    "title": ""
+    "title": "Karriere"
   }
 }
