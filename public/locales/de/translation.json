@@ -1,0 +1,133 @@
+{
+  "Welcome to React": "",
+  "navigation": {
+    "home": "",
+    "aboutUs": "",
+    "companies": "",
+    "jobs": "",
+    "careers": "",
+    "contact": "",
+    "faq": "",
+    "dashboard": "",
+    "myJobs": "",
+    "profile": "",
+    "updateProfile": "",
+    "postJobs": "",
+    "createCompanies": "",
+    "login": "",
+    "signup": "",
+    "logout": ""
+  },
+  "landing_page": {
+    "title": "",
+    "subtitle": "",
+    "search_placeholder": "",
+    "featured_jobs": "",
+    "latest_companies": "",
+    "find_job_button": ""
+  },
+  "job_card": {
+    "salary": "",
+    "apply_button": "",
+    "view_details_button": ""
+  },
+  "job_details": {
+    "title": "",
+    "description": "",
+    "responsibilities": "",
+    "requirements": "",
+    "apply_now_button": ""
+  },
+  "companies_page": {
+    "title": "",
+    "description": ""
+  },
+  "company_details": {
+    "about": "",
+    "location": "",
+    "website": "",
+    "open_jobs": ""
+  },
+  "about_us_page": {
+    "title": "",
+    "section1_title": "",
+    "section1_content": "",
+    "section2_title": "",
+    "section2_content": ""
+  },
+  "contact_page": {
+    "title": "",
+    "description": "",
+    "name_label": "",
+    "email_label": "",
+    "message_label": "",
+    "send_button": ""
+  },
+  "faq_page": {
+    "title": "",
+    "description": ""
+  },
+  "dashboard_page": {
+    "title": "",
+    "welcome_message": ""
+  },
+  "profile_page": {
+    "title": "",
+    "name_label": "",
+    "email_label": "",
+    "bio_label": "",
+    "update_button": ""
+  },
+  "auth_page": {
+    "login_title": "",
+    "signup_title": "",
+    "email_label": "",
+    "password_label": "",
+    "login_button": "",
+    "signup_button": "",
+    "forgot_password": "",
+    "or_login_with_google": "",
+    "or_signup_with_google": "",
+    "already_have_account": "",
+    "dont_have_account": ""
+  },
+  "create_company_page": {
+    "title": "",
+    "name_label": "",
+    "description_label": "",
+    "location_label": "",
+    "website_label": "",
+    "create_button": ""
+  },
+  "post_job_page": {
+    "title": "",
+    "job_title_label": "",
+    "description_label": "",
+    "requirements_label": "",
+    "responsibilities_label": "",
+    "salary_label": "",
+    "post_button": ""
+  },
+  "my_jobs_page": {
+    "title": "",
+    "no_jobs_message": ""
+  },
+  "update_profile_page": {
+    "title": ""
+  },
+  "footer": {
+    "quick_links": "",
+    "contact_us": "",
+    "follow_us": "",
+    "all_rights_reserved": ""
+  },
+  "terms_of_service_page": {
+    "title": ""
+  },
+  "policies_page": {
+    "title": ""
+  },
+  "careers_page": {
+    "title": ""
+  }
+}

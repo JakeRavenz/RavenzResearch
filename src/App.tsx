@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import LandingPage from "./pages/langingPage";
+import LandingPage from "./pages/landingPage";
 import Companies from "./pages/Companies";
 import CompanyJobs from "./pages/CompanyJobs";
 import Profile from "./pages/Profile";
@@ -20,6 +20,7 @@ import Policies from "./pages/Policies";
 import TermsOfService from "./pages/TermsOfService";
 import MyJobs from "./pages/myJobs";
 import WhatsAppWidget from "./components/WhatsAppWidget";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         {/* All other routes wrapped with Layout */}
         <Route element={<Layout />}>
           <Route path="/" element={<LandingPage />} />
+        <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/companies" element={<Companies />} />
           <Route path="/companies/:id/jobs" element={<CompanyJobs />} />
           <Route path="/profile" element={<Profile />} />
