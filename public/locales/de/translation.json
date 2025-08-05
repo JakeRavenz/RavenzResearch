@@ -117,6 +117,8 @@
     "contract": "Vertrag",
     "location": "Standort",
     "all_locations": "Alle Standorte",
+    "jobs_page.fully-remote": "Vollzeit-Fernarbeit",
+    "jobs_page.freelance": "Freiberuflich",
     "remote": "Remote",
     "us": "USA",
     "europe": "Europa",
@@ -134,9 +136,8 @@
     "clear_search": "Suche zurücksetzen",
     "new": "Neu",
     "per_hour": "pro Stunde",
-    "apply": "Bewerben",
     "learn_more": "Mehr erfahren",
     "load_more_jobs": "Weitere Jobs laden",
     "loading": "Wird geladen..."
-  }
+}
 }
