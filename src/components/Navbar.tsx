@@ -156,6 +156,10 @@ export default function Navbar() {
             >
               <option value="en">English</option>
               <option value="es">Español</option>
+              <option value="de">Deutsch</option>
+              <option value="zh-TW">繁體中文</option>
+              <option value="pt-BR">Português (Brasil)</option>
+              <option value="tr">Türkçe</option>
             </select>
             {/* Theme toggle remains outside for accessibility */}
             <button
@@ -298,6 +302,10 @@ export default function Navbar() {
             >
               <option value="en">English</option>
               <option value="es">Español</option>
+              <option value="de">Deutsch</option>
+              <option value="zh-TW">繁體中文</option>
+              <option value="pt-BR">Português (Brasil)</option>
+              <option value="tr">Türkçe</option>
             </select>
           </div>
         </div>
